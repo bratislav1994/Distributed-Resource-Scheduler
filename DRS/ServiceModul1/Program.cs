@@ -10,6 +10,7 @@ namespace ServiceModul1
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Ciao");
             Console.WriteLine("poy");
         }
     }
