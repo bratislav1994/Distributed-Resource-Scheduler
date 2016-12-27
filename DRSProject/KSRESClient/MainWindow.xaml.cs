@@ -23,6 +23,7 @@ namespace KSRESClient
         public MainWindow()
         {
             InitializeComponent();
+            MessageBox.Show("Hellooooooo");
         }
     }
 }
