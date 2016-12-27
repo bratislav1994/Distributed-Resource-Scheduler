@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{78BF4FA7-392B-4613-974E-0128ED558340}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{93E0E8DE-4566-4201-BDD4-1AD37DECE1EE}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServiceModul1</RootNamespace>
-    <AssemblyName>ServiceModul1</AssemblyName>
+    <RootNamespace>CommonLibrary</RootNamespace>
+    <AssemblyName>CommonLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,11 +40,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Generator.cs" />
+    <Compile Include="GeneratorType.cs" />
+    <Compile Include="Group.cs" />
+    <Compile Include="IdentifiedObject.cs" />
+    <Compile Include="Interfaces\IKSClient.cs" />
+    <Compile Include="Interfaces\IKSForClient.cs" />
+    <Compile Include="Interfaces\IKSRes.cs" />
+    <Compile Include="Interfaces\ILKClient.cs" />
+    <Compile Include="Interfaces\ILKForClient.cs" />
+    <Compile Include="Interfaces\ILKRes.cs" />
+    <Compile Include="LKResService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <Compile Include="SetPoint.cs" />
+    <Compile Include="Site.cs" />
+    <Compile Include="UpdateInfo.cs" />
+    <Compile Include="UpdateType.cs" />
+    <Compile Include="WorkingMode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
