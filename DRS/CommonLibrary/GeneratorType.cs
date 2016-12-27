@@ -13,6 +13,7 @@ using System.IO;
 
 
 
+
 public enum GeneratorType : int {
 
 	WIND_STATIC,
