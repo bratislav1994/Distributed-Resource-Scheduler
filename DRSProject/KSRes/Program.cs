@@ -10,6 +10,7 @@ namespace KSRes
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Hellooooos");
         }
     }
 }
