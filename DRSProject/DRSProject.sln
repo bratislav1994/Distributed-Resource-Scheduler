@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSRESClient", "KSRESClient\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSRes", "KSRes\KSRes.csproj", "{26BCBD69-6B8E-4A70-A877-9FB3055328DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KLRESClient", "KLRESClient\KLRESClient.csproj", "{F4EAB13F-D09E-44BD-BEF2-FB4A26DEC05C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LKRESClient", "KLRESClient\LKRESClient.csproj", "{F4EAB13F-D09E-44BD-BEF2-FB4A26DEC05C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
