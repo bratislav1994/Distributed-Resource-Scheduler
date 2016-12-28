@@ -12,25 +12,29 @@ using System.Text;
 using System.IO;
 
 
-
-public class Site : IdentifiedObject {
-
-	private List<Group> groups;
-
-	public Site(){
-
-	}
-
-    public List<Group> Groups
+namespace CommonLibrary
+{
+    public class Site : IdentifiedObject
     {
-        get
+
+        private List<Group> groups;
+
+        public Site()
         {
-            return groups;
+
         }
 
-        set
+        public List<Group> Groups
         {
-            groups = value;
+            get
+            {
+                return groups;
+            }
+
+            set
+            {
+                groups = value;
+            }
         }
-    }
-}//end Site
+    }//end Site
+}

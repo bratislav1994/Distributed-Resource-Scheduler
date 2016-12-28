@@ -12,10 +12,13 @@ using System.Text;
 using System.IO;
 
 
+namespace CommonLibrary
+{
+    public enum WorkingMode : int
+    {
 
-public enum WorkingMode : int {
+        LOCAL,
+        REMOTE
 
-	LOCAL,
-	REMOTE
-
-}//end WorkingMode
+    }//end WorkingMode
+}

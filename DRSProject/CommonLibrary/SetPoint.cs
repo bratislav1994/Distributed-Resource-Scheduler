@@ -12,28 +12,37 @@ using System.Text;
 using System.IO;
 
 
+namespace CommonLibrary
+{
+    public class SetPoint
+    {
 
-public class SetPoint {
+        private string generatorID;
+        private double setpoint;
 
-	private string generatorID;
-	private double setpoint;
+        public double Setpoint
+        {
+            get
+            {
+                return setpoint;
+            }
+            set
+            {
+                setpoint = value;
+            }
+        }
 
-	public double Setpoint{
-		get{
-			return setpoint;
-		}
-		set{
-			setpoint = value;
-		}
-	}
+        public string GeneratorID
+        {
+            get
+            {
+                return generatorID;
+            }
+            set
+            {
+                generatorID = value;
+            }
+        }
 
-	public string GeneratorID{
-		get{
-			return generatorID;
-		}
-		set{
-			generatorID = value;
-		}
-	}
-
-}//end SetPoint
+    }//end SetPoint
+}

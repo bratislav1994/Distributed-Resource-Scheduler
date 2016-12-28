@@ -13,7 +13,8 @@ using System.IO;
 
 
 
-namespace InterfaceForDuplex {
+namespace CommonLibrary.Interfaces
+{
 	public interface ILKForClient  {
 
 		List<Site> GetMySystem();

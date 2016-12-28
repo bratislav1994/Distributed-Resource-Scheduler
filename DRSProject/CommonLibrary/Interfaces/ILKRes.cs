@@ -11,13 +11,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
+namespace CommonLibrary.Interfaces
+{
+    public interface ILKRes
+    {
 
+        string Ping();
 
-public interface ILKRes  {
-
-	string Ping();
-
-	/// 
-	/// <param name="setPoints"></param>
-	void SendSetPoint(List<SetPoint> setPoints);
-}//end ILKRes
+        /// 
+        /// <param name="setPoints"></param>
+        void SendSetPoint(List<SetPoint> setPoints);
+    }//end ILKRes
+}

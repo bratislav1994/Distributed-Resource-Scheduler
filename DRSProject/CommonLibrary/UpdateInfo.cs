@@ -12,35 +12,38 @@ using System.Text;
 using System.IO;
 
 
-
-public class UpdateInfo {
-
-	private UpdateType updateType;
-	private Generator generator;
-
-    public UpdateType UpdateType
+namespace CommonLibrary
+{
+    public class UpdateInfo
     {
-        get
+
+        private UpdateType updateType;
+        private Generator generator;
+
+        public UpdateType UpdateType
         {
-            return updateType;
+            get
+            {
+                return updateType;
+            }
+
+            set
+            {
+                updateType = value;
+            }
         }
 
-        set
+        public Generator Generator
         {
-            updateType = value;
-        }
-    }
+            get
+            {
+                return generator;
+            }
 
-    public Generator Generator
-    {
-        get
-        {
-            return generator;
+            set
+            {
+                generator = value;
+            }
         }
-
-        set
-        {
-            generator = value;
-        }
-    }
-}//end UpdateInfo
+    }//end UpdateInfo
+}
