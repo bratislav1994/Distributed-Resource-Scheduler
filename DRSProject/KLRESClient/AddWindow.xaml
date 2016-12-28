@@ -123,5 +123,11 @@
             </Button.Style>
         </Button>
 
+        <Label Content="Add in existing site/group:" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top"/>
+        <Label Content="Add in new site/group:" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top"/>
+
+        <RadioButton x:Name="radioButton" Content="RadioButton" HorizontalAlignment="Left" Margin="159,178,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="radioButton1" Content="RadioButton" HorizontalAlignment="Left" Margin="159,198,0,0" VerticalAlignment="Top"/>
+
     </Grid>
 </Window>
