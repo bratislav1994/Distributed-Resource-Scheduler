@@ -12,22 +12,29 @@ using System.Text;
 using System.IO;
 
 
+namespace CommonLibrary
+{
+    public abstract class IdentifiedObject
+    {
 
-public abstract class IdentifiedObject {
+        private string mrID;
 
-	private string mrID;
+        public IdentifiedObject()
+        {
 
-	public IdentifiedObject(){
+        }
 
-	}
+        public string MRID
+        {
+            get
+            {
+                return mrID;
+            }
+            set
+            {
+                mrID = value;
+            }
+        }
 
-	public string MRID{
-		get{
-			return mrID;
-		}
-		set{
-			mrID = value;
-		}
-	}
-
-}//end IdentifiedObject
+    }//end IdentifiedObject
+}

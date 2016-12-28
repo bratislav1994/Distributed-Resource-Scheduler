@@ -10,51 +10,59 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using CommonLibrary.Interfaces;
 
 
-
-public class LKResService {
-
-	private string username;
-	private ILKRes client;
-	private List<Site> sites;
-
-	public LKResService(){
-
-	}
-
-	public string Username{
-		get{
-			return username;
-		}
-		set{
-			username = value;
-		}
-	}
-
-    public List<Site> Sites
+namespace CommonLibrary
+{
+    public class LKResService
     {
-        get
+
+        private string username;
+        private ILKRes client;
+        private List<Site> sites;
+
+        public LKResService()
         {
-            return sites;
+
         }
 
-        set
+        public string Username
         {
-            sites = value;
+            get
+            {
+                return username;
+            }
+            set
+            {
+                username = value;
+            }
         }
-    }
 
-    public ILKRes Client
-    {
-        get
+        public List<Site> Sites
         {
-            return client;
+            get
+            {
+                return sites;
+            }
+
+            set
+            {
+                sites = value;
+            }
         }
 
-        set
+        public ILKRes Client
         {
-            client = value;
+            get
+            {
+                return client;
+            }
+
+            set
+            {
+                client = value;
+            }
         }
-    }
-}//end LKResService
+    }//end LKResService
+}

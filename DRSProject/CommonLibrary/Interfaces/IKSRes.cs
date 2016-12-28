@@ -12,28 +12,32 @@ using System.Text;
 using System.IO;
 using System.ServiceModel;
 
-[ServiceContract]
-public interface IKSRes
+
+namespace CommonLibrary.Interfaces
 {
-    /// 
-    /// <param name="username"></param>
-    /// <param name="password"></param>
-    [OperationContract]
-    void Login(string username, string password);
+    [ServiceContract]
+    public interface IKSRes
+    {
+        /// 
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        [OperationContract]
+        void Login(string username, string password);
 
-    /// 
-    /// <param name="username"></param>
-    /// <param name="password"></param>
-    [OperationContract]
-    void Registration(string username, string password);
+        /// 
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        [OperationContract]
+        void Registration(string username, string password);
 
-    /// 
-    /// <param name="measurments"></param>
-    [OperationContract]
-    void SendMeasurement(Dictionary<string, double> measurments);
+        /// 
+        /// <param name="measurments"></param>
+        [OperationContract]
+        void SendMeasurement(Dictionary<string, double> measurments);
 
-    /// 
-    /// <param name="update"></param>
-    [OperationContract]
-    void Update(UpdateInfo update);
+        /// 
+        /// <param name="update"></param>
+        [OperationContract]
+        void Update(UpdateInfo update);
+    }
 }

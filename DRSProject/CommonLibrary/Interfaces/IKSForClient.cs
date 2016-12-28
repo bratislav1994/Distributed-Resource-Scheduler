@@ -12,7 +12,7 @@ using System.Text;
 using System.IO;
 using System.ServiceModel;
 
-namespace InterfaceForDuplex
+namespace CommonLibrary.Interfaces
 {
     [ServiceContract]
     public interface IKSForClient
