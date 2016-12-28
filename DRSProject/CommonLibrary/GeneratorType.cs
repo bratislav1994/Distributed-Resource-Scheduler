@@ -12,13 +12,16 @@ using System.Text;
 using System.IO;
 
 
+namespace CommonLibrary
+{
 
+    public enum GeneratorType : int
+    {
 
-public enum GeneratorType : int {
+        WIND_STATIC,
+        WIND_DYNAMIC,
+        SOLAR,
+        MICROHYDRO
 
-	WIND_STATIC,
-	WIND_DYNAMIC,
-	SOLAR,
-	MICROHYDRO
-
-}//end GeneratorType
+    }//end GeneratorType
+}

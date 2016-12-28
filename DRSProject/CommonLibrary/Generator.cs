@@ -12,113 +12,139 @@ using System.Text;
 using System.IO;
 
 
-
-public class Generator : IdentifiedObject {
-
-	private double activePower;
-	private double basePoint;
-	private bool hasMeasurment;
-	private double pmax;
-	private double pmin;
-	private double price;
-	private double setPoint;
-	private GeneratorType generatorType;
-	private WorkingMode workingMode;
-
-	public Generator(){
-
-	}
-
-	~Generator(){
-
-	}
-
-	public double ActivePower{
-		get{
-			return activePower;
-		}
-		set{
-			activePower = value;
-		}
-	}
-
-	public double BasePoint{
-		get{
-			return basePoint;
-		}
-		set{
-			basePoint = value;
-		}
-	}
-
-	public bool HasMeasurment{
-		get{
-			return hasMeasurment;
-		}
-		set{
-			hasMeasurment = value;
-		}
-	}
-
-	public double Pmax{
-		get{
-			return pmax;
-		}
-		set{
-			pmax = value;
-		}
-	}
-
-	public double Pmin{
-		get{
-			return pmin;
-		}
-		set{
-			pmin = value;
-		}
-	}
-
-	public double Price{
-		get{
-			return price;
-		}
-		set{
-			price = value;
-		}
-	}
-
-	public double SetPoint{
-		get{
-			return setPoint;
-		}
-		set{
-			setPoint = value;
-		}
-	}
-
-    public GeneratorType GeneratorType
+namespace CommonLibrary
+{
+    public class Generator : IdentifiedObject
     {
-        get
+
+        private double activePower;
+        private double basePoint;
+        private bool hasMeasurment;
+        private double pmax;
+        private double pmin;
+        private double price;
+        private double setPoint;
+        private GeneratorType generatorType;
+        private WorkingMode workingMode;
+
+        public Generator()
         {
-            return generatorType;
+
         }
 
-        set
+        ~Generator()
         {
-            generatorType = value;
-        }
-    }
 
-    public WorkingMode WorkingMode
-    {
-        get
-        {
-            return workingMode;
         }
 
-        set
+        public double ActivePower
         {
-            workingMode = value;
+            get
+            {
+                return activePower;
+            }
+            set
+            {
+                activePower = value;
+            }
         }
-    }
-}//end Generator
+
+        public double BasePoint
+        {
+            get
+            {
+                return basePoint;
+            }
+            set
+            {
+                basePoint = value;
+            }
+        }
+
+        public bool HasMeasurment
+        {
+            get
+            {
+                return hasMeasurment;
+            }
+            set
+            {
+                hasMeasurment = value;
+            }
+        }
+
+        public double Pmax
+        {
+            get
+            {
+                return pmax;
+            }
+            set
+            {
+                pmax = value;
+            }
+        }
+
+        public double Pmin
+        {
+            get
+            {
+                return pmin;
+            }
+            set
+            {
+                pmin = value;
+            }
+        }
+
+        public double Price
+        {
+            get
+            {
+                return price;
+            }
+            set
+            {
+                price = value;
+            }
+        }
+
+        public double SetPoint
+        {
+            get
+            {
+                return setPoint;
+            }
+            set
+            {
+                setPoint = value;
+            }
+        }
+
+        public GeneratorType GeneratorType
+        {
+            get
+            {
+                return generatorType;
+            }
+
+            set
+            {
+                generatorType = value;
+            }
+        }
+
+        public WorkingMode WorkingMode
+        {
+            get
+            {
+                return workingMode;
+            }
+
+            set
+            {
+                workingMode = value;
+            }
+        }
+    }//end Generator
+}

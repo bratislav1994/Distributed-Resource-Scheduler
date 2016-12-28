@@ -12,11 +12,14 @@ using System.Text;
 using System.IO;
 
 
+namespace CommonLibrary
+{
+    public enum UpdateType : int
+    {
 
-public enum UpdateType : int {
+        UPDATE,
+        ADD,
+        REMOVE
 
-	UPDATE,
-	ADD,
-	REMOVE
-
-}//end UpdateType
+    }//end UpdateType
+}

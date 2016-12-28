@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace CommonLibrary
+namespace CommonLibrary.Interfaces
 {
     public interface ILKRes
     {

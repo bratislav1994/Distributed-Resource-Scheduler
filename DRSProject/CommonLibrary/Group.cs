@@ -12,30 +12,35 @@ using System.Text;
 using System.IO;
 
 
-
-public class Group : IdentifiedObject {
-
-	private List<Generator> generators;
-
-	public Group(){
-
-	}
-
-    public List<Generator> Generators
+namespace CommonLibrary
+{
+    public class Group : IdentifiedObject
     {
-        get
+
+        private List<Generator> generators;
+
+        public Group()
         {
-            return generators;
+
         }
 
-        set
+        public List<Generator> Generators
         {
-            generators = value;
+            get
+            {
+                return generators;
+            }
+
+            set
+            {
+                generators = value;
+            }
         }
-    }
 
-    public void EstimateMeasurment(){
+        public void EstimateMeasurment()
+        {
 
-	}
+        }
 
-}//end Group
+    }//end Group
+}
