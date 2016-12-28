@@ -23,12 +23,24 @@ namespace KLRESClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private UpdateInfo getAllGenerators;
+        private ILKForClient proxy = null;
+
         public MainWindow()
         {
             InitializeComponent();
             
             DataContext = this;
-            
+
+            DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
+                    new InstanceContext(this),
+                        new NetTcpBinding(),
+                        new EndpointAddress("net.tcp://localhost:4000/ILKForClient"));
+            proxy = factory.CreateChannel();
+
+            getAllGenerators = proxy.GetMySystem();
+
+
             if (ClientDatabase.generators == null)
             {
                 ClientDatabase.generators = new List<Generator>();
