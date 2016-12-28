@@ -17,10 +17,11 @@ namespace CommonLibrary
 {
     public class LKResService
     {
-
         private string username;
         private ILKRes client;
         private List<Site> sites;
+        private List<Group> gropus;
+        private List<Generator> generators;
 
         public LKResService()
         {
@@ -62,6 +63,32 @@ namespace CommonLibrary
             set
             {
                 client = value;
+            }
+        }
+
+        public List<Group> Gropus
+        {
+            get
+            {
+                return gropus;
+            }
+
+            set
+            {
+                gropus = value;
+            }
+        }
+
+        public List<Generator> Generators
+        {
+            get
+            {
+                return generators;
+            }
+
+            set
+            {
+                generators = value;
             }
         }
     }//end LKResService

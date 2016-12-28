@@ -10,10 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.Runtime.Serialization;
 
 namespace CommonLibrary
 {
+    [DataContract]
     public class Generator : IdentifiedObject
     {
 
@@ -26,17 +27,14 @@ namespace CommonLibrary
         private double setPoint;
         private GeneratorType generatorType;
         private WorkingMode workingMode;
+        private string groupID;
 
         public Generator()
         {
 
         }
 
-        ~Generator()
-        {
-
-        }
-
+        [DataMember]
         public double ActivePower
         {
             get
@@ -49,6 +47,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public double BasePoint
         {
             get
@@ -61,6 +60,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public bool HasMeasurment
         {
             get
@@ -73,6 +73,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public double Pmax
         {
             get
@@ -85,6 +86,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public double Pmin
         {
             get
@@ -97,6 +99,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public double Price
         {
             get
@@ -109,6 +112,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public double SetPoint
         {
             get
@@ -121,6 +125,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public GeneratorType GeneratorType
         {
             get
@@ -134,6 +139,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public WorkingMode WorkingMode
         {
             get
@@ -144,6 +150,20 @@ namespace CommonLibrary
             set
             {
                 workingMode = value;
+            }
+        }
+
+        [DataMember]
+        public string GroupID
+        {
+            get
+            {
+                return groupID;
+            }
+
+            set
+            {
+                groupID = value;
             }
         }
     }//end Generator

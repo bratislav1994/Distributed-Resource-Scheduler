@@ -18,6 +18,7 @@ namespace CommonLibrary
     {
 
         private string mrID;
+        private string name;
 
         public IdentifiedObject()
         {
@@ -36,5 +37,17 @@ namespace CommonLibrary
             }
         }
 
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+
+            set
+            {
+                name = value;
+            }
+        }
     }//end IdentifiedObject
 }
