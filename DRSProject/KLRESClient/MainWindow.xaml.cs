@@ -30,10 +30,10 @@ namespace KLRESClient
         {
             InitializeComponent();
             
-            DataContext = this;
-
+            DataContext = ClientDatabase.Instance();
+            LKClientService a = new LKClientService();
             DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
-                    new InstanceContext(this),
+                    new InstanceContext(a),
                         new NetTcpBinding(),
                         new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
             proxy = factory.CreateChannel();
@@ -47,6 +47,8 @@ namespace KLRESClient
                     ClientDatabase.Instance().Generators.Add(gen);
                 }
             }
+
+            dataGridGenerators.ItemsSource = ClientDatabase.Instance().Generators;
 
             if (getAllFromService.Groups != null)
             {
