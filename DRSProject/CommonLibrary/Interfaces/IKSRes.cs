@@ -10,26 +10,30 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.ServiceModel;
 
+[ServiceContract]
+public interface IKSRes
+{
+    /// 
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    [OperationContract]
+    void Login(string username, string password);
 
+    /// 
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    [OperationContract]
+    void Registration(string username, string password);
 
-public interface IKSRes  {
+    /// 
+    /// <param name="measurments"></param>
+    [OperationContract]
+    void SendMeasurement(Dictionary<string, double> measurments);
 
-	/// 
-	/// <param name="username"></param>
-	/// <param name="password"></param>
-	void Login(string username, string password);
-
-	/// 
-	/// <param name="username"></param>
-	/// <param name="password"></param>
-	void Registration(string username, string password);
-
-	/// 
-	/// <param name="measurments"></param>
-	void SendMeasurement(Dictionary<string, double> measurments);
-
-	/// 
-	/// <param name="update"></param>
-	void Update(UpdateInfo update);
-}//end IKSRes
+    /// 
+    /// <param name="update"></param>
+    [OperationContract]
+    void Update(UpdateInfo update);
+}
