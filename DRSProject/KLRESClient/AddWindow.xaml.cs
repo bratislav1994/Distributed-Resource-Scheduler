@@ -429,7 +429,7 @@ namespace KLRESClient
                 Margin = text_box8.Margin,
                 Width = text_box8.Width
             };
-
+            panel.Children.Clear();
             TextBox txb = new TextBox()
             {
                 Name = "txb",
@@ -447,7 +447,7 @@ namespace KLRESClient
             //    cmb2.Visibility = Visibility.Hidden;
             //}
 
-            panel.Children.Clear();
+            
             panel.Children.Add(cmb3);
             panel.Children.Add(txb);
             
