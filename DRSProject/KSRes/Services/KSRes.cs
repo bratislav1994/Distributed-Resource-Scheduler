@@ -72,18 +72,19 @@ namespace KSRes.Services
 
         public void IssueCommand(string username, double requiredAP)
         {
+            List<Generator> remoteGenerators = new List<Generator>();
+            List<SetPoint> setPoints = new List<SetPoint>();
             LKResService user = dynamicDataBase.GetUser(username);
-
             double activePower = 0;
+            double diff = 0;
 
             foreach(Generator generator in user.Generators)
             {
                 activePower += generator.ActivePower;
             }
 
-            double diff = requiredAP - activePower;
+            diff = requiredAP - activePower;
 
-            List<Generator> remoteGenerators = new List<Generator>();
             foreach (Generator generator in user.Generators)
             {
                 if (generator.WorkingMode == WorkingMode.REMOTE)
@@ -91,39 +92,69 @@ namespace KSRes.Services
                     remoteGenerators.Add(generator);
                 }
             }
-        
-            List<Generator> sortedList = remoteGenerators.OrderBy(o => o.Price).ToList();
-
+            
             if (diff > 0)
             {
-                foreach(Generator remoteGenerator in remoteGenerators)
+                List<Generator> sortedList = remoteGenerators.OrderBy(o => o.Price).ToList();
+                foreach (Generator remoteGenerator in remoteGenerators)
                 {
                     double diff1 = 0;
                     if ((diff1 = remoteGenerator.Pmax - remoteGenerator.ActivePower) > 0)
                     {
                         SetPoint setPoint = new SetPoint();
-                        if (diff != 0)
+
+                        if (diff > diff1)
                         {
-                            if (diff >= diff1)
-                            {
-                                diff -= diff1;
-                                setPoint.GeneratorID = remoteGenerator.MRID;
-                                setPoint.Setpoint = remoteGenerator.Pmax;
-                            }
-                            else
-                            {
-                                setPoint.GeneratorID = remoteGenerator.MRID;
-                                setPoint.Setpoint = remoteGenerator.ActivePower + diff;
-                                diff = 0;
-                                break;
-                            }
+                            diff -= diff1;
+                            setPoint.GeneratorID = remoteGenerator.MRID;
+                            setPoint.Setpoint = remoteGenerator.Pmax;
+                        }
+                        else if (diff <= diff1)
+                        {
+                            setPoint.GeneratorID = remoteGenerator.MRID;
+                            setPoint.Setpoint = remoteGenerator.ActivePower + diff;
+                            diff = 0;
+                            break;
                         }
                     }
                 }
             }
             else
             {
-
+                diff = Math.Abs(diff);
+                List<Generator> sortedList = remoteGenerators.OrderByDescending(o => o.Price).ToList();
+                foreach (Generator remoteGenerator in remoteGenerators)
+                {
+                    if ( remoteGenerator.ActivePower > 0 )
+                    {
+                        SetPoint setPoint = new SetPoint();
+                        if (diff != 0)
+                        {
+                            if (remoteGenerator.ActivePower <= diff)
+                            {
+                                setPoint.GeneratorID = remoteGenerator.MRID;
+                                setPoint.Setpoint = 0;
+                                diff -= remoteGenerator.ActivePower;
+                            }
+                            else
+                            {
+                                if ((remoteGenerator.ActivePower - remoteGenerator.Pmin) >= diff)
+                                {
+                                    setPoint.GeneratorID = remoteGenerator.MRID;
+                                    setPoint.Setpoint = remoteGenerator.ActivePower - diff;
+                                    diff = 0;
+                                    break;
+                                }
+                                else
+                                {
+                                    setPoint.GeneratorID = remoteGenerator.MRID;
+                                    setPoint.Setpoint = remoteGenerator.Pmin;
+                                    diff -= remoteGenerator.Pmin;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
         }
