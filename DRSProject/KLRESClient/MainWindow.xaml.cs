@@ -27,7 +27,9 @@ namespace KLRESClient
 
         private void AddGenerator(object sender, RoutedEventArgs e)
         {
-
+            AddWindow win1 = new AddWindow();
+            win1.Owner = this;
+            win1.ShowDialog();
         }
 
         private void UpdateGenerator(object sender, RoutedEventArgs e)
