@@ -23,7 +23,7 @@ namespace KLRESClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private UpdateInfo getAllGenerators;
+        private UpdateInfo getAllFromService;
         private ILKForClient proxy = null;
 
         public MainWindow()
@@ -38,23 +38,10 @@ namespace KLRESClient
                         new EndpointAddress("net.tcp://localhost:4000/ILKForClient"));
             proxy = factory.CreateChannel();
 
-            getAllGenerators = proxy.GetMySystem();
-
-
-            if (ClientDatabase.generators == null)
-            {
-                ClientDatabase.generators = new List<Generator>();
-            }
-
-            if (ClientDatabase.groups == null)
-            {
-                ClientDatabase.groups = new List<Group>();
-            }
-
-            if (ClientDatabase.sites == null)
-            {
-                ClientDatabase.sites = new List<Site>();
-            }
+            getAllFromService = proxy.GetMySystem();
+            ClientDatabase.generators = getAllFromService.Generators;
+            ClientDatabase.groups = getAllFromService.Groups;
+            ClientDatabase.sites = getAllFromService.Sites;
         }
 
         private void AddGenerator(object sender, RoutedEventArgs e)
@@ -69,6 +56,36 @@ namespace KLRESClient
             if (dataGridGenerators.SelectedItem != null)
             {
                 EditWindow win1 = new EditWindow();
+                Generator generator = (Generator)dataGridGenerators.SelectedItem;
+                win1.text_box2.Text = generator.Name;
+                win1.text_box3.Text = generator.ActivePower.ToString();
+                win1.combo_box1.SelectedItem = generator.HasMeasurment.ToString();
+                win1.text_box4.Text = generator.BasePoint.ToString();
+                win1.text_box10.Text = generator.SetPoint.ToString();
+                win1.text_box5.Text = generator.Pmin.ToString();
+                win1.text_box6.Text = generator.Pmax.ToString();
+                win1.text_box7.Text = generator.Price.ToString();
+                win1.combo_box2.SelectedItem = generator.GeneratorType.ToString();
+                win1.combo_box3.SelectedItem = generator.WorkingMode.ToString();
+                foreach (Group group in ClientDatabase.groups)
+                {
+                    if (group.MRID.Equals(generator.GroupID))
+                    {
+                        win1.cmb2.SelectedItem = group.Name.ToString();
+
+                        foreach (Site site in ClientDatabase.sites)
+                        {
+                            if (site.MRID.Equals(group.SiteID))
+                            {
+                                win1.cmb.SelectedItem = site.Name.ToString();
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
                 win1.Owner = this;
                 win1.ShowDialog();
             }

@@ -124,8 +124,8 @@
             </Button.Style>
         </Button>
 
-        <RadioButton x:Name="radioButton" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" IsChecked="True" Click="radioButton_Click" />
-        <RadioButton x:Name="radioButton1" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" Click="radioButton1_Click"/>
+        <RadioButton x:Name="radioButton" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" Click="radioButton_Click" />
+        <RadioButton x:Name="radioButton1" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" IsChecked="True" Click="radioButton1_Click"/>
         <RadioButton x:Name="radioButton2" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Click="radioButton2_Click"/>
         <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="215,178,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="215,198,0,0" VerticalAlignment="Top"/>
