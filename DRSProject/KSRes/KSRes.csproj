@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KSForClient.cs" />
-    <Compile Include="KSRes.cs" />
+    <Compile Include="Services\KSForClient.cs" />
+    <Compile Include="Services\KSRes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

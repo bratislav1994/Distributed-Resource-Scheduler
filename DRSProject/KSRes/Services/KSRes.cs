@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommonLibrary;
 
-namespace KSRes
+namespace KSRes.Services
 {
     public class KSRes : IKSRes
     {
