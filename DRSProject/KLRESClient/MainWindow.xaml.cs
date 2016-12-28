@@ -1,7 +1,9 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,12 +23,24 @@ namespace KLRESClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private UpdateInfo getAllGenerators;
+        private ILKForClient proxy = null;
+
         public MainWindow()
         {
             InitializeComponent();
             
             DataContext = this;
-            
+
+            DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
+                    new InstanceContext(this),
+                        new NetTcpBinding(),
+                        new EndpointAddress("net.tcp://localhost:4000/ILKForClient"));
+            proxy = factory.CreateChannel();
+
+            getAllGenerators = proxy.GetMySystem();
+
+
             if (ClientDatabase.generators == null)
             {
                 ClientDatabase.generators = new List<Generator>();
@@ -66,8 +80,53 @@ namespace KLRESClient
         {
             if (dataGridGenerators.SelectedItem != null)
             {
-                LKClientService lkClientServ = new LKClientService();
-                lkClientServ.Update(updInfo);
+                DuplexChannelFactory<ILKClient> factory = new DuplexChannelFactory<ILKClient>(
+                    new InstanceContext(this),
+                    new NetTcpBinding(),
+                    new EndpointAddress("net.tcp://localhost:4000/LKClientService"));
+                ILKClient proxy = factory.CreateChannel();
+
+                UpdateInfo updInfo = null;
+                Generator gen = (Generator)dataGridGenerators.SelectedItem;
+
+                foreach (Group g in ClientDatabase.groups)
+                {
+                    if (g.MRID.Equals(gen.GroupID))
+                    {
+                        bool findSite = false;
+                        foreach (Site site in ClientDatabase.sites)
+                        {
+                            if (g.SiteID.Equals(site.MRID))
+                            {
+                                updInfo = new UpdateInfo()
+                                {
+                                    Generators = new List<Generator>()
+                                    {
+                                        gen
+                                    },
+                                    Groups = new List<Group>()
+                                    {
+                                        g
+                                    },
+                                    Sites = new List<Site>()
+                                    {
+                                        site
+                                    },
+                                    UpdateType = UpdateType.REMOVE
+                                };
+
+                                findSite = true;
+                                break;
+                            }
+                        }
+
+                        if (findSite)
+                        {
+                            break;
+                        }
+                    }
+                }
+                proxy.Update(updInfo);
             }
 
             dataGridGenerators.SelectedItem = null;
