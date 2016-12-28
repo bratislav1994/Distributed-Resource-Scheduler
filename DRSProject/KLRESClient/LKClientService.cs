@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using InterfaceForDuplex;
+using CommonLibrary;
+using CommonLibrary.Interfaces;
 
-namespace LKRes.Services
+namespace KLRESClient
 {
     public class LKClientService : ILKClient
     {
