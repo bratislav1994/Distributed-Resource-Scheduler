@@ -356,6 +356,10 @@ namespace KLRESClient
                     },
                     UpdateType = UpdateType.UPDATE
                 };
+
+                LKClientService lkClientServ = new LKClientService();
+                lkClientServ.Update(updInfo);
+                this.Close();
             }
         }
 

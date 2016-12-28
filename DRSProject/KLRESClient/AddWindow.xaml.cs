@@ -23,7 +23,7 @@ namespace KLRESClient
         public AddWindow()
         {
             InitializeComponent();
-
+            
             combo_box1.Items.Add(true);
             combo_box1.Items.Add(false);
 
@@ -357,7 +357,8 @@ namespace KLRESClient
                     UpdateType = UpdateType.ADD
                 };
 
-                
+                LKClientService lkClientServ = new LKClientService();
+                lkClientServ.Update(updInfo);
                 this.Close();
             }
         }

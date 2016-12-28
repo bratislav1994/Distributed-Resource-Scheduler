@@ -64,7 +64,13 @@ namespace KLRESClient
 
         private void RemoveGenerator(object sender, RoutedEventArgs e)
         {
+            if (dataGridGenerators.SelectedItem != null)
+            {
+                LKClientService lkClientServ = new LKClientService();
+                lkClientServ.Update(updInfo);
+            }
 
+            dataGridGenerators.SelectedItem = null;
         }
     }
 }
