@@ -5,8 +5,168 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KLRESClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="MainWindow" Height="400" Width="825">
+    <Grid Background="#FF526B87">
+        <Canvas x:Name="canvas" Margin="120,20,0,50" HorizontalAlignment="Left" Width="680" Background="White">
+
+            <DataGrid x:Name="substationsDataGrid" CanUserAddRows="false" ItemsSource="{Binding Substations}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="140" VerticalAlignment="Top" Width="650" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Grid.Row="1" Canvas.Left="10" Canvas.Top="68">
+                <DataGrid.Background>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                </DataGrid.Background>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="mrID" Binding="{Binding mrID}"/>
+                    <DataGridTextColumn Header="name" Binding="{Binding name}"/>
+                    <DataGridTextColumn Header="activePower" Binding="{Binding activePower}"/>
+                    <DataGridTextColumn Header="basePoint" Binding="{Binding basePoint}"/>
+                    <DataGridTextColumn Header="hasMeasurment" Binding="{Binding hasMeasurment}"/>
+                    <DataGridTextColumn Header="pmin" Width="40" Binding="{Binding pmin}"/>
+                    <DataGridTextColumn Header="pmax" Width="40" Binding="{Binding pmax}"/>
+                    <DataGridTextColumn Header="price" Width="40" Binding="{Binding price}"/>
+                    <DataGridTextColumn Header="generatorType" Binding="{Binding generatorType}"/>
+                    <DataGridTextColumn Header="workingMode" Width="*" Binding="{Binding workingMode}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Canvas>
+
+        <Button x:Name="button1" Content="Add generator" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" Height="60" Width="100" Click="AddGenerator">
+            <Button.Style>
+                <Style  TargetType="{x:Type Button}">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="Background" Value="#FF474444"/>
+                    <Setter Property="BorderBrush" Value="#cccccc"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Foreground" Value="White"/>
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="B"
+        										Background="{TemplateBinding Background}"
+        										BorderBrush="{TemplateBinding BorderBrush}"
+        										BorderThickness="{TemplateBinding BorderThickness}"
+        										SnapsToDevicePixels="true">
+                                    <ContentPresenter x:Name="Presenter" Margin="{TemplateBinding Padding}"
+        											VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+        											HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+        											RecognizesAccessKey="True"
+        											SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF7A7777" />
+                                        <Setter Property="BorderBrush" Value="#FF80BBD1" />
+
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#FF99A2A6" />
+                                        <Setter Property="BorderBrush" Value="#1ba1e2"/>
+
+                                    </Trigger>
+                                    <Trigger Property="IsFocused" Value="true">
+                                        <Setter TargetName="B" Property="BorderBrush" Value="#FF73C3EA" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <Button x:Name="button2" Content="Update generator" HorizontalAlignment="Left" Margin="10,120,0,0" VerticalAlignment="Top" Height="60" Width="100" Click="UpdateGenerator">
+            <Button.Style>
+                <Style  TargetType="{x:Type Button}">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="Background" Value="#FF474444"/>
+                    <Setter Property="BorderBrush" Value="#cccccc"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Foreground" Value="White"/>
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="B"
+        										Background="{TemplateBinding Background}"
+        										BorderBrush="{TemplateBinding BorderBrush}"
+        										BorderThickness="{TemplateBinding BorderThickness}"
+        										SnapsToDevicePixels="true">
+                                    <ContentPresenter x:Name="Presenter" Margin="{TemplateBinding Padding}"
+        											VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+        											HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+        											RecognizesAccessKey="True"
+        											SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF7A7777" />
+                                        <Setter Property="BorderBrush" Value="#FF80BBD1" />
+
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#FF99A2A6" />
+                                        <Setter Property="BorderBrush" Value="#1ba1e2"/>
+
+                                    </Trigger>
+                                    <Trigger Property="IsFocused" Value="true">
+                                        <Setter TargetName="B" Property="BorderBrush" Value="#FF73C3EA" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <Button x:Name="button3" Content="Remove generator" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" Height="60" Width="100" Click="RemoveGenerator">
+            <Button.Style>
+                <Style  TargetType="{x:Type Button}">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="Background" Value="#FF474444"/>
+                    <Setter Property="BorderBrush" Value="#cccccc"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Foreground" Value="White"/>
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border x:Name="B"
+        										Background="{TemplateBinding Background}"
+        										BorderBrush="{TemplateBinding BorderBrush}"
+        										BorderThickness="{TemplateBinding BorderThickness}"
+        										SnapsToDevicePixels="true">
+                                    <ContentPresenter x:Name="Presenter" Margin="{TemplateBinding Padding}"
+        											VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+        											HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+        											RecognizesAccessKey="True"
+        											SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF7A7777" />
+                                        <Setter Property="BorderBrush" Value="#FF80BBD1" />
+
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#FF99A2A6" />
+                                        <Setter Property="BorderBrush" Value="#1ba1e2"/>
+
+                                    </Trigger>
+                                    <Trigger Property="IsFocused" Value="true">
+                                        <Setter TargetName="B" Property="BorderBrush" Value="#FF73C3EA" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
+
     </Grid>
 </Window>
