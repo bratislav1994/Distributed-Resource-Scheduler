@@ -36,15 +36,15 @@ namespace KLRESClient
                 Name = "cmb",
                 Margin = text_box8.Margin,
                 Width = text_box8.Width,
-                Visibility = Visibility.Hidden
             };
+
+            cmb.SelectionChanged += new SelectionChangedEventHandler(Cmb_SelectionChanged);
 
             cmb2 = new ComboBox()
             {
                 Name = "cmb2",
                 Margin = text_box9.Margin,
                 Width = text_box9.Width,
-                Visibility = Visibility.Hidden
             };
 
             cmb3 = new ComboBox()
@@ -52,7 +52,6 @@ namespace KLRESClient
                 Name = "cmb3",
                 Margin = text_box8.Margin,
                 Width = text_box8.Width,
-                Visibility = Visibility.Hidden
             };
 
             txb = new TextBox()
@@ -61,7 +60,6 @@ namespace KLRESClient
                 Height = text_box9.Height,
                 Margin = text_box9.Margin,
                 Width = text_box9.Width,
-                Visibility = Visibility.Hidden
             };
 
             panel.Children.Add(cmb);
@@ -80,6 +78,19 @@ namespace KLRESClient
             foreach (WorkingMode workMode in Enum.GetValues(typeof(WorkingMode)))
             {
                 combo_box3.Items.Add(workMode);
+            }
+        }
+
+        private void Cmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Site site = (Site)cmb.SelectedItem;
+
+            foreach (Group group in ClientDatabase.groups)
+            {
+                if (site.MRID.Equals(group.SiteID))
+                {
+                    cmb2.Items.Add(group);
+                }
             }
         }
 
@@ -122,9 +133,6 @@ namespace KLRESClient
             }
             else if (radioButton1.IsChecked == true)
             {
-                ComboBox cmb = this.FindName("cmb") as ComboBox;
-                ComboBox cmb2 = this.FindName("cmb2") as ComboBox;
-
                 if (cmb.SelectedItem != null && cmb2.SelectedItem != null)
                 {
                     site = null;
@@ -138,9 +146,6 @@ namespace KLRESClient
             }
             else if (radioButton2.IsChecked == true)
             {
-                ComboBox cmb3 = this.FindName("cmb3") as ComboBox;
-                TextBox txb = this.FindName("txb") as TextBox;
-
                 if (cmb3.SelectedItem != null && string.IsNullOrEmpty(txb.Text.Trim()))
                 {
                     site = null;
@@ -340,32 +345,33 @@ namespace KLRESClient
 
         private void radioButton_Click(object sender, RoutedEventArgs e)
         {
-            cmb.Visibility = Visibility.Hidden;
-            cmb2.Visibility = Visibility.Hidden;
-            cmb3.Visibility = Visibility.Hidden;
-            txb.Visibility = Visibility.Hidden;
-            text_box8.Visibility = Visibility.Visible;
-            text_box9.Visibility = Visibility.Visible;
+            panel.Children.Clear();
+            panel.Children.Add(text_box8);
+            panel.Children.Add(text_box9);
         }
 
         private void radioButton1_Click(object sender, RoutedEventArgs e)
         {
-            cmb.Visibility = Visibility.Visible;
-            cmb2.Visibility = Visibility.Visible;
-            cmb3.Visibility = Visibility.Hidden;
-            txb.Visibility = Visibility.Hidden;
-            text_box8.Visibility = Visibility.Hidden;
-            text_box9.Visibility = Visibility.Hidden;
+            panel.Children.Clear();
+            panel.Children.Add(cmb);
+            panel.Children.Add(cmb2);
+
+            foreach (Site site in ClientDatabase.sites)
+            {
+                cmb.Items.Add(site);
+            }
         }
 
         private void radioButton2_Click(object sender, RoutedEventArgs e)
         {
-            cmb.Visibility = Visibility.Hidden;
-            cmb2.Visibility = Visibility.Hidden;
-            cmb3.Visibility = Visibility.Visible;
-            txb.Visibility = Visibility.Visible;
-            text_box8.Visibility = Visibility.Hidden;
-            text_box9.Visibility = Visibility.Hidden;
+            panel.Children.Clear();
+            panel.Children.Add(cmb3);
+            panel.Children.Add(txb);
+
+            foreach (Site site in ClientDatabase.sites)
+            {
+                cmb.Items.Add(site);
+            }
         }
     }
 }
