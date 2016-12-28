@@ -16,8 +16,8 @@ using System.ServiceModel;
 
 namespace CommonLibrary.Interfaces
 {
-    [ServiceContract]
-	public interface ILKForClient  {
+    [ServiceContract(CallbackContract = typeof(ILKClient))]
+    public interface ILKForClient  {
 
         [OperationContract]
 		UpdateInfo GetMySystem();

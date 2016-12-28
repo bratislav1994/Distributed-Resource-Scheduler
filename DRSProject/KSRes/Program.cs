@@ -13,19 +13,16 @@ namespace KSRes
     {
         static void Main(string[] args)
         {
-            ChannelFactory<ILKRes> factory = new ChannelFactory<ILKRes>("ClientLSRes");
-            ILKRes proxy = factory.CreateChannel();
 
-            ServiceHost KSResHost = new ServiceHost(typeof(KSForClient));
+
+            ServiceHost KSResHost = new ServiceHost(typeof(KSRes.Services.KSRes));
             KSResHost.Open();
 
-            ServiceHost KSForClientHost = new ServiceHost(typeof(KSForClient));
-            KSForClientHost.Open();
-            
+
             Console.WriteLine("Services are started...");
             Console.ReadKey();
 
-            Console.WriteLine(proxy.Ping());
+           
 
             Console.ReadKey();
         }
