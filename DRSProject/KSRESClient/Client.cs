@@ -12,33 +12,24 @@ namespace KSRESClient
 {
     public class Client : IKSClient
     {
-        private BindingList<Generator> generators;
-        private List<LKResService> users;
+        private BindingList<Generator> generatorsForShowing;
+        private List<Generator> allGenerators;
         private IKSForClient proxy = null;
 
         public Client()
         {
-            generators = new BindingList<Generator>();
-            users = new List<LKResService>();
+            generatorsForShowing = new BindingList<Generator>();
+            allGenerators = new List<Generator>();
             DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
                     new InstanceContext(this),
                         new NetTcpBinding(),
                         new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
             proxy = factory.CreateChannel();
 
-            users = proxy.GetAllSystem();
-            foreach(LKResService user in users)
+            allGenerators = proxy.GetAllSystem();
+            foreach(Generator g in allGenerators)
             {
-                foreach(Site site in user.Sites)
-                {
-                    foreach(Group group in site.Groups)
-                    {
-                        foreach(Generator g in group.Generators)
-                        {
-                            generators.Add(g);
-                        }
-                    }
-                }
+                generatorsForShowing.Add(g);
             }
         }
 
@@ -46,11 +37,11 @@ namespace KSRESClient
         {
             get
             {
-                return generators;
+                return generatorsForShowing;
             }
             set
             {
-                generators = value;
+                generatorsForShowing = value;
                 RaisePropertyChanged("Generators");
             }
         }

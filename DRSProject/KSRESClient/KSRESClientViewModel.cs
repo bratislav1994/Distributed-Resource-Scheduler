@@ -26,5 +26,7 @@ namespace KSRESClient
                 client = value;
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
