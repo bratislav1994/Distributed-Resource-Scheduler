@@ -20,20 +20,14 @@ namespace KSRESClient
         {
             generatorsForShowing = new BindingList<Generator>();
             allUsers = new List<LKResService>();
-             DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
-                     new InstanceContext(this),
-                         new NetTcpBinding(),
-                         new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
-             proxy = factory.CreateChannel();
+                DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
+                        new InstanceContext(this),
+                            new NetTcpBinding(),
+                            new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
+                proxy = factory.CreateChannel();
 
-             allUsers = proxy.GetAllSystem();
-             foreach(LKResService user in allUsers)
-             {
-                 foreach (Generator g in user.Generators)
-                 {
-                     generatorsForShowing.Add(g);
-                 }
-             }
+                allUsers = proxy.GetAllSystem();
+                FillListForShowing();
         }
         public BindingList<Generator> Generators
         {
@@ -47,7 +41,92 @@ namespace KSRESClient
                 RaisePropertyChanged("Generators");
             }
         }
+        
+        
+        public void Update(UpdateInfo update, string username)
+        {
+            
+            switch(update.UpdateType)
+            {
+                case UpdateType.ADD:
+                    foreach(LKResService user in allUsers)
+                    {
+                        if(user.Username.Equals(username))
+                        {
+                            foreach(Generator g in update.Generators)
+                            {
+                                user.Generators.Add(g);
+                            }
+                            FillListForShowing();
+                            break;
+                        }
+                    }
+                    break;
+                case UpdateType.REMOVE:
+                    List<Generator> removingList = new List<Generator>();
+                    foreach (LKResService user in allUsers)
+                    {
+                        if (user.Username.Equals(username))
+                        {
+                            foreach(Generator g in update.Generators)
+                            {
+                                foreach (Generator g1 in user.Generators)
+                                {
+                                    if (g.MRID.Equals(g1.MRID))
+                                    {
+                                        removingList.Add(g1);
+                                    }
+                                }
+                                foreach(Generator g2 in removingList)
+                                {
+                                    user.Generators.Remove(g2);
+                                }
+                                removingList.Clear();
+                            }
+                            FillListForShowing();
+                            break;
+                        }
+                    }
+                    break;
+                case UpdateType.UPDATE:
+                    Dictionary<int, Generator> tempList = new Dictionary<int, Generator>();
+                    foreach (LKResService user in allUsers)
+                    {
+                        if (user.Username.Equals(username))
+                        {
+                            foreach(Generator g in update.Generators)
+                            {
+                                foreach(Generator g1 in user.Generators)
+                                {
+                                    if(g.MRID.Equals(g1.MRID))
+                                    {
+                                        tempList.Add(user.Generators.IndexOf(g1), g1);
+                                    }
+                                }
+                            }
+                            foreach(KeyValuePair<int,Generator> kp in tempList)
+                            {
+                                user.Generators[kp.Key] = kp.Value;
+                            }
+                            FillListForShowing();
+                            break;
+                        }
+                    }
+                    break;
+            }
+        }
 
+        public void FillListForShowing()
+        {
+            generatorsForShowing.Clear();
+            foreach (LKResService user in allUsers)
+            {
+                foreach (Generator g in user.Generators)
+                {
+                    generatorsForShowing.Add(g);
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -57,11 +136,6 @@ namespace KSRESClient
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
-        }
-        
-        public void Update(UpdateInfo update, string username)
-        {
-            throw new NotImplementedException();
         }
     }
 }
