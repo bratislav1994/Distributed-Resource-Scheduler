@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,23 @@ namespace KLRESClient
         public MainWindow()
         {
             InitializeComponent();
+            
+            DataContext = this;
+            
+            if (ClientDatabase.generators == null)
+            {
+                ClientDatabase.generators = new List<Generator>();
+            }
+
+            if (ClientDatabase.groups == null)
+            {
+                ClientDatabase.groups = new List<Group>();
+            }
+
+            if (ClientDatabase.sites == null)
+            {
+                ClientDatabase.sites = new List<Site>();
+            }
         }
 
         private void AddGenerator(object sender, RoutedEventArgs e)
@@ -34,9 +52,14 @@ namespace KLRESClient
 
         private void UpdateGenerator(object sender, RoutedEventArgs e)
         {
-            EditWindow win1 = new EditWindow();
-            win1.Owner = this;
-            win1.ShowDialog();
+            if (dataGridGenerators.SelectedItem != null)
+            {
+                EditWindow win1 = new EditWindow();
+                win1.Owner = this;
+                win1.ShowDialog();
+            }
+
+            dataGridGenerators.SelectedItem = null;
         }
 
         private void RemoveGenerator(object sender, RoutedEventArgs e)

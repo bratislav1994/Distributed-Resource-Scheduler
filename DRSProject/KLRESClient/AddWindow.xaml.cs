@@ -339,6 +339,26 @@ namespace KLRESClient
                     SetPoint = float.Parse(text_box10.Text.Trim()),
                     WorkingMode = (WorkingMode)combo_box3.SelectedItem
                 };
+
+                UpdateInfo updInfo = new UpdateInfo()
+                {
+                    Generators = new List<Generator>(1)
+                    {
+                        newGen
+                    },
+                    Groups = new List<Group>(1)
+                    {
+                        group
+                    },
+                    Sites = new List<Site>(1)
+                    {
+                        site
+                    },
+                    UpdateType = UpdateType.ADD
+                };
+
+                
+                this.Close();
             }
         }
 
