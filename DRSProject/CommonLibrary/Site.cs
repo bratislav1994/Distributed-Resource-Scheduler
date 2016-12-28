@@ -10,31 +10,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.Runtime.Serialization;
 
 namespace CommonLibrary
 {
+    [DataContract]
     public class Site : IdentifiedObject
     {
-
-        private List<Group> groups;
-
         public Site()
         {
 
-        }
-
-        public List<Group> Groups
-        {
-            get
-            {
-                return groups;
-            }
-
-            set
-            {
-                groups = value;
-            }
         }
     }//end Site
 }

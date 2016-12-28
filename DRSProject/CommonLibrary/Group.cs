@@ -10,37 +10,39 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.Runtime.Serialization;
 
 namespace CommonLibrary
 {
+    [DataContract]
     public class Group : IdentifiedObject
     {
 
-        private List<Generator> generators;
+        private string siteID;
 
         public Group()
         {
 
         }
 
-        public List<Generator> Generators
+        [DataMember]
+        public string SiteID
         {
             get
             {
-                return generators;
+                return siteID;
             }
 
             set
             {
-                generators = value;
+                siteID = value;
             }
         }
 
+        [DataMember]
         public void EstimateMeasurment()
         {
 
         }
-
     }//end Group
 }

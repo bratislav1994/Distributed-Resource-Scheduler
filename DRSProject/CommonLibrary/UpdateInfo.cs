@@ -10,16 +10,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.Runtime.Serialization;
 
 namespace CommonLibrary
 {
+    [DataContract]
     public class UpdateInfo
     {
-
         private UpdateType updateType;
         private Generator generator;
+        private Group group;
+        private Site site;
 
+        [DataMember]
         public UpdateType UpdateType
         {
             get
@@ -33,6 +36,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public Generator Generator
         {
             get
@@ -43,6 +47,34 @@ namespace CommonLibrary
             set
             {
                 generator = value;
+            }
+        }
+
+        [DataMember]
+        public Group Group
+        {
+            get
+            {
+                return group;
+            }
+
+            set
+            {
+                group = value;
+            }
+        }
+
+        [DataMember]
+        public Site Site
+        {
+            get
+            {
+                return site;
+            }
+
+            set
+            {
+                site = value;
             }
         }
     }//end UpdateInfo

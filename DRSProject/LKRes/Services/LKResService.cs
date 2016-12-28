@@ -12,7 +12,7 @@ namespace LKRes.Services
     {
         public string Ping()
         {
-            throw new NotImplementedException();
+            return "OK";
         }
 
         public void SendSetPoint(List<SetPoint> setPoints)
