@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.ServiceModel;
-
+using CommonLibrary.Exceptions;
 
 namespace CommonLibrary.Interfaces
 {
@@ -22,12 +22,14 @@ namespace CommonLibrary.Interfaces
         /// <param name="username"></param>
         /// <param name="password"></param>
         [OperationContract]
+        [FaultContract(typeof(IdentificationExeption))]
         void Login(string username, string password);
 
         /// 
         /// <param name="username"></param>
         /// <param name="password"></param>
         [OperationContract]
+        [FaultContract(typeof(IdentificationExeption))]
         void Registration(string username, string password);
 
         /// 

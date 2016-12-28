@@ -18,7 +18,6 @@ namespace CommonLibrary.Interfaces
     [ServiceContract(CallbackContract = typeof(ILKForClient))]
     public interface ILKClient  {
         [OperationContract]
-		/// 
 		/// <param name="update"></param>
 		void Update(UpdateInfo update);
 	}//end ILKClient

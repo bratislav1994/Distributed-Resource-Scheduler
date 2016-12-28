@@ -18,9 +18,9 @@ namespace CommonLibrary
     public class UpdateInfo
     {
         private UpdateType updateType;
-        private Generator generator;
-        private Group group;
-        private Site site;
+        private List<Generator> generators;
+        private List<Group> groups;
+        private List<Site> sites;
 
         [DataMember]
         public UpdateType UpdateType
@@ -37,44 +37,44 @@ namespace CommonLibrary
         }
 
         [DataMember]
-        public Generator Generator
+        public List<Generator> Generators
         {
             get
             {
-                return generator;
+                return generators;
             }
 
             set
             {
-                generator = value;
+                generators = value;
             }
         }
 
         [DataMember]
-        public Group Group
+        public List<Group> Groups
         {
             get
             {
-                return group;
+                return groups;
             }
 
             set
             {
-                group = value;
+                groups = value;
             }
         }
 
         [DataMember]
-        public Site Site
+        public List<Site> Sites
         {
             get
             {
-                return site;
+                return sites;
             }
 
             set
             {
-                site = value;
+                sites = value;
             }
         }
     }//end UpdateInfo
