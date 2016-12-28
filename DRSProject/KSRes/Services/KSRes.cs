@@ -14,6 +14,7 @@ namespace KSRes.Services
     {
         public static DynamicDataBase dynamicDataBase = new DynamicDataBase();
 
+        #region ILKRes
         public void Login(string username, string password)
         {
             OperationContext context = OperationContext.Current;
@@ -51,38 +52,82 @@ namespace KSRes.Services
         {
             OperationContext context = OperationContext.Current;
             string sessionID = context.Channel.SessionId;
-            ILKRes service = context.GetCallbackChannel<ILKRes>();
 
-            LKResService lkClient = dynamicDataBase.GetClient(sessionID);
-
-            switch(update.UpdateType)
+            try
             {
-                case UpdateType.ADD:
-                    break;
+                dynamicDataBase.Update(sessionID, update);
+            }
+            catch
+            {
 
-                case UpdateType.REMOVE:
-                    break;
-
-                case UpdateType.UPDATE:
-                    break;
             }
         }
+        #endregion ILKRes
 
-        /// <summary>
-        /// IKSForClient implementation
-        /// </summary>
-        /// <returns></returns>
+        #region IKSForClient
         public List<LKResService> GetAllSystem()
         {
-            OperationContext context = OperationContext.Current;
-            ILKRes service = context.GetCallbackChannel<ILKRes>();
-
             return dynamicDataBase.GetAllSystem();
         }
 
         public void IssueCommand(string username, double requiredAP)
         {
-            throw new NotImplementedException();
+            LKResService user = dynamicDataBase.GetUser(username);
+
+            double activePower = 0;
+
+            foreach(Generator generator in user.Generators)
+            {
+                activePower += generator.ActivePower;
+            }
+
+            double diff = requiredAP - activePower;
+
+            List<Generator> remoteGenerators = new List<Generator>();
+            foreach (Generator generator in user.Generators)
+            {
+                if (generator.WorkingMode == WorkingMode.REMOTE)
+                {
+                    remoteGenerators.Add(generator);
+                }
+            }
+        
+            List<Generator> sortedList = remoteGenerators.OrderBy(o => o.Price).ToList();
+
+            if (diff > 0)
+            {
+                foreach(Generator remoteGenerator in remoteGenerators)
+                {
+                    double diff1 = 0;
+                    if ((diff1 = remoteGenerator.Pmax - remoteGenerator.ActivePower) > 0)
+                    {
+                        SetPoint setPoint = new SetPoint();
+                        if (diff != 0)
+                        {
+                            if (diff >= diff1)
+                            {
+                                diff -= diff1;
+                                setPoint.GeneratorID = remoteGenerator.MRID;
+                                setPoint.Setpoint = remoteGenerator.Pmax;
+                            }
+                            else
+                            {
+                                setPoint.GeneratorID = remoteGenerator.MRID;
+                                setPoint.Setpoint = remoteGenerator.ActivePower + diff;
+                                diff = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+            }
+
         }
+
+        #endregion IKSForClient
     }
 }
