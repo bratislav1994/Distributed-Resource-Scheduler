@@ -14,7 +14,7 @@ using System.ServiceModel;
 
 namespace CommonLibrary.Interfaces
 {
-    [ServiceContract]
+    [ServiceContract(CallbackContract = typeof(IKSRes))]
     public interface ILKRes
     {
         [OperationContract]
