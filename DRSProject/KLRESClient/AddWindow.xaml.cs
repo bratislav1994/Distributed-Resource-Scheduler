@@ -266,19 +266,19 @@ namespace KLRESClient
 
             if (isOk)
             {
-                Generator newGen = new Generator()
-                {
-                    ActivePower = float.Parse(text_box3.Text.Trim()),
-                    BasePoint = float.Parse(text_box4.Text.Trim()),
-                    GeneratorType = (GeneratorType)combo_box2.SelectedItem,
-                    HasMeasurment = (bool)combo_box1.SelectedItem,
-                    MRID = text_box1.Text.Trim(),
-                    Pmax = float.Parse(text_box6.Text.Trim()),
-                    Pmin = float.Parse(text_box5.Text.Trim()),
-                    Price = float.Parse(text_box7.Text.Trim()),
-                    SetPoint = float.Parse(text_box10.Text.Trim()),
-                    WorkingMode = (WorkingMode)combo_box3.SelectedItem
-                };
+                //Generator newGen = new Generator()
+                //{
+                //    ActivePower = float.Parse(text_box3.Text.Trim()),
+                //    BasePoint = float.Parse(text_box4.Text.Trim()),
+                //    GeneratorType = (GeneratorType)combo_box2.SelectedItem,
+                //    HasMeasurment = (bool)combo_box1.SelectedItem,
+                //    MRID = text_box1.Text.Trim(),
+                //    Pmax = float.Parse(text_box6.Text.Trim()),
+                //    Pmin = float.Parse(text_box5.Text.Trim()),
+                //    Price = float.Parse(text_box7.Text.Trim()),
+                //    SetPoint = float.Parse(text_box10.Text.Trim()),
+                //    WorkingMode = (WorkingMode)combo_box3.SelectedItem
+                //};
             }
         }
 
@@ -361,29 +361,33 @@ namespace KLRESClient
 
         private void radioButton_Click(object sender, RoutedEventArgs e)
         {
-            ComboBox cmb = this.FindName("cmb") as ComboBox;
+            //ComboBox cmb = this.FindName("cmb") as ComboBox;
 
-            if (cmb != null)
-            {
-                cmb.Visibility = Visibility.Hidden;
-                ComboBox cmb2 = this.FindName("cmb2") as ComboBox;
-                cmb2.Visibility = Visibility.Hidden;
-            }
+            //if (cmb != null)
+            //{
+            //    cmb.Visibility = Visibility.Hidden;
+            //    ComboBox cmb2 = this.FindName("cmb2") as ComboBox;
+            //    cmb2.Visibility = Visibility.Hidden;
+            //}
 
-            ComboBox cmb3 = this.FindName("cmb3") as ComboBox;
+            //ComboBox cmb3 = this.FindName("cmb3") as ComboBox;
 
-            if (cmb3 != null)
-            {
-                cmb3.Visibility = Visibility.Hidden;
-                TextBox txb = this.FindName("txb") as TextBox;
-                txb.Visibility = Visibility.Hidden;
-            }
+            //if (cmb3 != null)
+            //{
+            //    cmb3.Visibility = Visibility.Hidden;
+            //    TextBox txb = this.FindName("txb") as TextBox;
+            //    txb.Visibility = Visibility.Hidden;
+            //}
+
+            panel.Children.Clear();
+            panel.Children.Add(text_box8);
+            panel.Children.Add(text_box9);
         }
 
         private void radioButton1_Click(object sender, RoutedEventArgs e)
         {
-            text_box8.Visibility = Visibility.Hidden;
-            text_box9.Visibility = Visibility.Hidden;
+            //text_box8.Visibility = Visibility.Hidden;
+            //text_box9.Visibility = Visibility.Hidden;
 
             ComboBox cmb = new ComboBox()
             {
@@ -398,12 +402,26 @@ namespace KLRESClient
                 Margin = text_box9.Margin,
                 Width = text_box9.Width
             };
+
+            //ComboBox cmb3 = this.FindName("cmb3") as ComboBox;
+
+            //if (cmb3 != null)
+            //{
+            //    cmb3.Visibility = Visibility.Hidden;
+            //    TextBox txb = this.FindName("txb") as TextBox;
+            //    txb.Visibility = Visibility.Hidden;
+            //}
+
+            panel.Children.Clear();
+            panel.Children.Add(cmb);
+            panel.Children.Add(cmb2);
+            
         }
 
         private void radioButton2_Click(object sender, RoutedEventArgs e)
         {
-            text_box8.Visibility = Visibility.Hidden;
-            text_box9.Visibility = Visibility.Hidden;
+            //text_box8.Visibility = Visibility.Hidden;
+            //text_box9.Visibility = Visibility.Hidden;
 
             ComboBox cmb3 = new ComboBox()
             {
@@ -411,7 +429,7 @@ namespace KLRESClient
                 Margin = text_box8.Margin,
                 Width = text_box8.Width
             };
-
+            panel.Children.Clear();
             TextBox txb = new TextBox()
             {
                 Name = "txb",
@@ -420,14 +438,19 @@ namespace KLRESClient
                 Width = text_box9.Width
             };
 
-            ComboBox cmb = this.FindName("cmb") as ComboBox;
+            //ComboBox cmb = this.FindName("cmb") as ComboBox;
 
-            if (cmb != null)
-            {
-                cmb.Visibility = Visibility.Hidden;
-                ComboBox cmb2 = this.FindName("cmb2") as ComboBox;
-                cmb2.Visibility = Visibility.Hidden;
-            }
+            //if (cmb != null)
+            //{
+            //    cmb.Visibility = Visibility.Hidden;
+            //    ComboBox cmb2 = this.FindName("cmb2") as ComboBox;
+            //    cmb2.Visibility = Visibility.Hidden;
+            //}
+
+            
+            panel.Children.Add(cmb3);
+            panel.Children.Add(txb);
+            
         }
     }
 }

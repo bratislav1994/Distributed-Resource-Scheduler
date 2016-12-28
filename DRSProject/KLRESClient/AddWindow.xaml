@@ -131,8 +131,11 @@
         <RadioButton x:Name="radioButton2" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Click="radioButton2_Click"/>
         <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="215,178,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="215,198,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="text_box8" HorizontalAlignment="Left" Height="23" Margin="315,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box8_GotFocus"/>
-        <TextBox x:Name="text_box9" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box9_GotFocus"/>
+        <StackPanel Name="panel" HorizontalAlignment="Left" Height="100" Margin="293,152,0,0" VerticalAlignment="Top" Width="170">
+            <TextBox x:Name="text_box8" HorizontalAlignment="Left" Height="23" Margin="5,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box8_GotFocus"/>
+            <TextBox x:Name="text_box9" HorizontalAlignment="Left" Height="23" Margin="5,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box9_GotFocus"/>
+
+        </StackPanel>
 
 
     </Grid>
