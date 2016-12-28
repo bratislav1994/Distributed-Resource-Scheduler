@@ -8,16 +8,17 @@
         Title="EditWindow" Height="350" Width="500">
     <Grid>
 
-        <Label Content="mrID:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="name:" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
-        <Label Content="activePower:" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top"/>
-        <Label Content="basePoint:" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top"/>
-        <Label Content="hasMeasurment:" HorizontalAlignment="Left" Margin="12,126,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="text_box1" HorizontalAlignment="Left" Height="23" Margin="90,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box1_GotFocus" />
-        <TextBox x:Name="text_box2" HorizontalAlignment="Left" Height="23" Margin="90,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box2_GotFocus"/>
-        <TextBox x:Name="text_box3" HorizontalAlignment="Left" Height="23" Margin="90,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box3_GotFocus"/>
-        <TextBox x:Name="text_box4" HorizontalAlignment="Left" Height="23" Margin="90,126,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
-        <ComboBox x:Name="combo_box1" HorizontalAlignment="Left" Margin="90,98,0,0" VerticalAlignment="Top" Width="120" GotFocus="combo_box1_GotFocus"/>
+        <Label Content="name:" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="hasMeasurment:" HorizontalAlignment="Left" Margin="5,67,0,0" VerticalAlignment="Top"/>
+        <Label Content="activePower:" HorizontalAlignment="Left" Margin="5,41,0,0" VerticalAlignment="Top"/>
+        <Label Content="basePoint:" HorizontalAlignment="Left" Margin="4,95,0,0" VerticalAlignment="Top"/>
+        <Label Content="setPoint:" HorizontalAlignment="Left" Margin="4,126,0,0" VerticalAlignment="Top"/>
+
+        <TextBox x:Name="text_box2" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box2_GotFocus"/>
+        <TextBox x:Name="text_box3" HorizontalAlignment="Left" Height="23" Margin="95,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box3_GotFocus"/>
+        <TextBox x:Name="text_box4" HorizontalAlignment="Left" Height="23" Margin="95,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
+        <ComboBox x:Name="combo_box1" HorizontalAlignment="Left" Margin="95,70,0,0" VerticalAlignment="Top" Width="120" GotFocus="combo_box1_GotFocus"/>
+        <TextBox x:Name="text_box10" HorizontalAlignment="Left" Height="23" Margin="95,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
 
 
         <Label Content="pmin:" HorizontalAlignment="Left" Margin="215,18,0,0" VerticalAlignment="Top"/>
@@ -77,7 +78,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Button x:Name="button1" Content="Cancel" HorizontalAlignment="Left" Margin="150,260,0,0" VerticalAlignment="Top" Height="50" Width="70" Click="Cancel">
+        <Button x:Name="button1" Content="Cancel" HorizontalAlignment="Left" Margin="140,259,0,0" VerticalAlignment="Top" Height="50" Width="70" Click="Cancel">
             <Button.Style>
                 <Style  TargetType="{x:Type Button}">
                     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -122,6 +123,18 @@
                 </Style>
             </Button.Style>
         </Button>
+
+        <RadioButton x:Name="radioButton" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" IsChecked="True" Click="radioButton_Click" />
+        <RadioButton x:Name="radioButton1" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" Click="radioButton1_Click"/>
+        <RadioButton x:Name="radioButton2" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Click="radioButton2_Click"/>
+        <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="215,178,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="215,198,0,0" VerticalAlignment="Top"/>
+        <StackPanel Name="panel" HorizontalAlignment="Left" Height="100" Margin="293,152,0,0" VerticalAlignment="Top" Width="170">
+            <TextBox x:Name="text_box8" HorizontalAlignment="Left" Height="23" Margin="5,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box8_GotFocus"/>
+            <TextBox x:Name="text_box9" HorizontalAlignment="Left" Height="23" Margin="5,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box9_GotFocus"/>
+
+        </StackPanel>
+
 
     </Grid>
 </Window>

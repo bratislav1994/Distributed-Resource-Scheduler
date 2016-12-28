@@ -12,7 +12,9 @@ namespace KLRESClient
     {
         public void Update(UpdateInfo update)
         {
-            throw new NotImplementedException();
+            ClientDatabase.generators = update.Generators;
+            ClientDatabase.groups = update.Groups;
+            ClientDatabase.sites = update.Sites;
         }
     }
 }
