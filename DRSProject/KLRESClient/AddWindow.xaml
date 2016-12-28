@@ -8,19 +8,17 @@
         Title="AddWindow" Height="350" Width="500">
     <Grid>
 
-        <Label Content="mrID:" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="name:" HorizontalAlignment="Left" Margin="5,41,0,0" VerticalAlignment="Top"/>
-        <Label Content="hasMeasurment:" HorizontalAlignment="Left" Margin="5,95,0,0" VerticalAlignment="Top"/>
-        <Label Content="activePower:" HorizontalAlignment="Left" Margin="5,67,0,0" VerticalAlignment="Top"/>
-        <Label Content="basePoint:" HorizontalAlignment="Left" Margin="4,126,0,0" VerticalAlignment="Top"/>
-        <Label Content="setPoint:" HorizontalAlignment="Left" Margin="4,146,0,0" VerticalAlignment="Top"/>
+        <Label Content="name:" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="hasMeasurment:" HorizontalAlignment="Left" Margin="5,67,0,0" VerticalAlignment="Top"/>
+        <Label Content="activePower:" HorizontalAlignment="Left" Margin="5,41,0,0" VerticalAlignment="Top"/>
+        <Label Content="basePoint:" HorizontalAlignment="Left" Margin="4,95,0,0" VerticalAlignment="Top"/>
+        <Label Content="setPoint:" HorizontalAlignment="Left" Margin="4,126,0,0" VerticalAlignment="Top"/>
 
-        <TextBox x:Name="text_box1" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box1_GotFocus" />
-        <TextBox x:Name="text_box2" HorizontalAlignment="Left" Height="23" Margin="95,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box2_GotFocus"/>
-        <TextBox x:Name="text_box3" HorizontalAlignment="Left" Height="23" Margin="95,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box3_GotFocus"/>
-        <TextBox x:Name="text_box4" HorizontalAlignment="Left" Height="23" Margin="95,123,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
-        <ComboBox x:Name="combo_box1" HorizontalAlignment="Left" Margin="95,98,0,0" VerticalAlignment="Top" Width="120" GotFocus="combo_box1_GotFocus"/>
-        <TextBox x:Name="text_box10" HorizontalAlignment="Left" Height="23" Margin="95,148,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
+        <TextBox x:Name="text_box2" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box2_GotFocus"/>
+        <TextBox x:Name="text_box3" HorizontalAlignment="Left" Height="23" Margin="95,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box3_GotFocus"/>
+        <TextBox x:Name="text_box4" HorizontalAlignment="Left" Height="23" Margin="95,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
+        <ComboBox x:Name="combo_box1" HorizontalAlignment="Left" Margin="95,70,0,0" VerticalAlignment="Top" Width="120" GotFocus="combo_box1_GotFocus"/>
+        <TextBox x:Name="text_box10" HorizontalAlignment="Left" Height="23" Margin="95,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
 
 
         <Label Content="pmin:" HorizontalAlignment="Left" Margin="215,18,0,0" VerticalAlignment="Top"/>

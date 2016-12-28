@@ -34,7 +34,9 @@ namespace KLRESClient
 
         private void UpdateGenerator(object sender, RoutedEventArgs e)
         {
-
+            EditWindow win1 = new EditWindow();
+            win1.Owner = this;
+            win1.ShowDialog();
         }
 
         private void RemoveGenerator(object sender, RoutedEventArgs e)
