@@ -24,5 +24,20 @@ namespace KLRESClient
         {
             InitializeComponent();
         }
+
+        private void AddGenerator(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UpdateGenerator(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RemoveGenerator(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
