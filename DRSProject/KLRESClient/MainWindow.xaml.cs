@@ -39,9 +39,30 @@ namespace KLRESClient
             proxy = factory.CreateChannel();
 
             getAllFromService = proxy.GetMySystem();
-            ClientDatabase.generators = getAllFromService.Generators;
-            ClientDatabase.groups = getAllFromService.Groups;
-            ClientDatabase.sites = getAllFromService.Sites;
+
+            if (getAllFromService.Generators != null)
+            {
+                foreach (Generator gen in getAllFromService.Generators)
+                {
+                    ClientDatabase.Instance().Generators.Add(gen);
+                }
+            }
+
+            if (getAllFromService.Groups != null)
+            {
+                foreach (Group group in getAllFromService.Groups)
+                {
+                    ClientDatabase.Instance().Groups.Add(group);
+                }
+            } 
+
+            if (getAllFromService.Sites != null)
+            {
+                foreach (Site site in getAllFromService.Sites)
+                {
+                    ClientDatabase.Instance().Sites.Add(site);
+                }
+            }
         }
 
         private void AddGenerator(object sender, RoutedEventArgs e)
@@ -67,13 +88,13 @@ namespace KLRESClient
                 win1.text_box7.Text = generator.Price.ToString();
                 win1.combo_box2.SelectedItem = generator.GeneratorType.ToString();
                 win1.combo_box3.SelectedItem = generator.WorkingMode.ToString();
-                foreach (Group group in ClientDatabase.groups)
+                foreach (Group group in ClientDatabase.Instance().Groups)
                 {
                     if (group.MRID.Equals(generator.GroupID))
                     {
                         win1.cmb2.SelectedItem = group.Name.ToString();
 
-                        foreach (Site site in ClientDatabase.sites)
+                        foreach (Site site in ClientDatabase.Instance().Sites)
                         {
                             if (site.MRID.Equals(group.SiteID))
                             {
@@ -106,12 +127,12 @@ namespace KLRESClient
                 UpdateInfo updInfo = null;
                 Generator gen = (Generator)dataGridGenerators.SelectedItem;
 
-                foreach (Group g in ClientDatabase.groups)
+                foreach (Group g in ClientDatabase.Instance().Groups)
                 {
                     if (g.MRID.Equals(gen.GroupID))
                     {
                         bool findSite = false;
-                        foreach (Site site in ClientDatabase.sites)
+                        foreach (Site site in ClientDatabase.Instance().Sites)
                         {
                             if (g.SiteID.Equals(site.MRID))
                             {

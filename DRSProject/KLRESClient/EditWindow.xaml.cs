@@ -90,7 +90,7 @@ namespace KLRESClient
         {
             Site site = (Site)cmb.SelectedItem;
 
-            foreach (Group group in ClientDatabase.groups)
+            foreach (Group group in ClientDatabase.Instance().Groups)
             {
                 if (site.MRID.Equals(group.SiteID))
                 {
@@ -381,7 +381,7 @@ namespace KLRESClient
             panel.Children.Add(cmb);
             panel.Children.Add(cmb2);
 
-            foreach (Site site in ClientDatabase.sites)
+            foreach (Site site in ClientDatabase.Instance().Sites)
             {
                 cmb.Items.Add(site);
             }
@@ -398,7 +398,7 @@ namespace KLRESClient
             panel.Children.Add(cmb3);
             panel.Children.Add(txb);
 
-            foreach (Site site in ClientDatabase.sites)
+            foreach (Site site in ClientDatabase.Instance().Sites)
             {
                 cmb.Items.Add(site);
             }
