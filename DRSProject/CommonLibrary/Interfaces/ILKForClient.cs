@@ -20,7 +20,11 @@ namespace CommonLibrary.Interfaces
 	public interface ILKForClient  {
 
         [OperationContract]
-		List<Site> GetMySystem();
+		UpdateInfo GetMySystem();
+
+        [OperationContract]
+        /// <param name="update"></param>
+        void Update(UpdateInfo update);
 
         [OperationContract]
 		/// 
@@ -33,6 +37,7 @@ namespace CommonLibrary.Interfaces
 		/// <param name="username"></param>
 		/// <param name="password"></param>
 		void Registration(string username, string password);
-	}//end ILKForClient
+
+    }//end ILKForClient
 
 }//end namespace InterfaceForDuplex

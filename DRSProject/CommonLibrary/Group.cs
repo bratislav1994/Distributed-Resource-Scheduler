@@ -39,7 +39,7 @@ namespace CommonLibrary
             }
         }
 
-        [DataMember]
+
         public void EstimateMeasurment()
         {
 
