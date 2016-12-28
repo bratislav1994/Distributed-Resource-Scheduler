@@ -378,6 +378,9 @@ namespace KLRESClient
                 TextBox txb = this.FindName("txb") as TextBox;
                 txb.Visibility = Visibility.Hidden;
             }
+
+            text_box8.Visibility = Visibility.Visible;
+            text_box9.Visibility = Visibility.Visible;
         }
 
         private void radioButton1_Click(object sender, RoutedEventArgs e)
@@ -398,6 +401,18 @@ namespace KLRESClient
                 Margin = text_box9.Margin,
                 Width = text_box9.Width
             };
+
+            ComboBox cmb3 = this.FindName("cmb3") as ComboBox;
+
+            if (cmb3 != null)
+            {
+                cmb3.Visibility = Visibility.Hidden;
+                TextBox txb = this.FindName("txb") as TextBox;
+                txb.Visibility = Visibility.Hidden;
+            }
+
+            this.AddChild(cmb);
+            this.AddChild(cmb2);
         }
 
         private void radioButton2_Click(object sender, RoutedEventArgs e)
@@ -428,6 +443,9 @@ namespace KLRESClient
                 ComboBox cmb2 = this.FindName("cmb2") as ComboBox;
                 cmb2.Visibility = Visibility.Hidden;
             }
+
+            this.AddChild(cmb3);
+            this.AddChild(txb);
         }
     }
 }
