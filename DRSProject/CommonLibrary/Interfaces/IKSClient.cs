@@ -10,16 +10,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.ServiceModel;
 
-
-
-namespace InterfaceForDuplex {
-	public interface IKSClient  {
-
-		/// 
-		/// <param name="update"></param>
-		/// <param name="username"></param>
-		void Update(UpdateInfo update, string username);
+namespace InterfaceForDuplex
+{
+    [ServiceContract(CallbackContract = typeof(IKSForClient))]
+    public interface IKSClient
+    {
+        /// 
+        /// <param name="update"></param>
+        /// <param name="username"></param>
+        [OperationContract]
+        void Update(UpdateInfo update, string username);
 	}//end IKSClient
 
 }//end namespace InterfaceForDuplex

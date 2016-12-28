@@ -10,18 +10,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.ServiceModel;
 
-
-
-namespace InterfaceForDuplex {
-	public interface IKSForClient  {
-
-		List<LKResService> GetAllSystem();
-
-		/// 
-		/// <param name="username"></param>
-		/// <param name="requiredAP"></param>
-		void IssueCommand(string username, double requiredAP);
-	}//end IKSForClient
-
-}//end namespace InterfaceForDuplex
+namespace InterfaceForDuplex
+{
+    [ServiceContract]
+    public interface IKSForClient
+    {
+        [OperationContract]
+        List<LKResService> GetAllSystem();
+        [OperationContract]
+        void IssueCommand(string username, double requiredAP);
+    }
+}
