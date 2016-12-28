@@ -210,11 +210,11 @@ namespace KLRESClient
                 UpdateType = UpdateType.UPDATE
             };
 
-            DuplexChannelFactory<ILKClient> factory = new DuplexChannelFactory<ILKClient>(
+            DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
                 new InstanceContext(this),
                 new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:4000/LKClientService"));
-            ILKClient proxy = factory.CreateChannel();
+                new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
+            ILKForClient proxy = factory.CreateChannel();
             proxy.Update(updInfo);
             this.Close();
         }

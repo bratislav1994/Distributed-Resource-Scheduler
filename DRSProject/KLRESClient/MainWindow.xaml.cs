@@ -35,7 +35,7 @@ namespace KLRESClient
             DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
                     new InstanceContext(this),
                         new NetTcpBinding(),
-                        new EndpointAddress("net.tcp://localhost:4000/ILKForClient"));
+                        new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
             proxy = factory.CreateChannel();
 
             getAllFromService = proxy.GetMySystem();
