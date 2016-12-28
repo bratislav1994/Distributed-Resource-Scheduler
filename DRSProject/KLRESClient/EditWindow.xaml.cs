@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CommonLibrary;
+using System.ServiceModel;
+using CommonLibrary.Interfaces;
 
 namespace KLRESClient
 {
@@ -357,8 +359,12 @@ namespace KLRESClient
                     UpdateType = UpdateType.UPDATE
                 };
 
-                LKClientService lkClientServ = new LKClientService();
-                lkClientServ.Update(updInfo);
+                DuplexChannelFactory<ILKClient> factory = new DuplexChannelFactory<ILKClient>(
+                    new InstanceContext(this),
+                    new NetTcpBinding(),
+                    new EndpointAddress("net.tcp://localhost:4000/LKClientService"));
+                ILKClient proxy = factory.CreateChannel();
+                proxy.Update(updInfo);
                 this.Close();
             }
         }
