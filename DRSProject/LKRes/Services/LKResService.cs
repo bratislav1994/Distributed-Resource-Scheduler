@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommonLibrary;
+using CommonLibrary.Interfaces;
 
 namespace LKRes.Services
 {
@@ -11,7 +12,7 @@ namespace LKRes.Services
     {
         public string Ping()
         {
-            throw new NotImplementedException();
+            return "OK";
         }
 
         public void SendSetPoint(List<SetPoint> setPoints)
