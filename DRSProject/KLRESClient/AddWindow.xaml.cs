@@ -83,9 +83,14 @@ namespace KLRESClient
 
         private void Cmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            CmbSelectionChanged();
+        }
+
+        private void CmbSelectionChanged()
+        {
             Site site = (Site)cmb.SelectedItem;
 
-            foreach (Group group in ClientDatabase.groups)
+            foreach (Group group in ClientDatabase.Instance().Groups)
             {
                 if (site.MRID.Equals(group.SiteID))
                 {
@@ -95,6 +100,11 @@ namespace KLRESClient
         }
 
         private void Create(object sender, RoutedEventArgs e)
+        {
+            CreateUpdateInfoInstance();
+        }
+
+        private void CreateUpdateInfoInstance()
         {
             bool isOk = true;
             isOk = CheckStringInputField(text_box2);
@@ -200,11 +210,11 @@ namespace KLRESClient
                 UpdateType = UpdateType.ADD
             };
 
-            DuplexChannelFactory<ILKClient> factory = new DuplexChannelFactory<ILKClient>(
+            DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
                 new InstanceContext(this),
                 new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:4000/LKClientService"));
-            ILKClient proxy = factory.CreateChannel();
+                new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
+            ILKForClient proxy = factory.CreateChannel();
             proxy.Update(updInfo);
             this.Close();
         }
@@ -272,6 +282,11 @@ namespace KLRESClient
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
+        {
+            CloseWindow();
+        }
+
+        private void CloseWindow()
         {
             this.Close();
         }
@@ -345,6 +360,11 @@ namespace KLRESClient
 
         private void radioButton_Click(object sender, RoutedEventArgs e)
         {
+            ClickOnRadioButton();
+        }
+
+        private void ClickOnRadioButton()
+        {
             panel.Children.Clear();
             panel.Children.Add(text_box8);
             panel.Children.Add(text_box9);
@@ -352,11 +372,17 @@ namespace KLRESClient
 
         private void radioButton1_Click(object sender, RoutedEventArgs e)
         {
+            ClickOnRadioButton1();
+        }
+
+        private void ClickOnRadioButton1()
+        {
             panel.Children.Clear();
             panel.Children.Add(cmb);
             panel.Children.Add(cmb2);
+            cmb2.Items.Clear();
 
-            foreach (Site site in ClientDatabase.sites)
+            foreach (Site site in ClientDatabase.Instance().Sites)
             {
                 cmb.Items.Add(site);
             }
@@ -364,11 +390,16 @@ namespace KLRESClient
 
         private void radioButton2_Click(object sender, RoutedEventArgs e)
         {
+            ClickOnRadioButton2();
+        }
+
+        private void ClickOnRadioButton2()
+        {
             panel.Children.Clear();
             panel.Children.Add(cmb3);
             panel.Children.Add(txb);
 
-            foreach (Site site in ClientDatabase.sites)
+            foreach (Site site in ClientDatabase.Instance().Sites)
             {
                 cmb.Items.Add(site);
             }
