@@ -10,20 +10,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.ServiceModel;
 
 
 
 namespace CommonLibrary.Interfaces
 {
+    [ServiceContract]
 	public interface ILKForClient  {
 
+        [OperationContract]
 		List<Site> GetMySystem();
 
+        [OperationContract]
 		/// 
 		/// <param name="username"></param>
 		/// <param name="password"></param>
 		void Login(string username, string password);
 
+        [OperationContract]
 		/// 
 		/// <param name="username"></param>
 		/// <param name="password"></param>
