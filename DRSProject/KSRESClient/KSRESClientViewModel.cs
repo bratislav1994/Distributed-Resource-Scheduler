@@ -10,6 +10,21 @@ namespace KSRESClient
 {
     public class KSRESClientViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private Client client;
+        public Client Client
+        {
+            get
+            {
+                if (client == null)
+                {
+                    client = new Client();
+                }
+                return client;
+            }
+            set
+            {
+                client = value;
+            }
+        }
     }
 }
