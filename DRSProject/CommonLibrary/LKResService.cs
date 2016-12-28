@@ -11,23 +11,31 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using CommonLibrary.Interfaces;
-
+using System.Runtime.Serialization;
 
 namespace CommonLibrary
 {
+    [DataContract]
     public class LKResService
     {
         private string username;
         private ILKRes client;
+        private string sessionID;
         private List<Site> sites;
         private List<Group> gropus;
         private List<Generator> generators;
 
-        public LKResService()
+        public LKResService(string username, ILKRes channel, string sessionID)
         {
-
+            this.username = username;
+            this.client = channel;
+            this.sites = new List<Site>();
+            this.gropus = new List<Group>();
+            this.generators = new List<Generator>();
+            this.sessionID = sessionID;
         }
 
+        [DataMember]
         public string Username
         {
             get
@@ -40,6 +48,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public List<Site> Sites
         {
             get
@@ -53,6 +62,7 @@ namespace CommonLibrary
             }
         }
 
+        [IgnoreDataMember]
         public ILKRes Client
         {
             get
@@ -66,6 +76,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public List<Group> Gropus
         {
             get
@@ -79,6 +90,7 @@ namespace CommonLibrary
             }
         }
 
+        [DataMember]
         public List<Generator> Generators
         {
             get
@@ -89,6 +101,20 @@ namespace CommonLibrary
             set
             {
                 generators = value;
+            }
+        }
+
+        [IgnoreDataMember]
+        public string SessionID
+        {
+            get
+            {
+                return sessionID;
+            }
+
+            set
+            {
+                sessionID = value;
             }
         }
     }//end LKResService

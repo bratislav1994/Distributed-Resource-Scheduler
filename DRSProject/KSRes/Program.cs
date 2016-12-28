@@ -21,7 +21,7 @@ namespace KSRes
 
             ServiceHost KSForClientHost = new ServiceHost(typeof(KSForClient));
             KSForClientHost.Open();
-
+            
             Console.WriteLine("Services are started...");
             Console.ReadKey();
 
