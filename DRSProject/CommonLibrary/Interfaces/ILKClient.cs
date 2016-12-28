@@ -10,13 +10,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.ServiceModel;
 
 
 namespace CommonLibrary.Interfaces
 {
-	public interface ILKClient  {
-
+    [ServiceContract(CallbackContract = typeof(ILKForClient))]
+    public interface ILKClient  {
+        [OperationContract]
 		/// 
 		/// <param name="update"></param>
 		void Update(UpdateInfo update);

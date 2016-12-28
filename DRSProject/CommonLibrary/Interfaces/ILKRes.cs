@@ -10,14 +10,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.ServiceModel;
 
 namespace CommonLibrary.Interfaces
 {
+    [ServiceContract]
     public interface ILKRes
     {
-
+        [OperationContract]
         string Ping();
 
+        [OperationContract]
         /// 
         /// <param name="setPoints"></param>
         void SendSetPoint(List<SetPoint> setPoints);
