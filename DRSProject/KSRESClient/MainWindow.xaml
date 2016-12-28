@@ -3,28 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:KSRESClient"
         Title="MainWindow" Height="459.833" Width="782.741">
-    <Window.DataContext>
-        <vm:KSRESClientViewModel />
-    </Window.DataContext>
     <Grid>
-        <DataGrid x:Name="GeneratorsDataGrid" CanUserAddRows="false" ItemsSource="{Binding Client.Generators,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="347" VerticalAlignment="Top" Width="606" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Canvas.Left="10" Canvas.Top="68" Margin="10,72,0,0">
+        <DataGrid x:Name="GeneratorsDataGrid" CanUserAddRows="false" ItemsSource="{Binding Client.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="347" VerticalAlignment="Top" Width="606" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Canvas.Left="10" Canvas.Top="68" Margin="10,72,0,0">
             <DataGrid.Background>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
             </DataGrid.Background>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="mrID" Binding="{Binding mrID}"/>
-                <DataGridTextColumn Header="name" Binding="{Binding name}"/>
-                <DataGridTextColumn Header="activePower" Binding="{Binding activePower}"/>
-                <DataGridTextColumn Header="basePoint" Binding="{Binding basePoint}"/>
-                <DataGridTextColumn Header="hasMeasurment" Binding="{Binding hasMeasurment}"/>
-                <DataGridTextColumn Header="pmin" Width="40" Binding="{Binding pmin}"/>
-                <DataGridTextColumn Header="pmax" Width="40" Binding="{Binding pmax}"/>
-                <DataGridTextColumn Header="price" Width="40" Binding="{Binding price}"/>
-                <DataGridTextColumn Header="generatorType" Binding="{Binding generatorType}"/>
-                <DataGridTextColumn Header="workingMode" Width="*" Binding="{Binding workingMode}"/>
+                <DataGridTextColumn Header="mrID" Binding="{Binding MRID}"/>
+                <DataGridTextColumn Header="name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="activePower" Binding="{Binding ActivePower}"/>
+                <DataGridTextColumn Header="basePoint" Binding="{Binding BasePoint}"/>
+                <DataGridTextColumn Header="hasMeasurment" Binding="{Binding HasMeasurment}"/>
+                <DataGridTextColumn Header="pmin" Width="40" Binding="{Binding Pmin}"/>
+                <DataGridTextColumn Header="pmax" Width="40" Binding="{Binding Pmax}"/>
+                <DataGridTextColumn Header="price" Width="40" Binding="{Binding Price}"/>
+                <DataGridTextColumn Header="generatorType" Binding="{Binding GeneratorType}"/>
+                <DataGridTextColumn Header="workingMode" Width="*" Binding="{Binding WorkingMode}"/>
             </DataGrid.Columns>
         </DataGrid>
         <ComboBox x:Name="usersComboBox" HorizontalAlignment="Left" Margin="85,21,0,0" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="label" Content="User : " HorizontalAlignment="Left" Margin="10,17,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="button" Command="{Binding AddCommand}" Content="Add generator" HorizontalAlignment="Left" Margin="672,75,0,0" VerticalAlignment="Top" Width="75" />
     </Grid>
 </Window>

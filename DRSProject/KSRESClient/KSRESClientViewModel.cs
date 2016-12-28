@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonLibrary;
+using Prism.Commands;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Windows;
 
 namespace KSRESClient
 {
-    public class KSRESClientViewModel : INotifyPropertyChanged
+    public class KSRESClientViewModel
     {
         private Client client;
         public Client Client
@@ -27,6 +29,5 @@ namespace KSRESClient
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

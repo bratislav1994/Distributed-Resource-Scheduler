@@ -11,11 +11,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace CommonLibrary
 {
     [DataContract]
-    public class Generator : IdentifiedObject
+    public class Generator : IdentifiedObject, INotifyPropertyChanged
     {
 
         private double activePower;
@@ -44,6 +45,7 @@ namespace CommonLibrary
             set
             {
                 activePower = value;
+                RaisePropertyChanged("activePower");
             }
         }
 
@@ -57,6 +59,7 @@ namespace CommonLibrary
             set
             {
                 basePoint = value;
+                RaisePropertyChanged("basePoint");
             }
         }
 
@@ -70,6 +73,7 @@ namespace CommonLibrary
             set
             {
                 hasMeasurment = value;
+                RaisePropertyChanged("hasMeasurment");
             }
         }
 
@@ -83,6 +87,7 @@ namespace CommonLibrary
             set
             {
                 pmax = value;
+                RaisePropertyChanged("pmax");
             }
         }
 
@@ -96,6 +101,7 @@ namespace CommonLibrary
             set
             {
                 pmin = value;
+                RaisePropertyChanged("pmin");
             }
         }
 
@@ -109,6 +115,7 @@ namespace CommonLibrary
             set
             {
                 price = value;
+                RaisePropertyChanged("price");
             }
         }
 
@@ -122,6 +129,7 @@ namespace CommonLibrary
             set
             {
                 setPoint = value;
+                RaisePropertyChanged("setPoint");
             }
         }
 
@@ -136,6 +144,7 @@ namespace CommonLibrary
             set
             {
                 generatorType = value;
+                RaisePropertyChanged("generatorType");
             }
         }
 
@@ -150,6 +159,7 @@ namespace CommonLibrary
             set
             {
                 workingMode = value;
+                RaisePropertyChanged("workingMode");
             }
         }
 
@@ -164,6 +174,16 @@ namespace CommonLibrary
             set
             {
                 groupID = value;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
     }//end Generator

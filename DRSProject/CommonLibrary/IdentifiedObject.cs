@@ -10,10 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace CommonLibrary
 {
+    [DataContract]
     public abstract class IdentifiedObject
     {
 
@@ -25,6 +27,7 @@ namespace CommonLibrary
 
         }
 
+        [DataMember]
         public string MRID
         {
             get
@@ -34,9 +37,11 @@ namespace CommonLibrary
             set
             {
                 mrID = value;
+                RaisePropertyChanged("mrID");
             }
         }
 
+        [DataMember]
         public string Name
         {
             get
@@ -47,6 +52,17 @@ namespace CommonLibrary
             set
             {
                 name = value;
+                RaisePropertyChanged("name");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
     }//end IdentifiedObject

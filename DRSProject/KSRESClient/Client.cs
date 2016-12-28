@@ -13,26 +13,28 @@ namespace KSRESClient
     public class Client : IKSClient
     {
         private BindingList<Generator> generatorsForShowing;
-        private List<Generator> allGenerators;
+        private List<LKResService> allUsers;
         private IKSForClient proxy = null;
 
         public Client()
         {
             generatorsForShowing = new BindingList<Generator>();
-            allGenerators = new List<Generator>();
-            DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
-                    new InstanceContext(this),
-                        new NetTcpBinding(),
-                        new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
-            proxy = factory.CreateChannel();
+            allUsers = new List<LKResService>();
+             DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
+                     new InstanceContext(this),
+                         new NetTcpBinding(),
+                         new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
+             proxy = factory.CreateChannel();
 
-            allGenerators = proxy.GetAllSystem();
-            foreach(Generator g in allGenerators)
-            {
-                generatorsForShowing.Add(g);
-            }
+             allUsers = proxy.GetAllSystem();
+             foreach(LKResService user in allUsers)
+             {
+                 foreach (Generator g in user.Generators)
+                 {
+                     generatorsForShowing.Add(g);
+                 }
+             }
         }
-
         public BindingList<Generator> Generators
         {
             get
@@ -56,7 +58,7 @@ namespace KSRESClient
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-
+        
         public void Update(UpdateInfo update, string username)
         {
             throw new NotImplementedException();

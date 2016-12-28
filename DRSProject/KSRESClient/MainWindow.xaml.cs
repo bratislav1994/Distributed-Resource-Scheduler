@@ -22,8 +22,9 @@ namespace KSRESClient
     {
         public MainWindow()
         {
+            KSRESClientViewModel model = new KSRESClientViewModel();
+            DataContext = model;
             InitializeComponent();
-            MessageBox.Show("Hellooooooo");
         }
     }
 }
