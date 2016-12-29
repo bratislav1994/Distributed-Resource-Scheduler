@@ -16,7 +16,8 @@ namespace KSRes
     {
         private Dictionary<string, string> registrationService = null;
         private List<LKResService> activeService = null;
-        private List<IKSClient> clients = new List<IKSClient>();
+        private List<IKSClient> clients = null;
+        private object lockObj = null;
 
         public Dictionary<string, string> RegistrationService
         {
@@ -47,6 +48,7 @@ namespace KSRes
             registrationService = new Dictionary<string, string>();
             activeService = new List<LKResService>();
             clients = new List<IKSClient>();
+            lockObj = new object();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
             CheckIfLKServiceIsAliveThread.Start();
@@ -89,7 +91,10 @@ namespace KSRes
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
-            RegistrationService.Add(username, password);
+            lock (lockObj)
+            {
+                RegistrationService.Add(username, password);
+            }
         }
 
         public void Login(string username, string password, ILKRes channel, string sessionID)
@@ -112,7 +117,10 @@ namespace KSRes
                 }
                 
                 LKResService newService = new LKResService(username, channel, sessionID);
-                ActiveService.Add(newService);
+                lock (lockObj)
+                {
+                    ActiveService.Add(newService);
+                }
             }
             else
             {
@@ -307,7 +315,10 @@ namespace KSRes
 
                 foreach (LKResService user in serviceForRemove)
                 {
-                    ActiveService.Remove(user);
+                    lock (lockObj)
+                    {
+                        ActiveService.Remove(user);
+                    }
                 }
 
                 serviceForRemove.Clear();
@@ -318,7 +329,10 @@ namespace KSRes
 
         public void AddClient(IKSClient client)
         {
-            Clients.Add(client);
+            lock (lockObj)
+            {
+                Clients.Add(client);
+            }
         }
 
         private void NotifyClients(UpdateInfo update, string username)
@@ -338,7 +352,10 @@ namespace KSRes
 
             foreach(IKSClient client in notActiveClient)
             {
-                clients.Remove(client);
+                lock (lockObj)
+                {
+                    clients.Remove(client);
+                }
             }
         }
     }

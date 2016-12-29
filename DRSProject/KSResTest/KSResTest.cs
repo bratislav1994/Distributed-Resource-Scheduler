@@ -10,5 +10,16 @@ namespace KSResTest
     [TestFixture]
     public class KSResTest
     {
+        [OneTimeSetUp]
+        public void SetupTest()
+        {
+            
+        }
+
+        [TearDown]
+        public void SetDataForTest()
+        {
+           
+        }
     }
 }
