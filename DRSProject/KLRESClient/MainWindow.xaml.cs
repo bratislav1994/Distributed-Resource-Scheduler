@@ -28,7 +28,10 @@ namespace KLRESClient
 
         public MainWindow()
         {
+            LKRESClientViewModel model = new LKRESClientViewModel();
+            DataContext = model;
             InitializeComponent();
+
             
             DataContext = ClientDatabase.Instance();
             LKClientService a = new LKClientService();

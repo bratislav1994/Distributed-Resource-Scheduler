@@ -6,11 +6,38 @@ using System.Threading.Tasks;
 using CommonLibrary;
 using CommonLibrary.Interfaces;
 using System.ComponentModel;
+using System.ServiceModel;
 
 namespace KLRESClient
 {
     public class LKClientService : ILKClient
     {
+        private UpdateInfo getAllFromService;
+        private ILKForClient proxy = null;
+        private BindingList<Generator> generators;
+        private BindingList<Site> sites;
+        private BindingList<Group> groups;
+
+        public LKClientService()
+        {
+            generators = new BindingList<Generator>();
+            sites = new BindingList<Site>();
+            groups = new BindingList<Group>();
+
+            DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
+                    new InstanceContext(this),
+                        new NetTcpBinding(),
+                        new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
+            proxy = factory.CreateChannel();
+
+            getAllFromService = proxy.GetMySystem(); 
+        }
+
+        public void Command(UpdateInfo update)
+        {
+            proxy.Update(update);
+        }
+
         public void Update(UpdateInfo update)
         {
             switch (update.UpdateType)
@@ -69,6 +96,42 @@ namespace KLRESClient
                         }
                     }
                     break;
+            }
+        }
+
+        public BindingList<Generator> Generators
+        {
+            get
+            {
+                return generators;
+            }
+            set
+            {
+                generators = value;
+            }
+        }
+
+        public BindingList<Site> Sites
+        {
+            get
+            {
+                return sites;
+            }
+            set
+            {
+                sites = value;
+            }
+        }
+
+        public BindingList<Group> Groups
+        {
+            get
+            {
+                return groups;
+            }
+            set
+            {
+                groups = value;
             }
         }
     }
