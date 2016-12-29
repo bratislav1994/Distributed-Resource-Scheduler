@@ -18,6 +18,12 @@ namespace KLRESClient
         private Group group = null;
         private Generator generator = null;
 
+        public LKRESClientViewModel()
+        {
+            client = new LKClientService();
+            //radioButton = true;
+        }
+
         public LKClientService Client
         {
             get
@@ -190,32 +196,6 @@ namespace KLRESClient
             set
             {
                 genPMin = value;
-            }
-        }
-        private string genSite;
-        public string GenSite
-        {
-            get
-            {
-                return genSite;
-            }
-
-            set
-            {
-                genSite = value;
-            }
-        }
-        private string genGroup;
-        public string GenGroup
-        {
-            get
-            {
-                return genGroup;
-            }
-
-            set
-            {
-                genGroup = value;
             }
         }
         #endregion
@@ -910,16 +890,16 @@ namespace KLRESClient
                 {
                     CreateCommand.RaiseCanExecuteChanged();
                 }
-                else if (propName.Equals("RadioButton"))
-                {
-                    txb8Visibility = Visibility.Visible;
-                    txb9Visibility = Visibility.Visible;
-                    cmbVisibility = Visibility.Hidden;
-                    cmb2Visibility = Visibility.Hidden;
-                    cmb3Visibility = Visibility.Hidden;
-                    txbVisibility = Visibility.Hidden;
-                    CreateCommand.RaiseCanExecuteChanged();
-                }
+                //else if (propName.Equals("RadioButton"))
+                //{
+                //    txb8Visibility = Visibility.Visible;
+                //    txb9Visibility = Visibility.Visible;
+                //    cmbVisibility = Visibility.Hidden;
+                //    cmb2Visibility = Visibility.Hidden;
+                //    cmb3Visibility = Visibility.Hidden;
+                //    txbVisibility = Visibility.Hidden;
+                //    CreateCommand.RaiseCanExecuteChanged();
+                //}
                 else if (propName.Equals("RadioButton1"))
                 {
                     txb8Visibility = Visibility.Hidden;
@@ -954,6 +934,16 @@ namespace KLRESClient
                 }
                 else if (propName.Equals("CmbSiteNameSelectedItem"))
                 {
+                    Site site = (Site)Enum.Parse(typeof(Site), cmbSiteNameSelectedItem);
+
+                    Client.GroupNames.Clear();
+                    foreach (Group group in Client.Groups)
+                    {
+                        if (site.MRID.Equals(group.SiteID))
+                        {
+                            Client.GroupNames.Add(group);
+                        }
+                    }
                     CreateCommand.RaiseCanExecuteChanged();
                 }
                 else if (propName.Equals("Cmb2SiteNameSelectedItem"))
@@ -1046,14 +1036,13 @@ namespace KLRESClient
                     {
                         generator = SelectedItem as Generator;
                         group = Client.GetGroupFromId(generator.GroupID);
+                        site = Client.GetSiteFromId(group.SiteID);
+
                         GenMRID = generator.MRID;
                         GenName = generator.Name;
                         GenPMax = generator.Pmax.ToString();
                         GenPMin = generator.Pmin.ToString();
                         GenPrice = generator.Price.ToString();
-                        GenGroup = Client.GetGroupNameFromId(generator.GroupID);
-                        GenSite = Client.GetSiteNameFromId(group.SiteID);
-                        site = Client.GetSiteFromId(group.SiteID);
                         GenSP = generator.SetPoint.ToString();
                         GenType = generator.GeneratorType.ToString();
                         GenAP = generator.ActivePower.ToString();
@@ -1077,6 +1066,102 @@ namespace KLRESClient
 
                 return createCommand;
             }
+        }
+
+        private DelegateCommand radioButtonn;
+        public DelegateCommand RadioButtonn
+        {
+            get
+            {
+                if (radioButtonn == null)
+                {
+                    radioButtonn = new DelegateCommand(CreateButton, CanExecuteButtonCommand);
+                }
+
+                return radioButtonn;
+            }
+        }
+
+        private void CreateButton()
+        {
+            radioButton = true;
+            radioButton1 = false;
+            radioButton2 = false;
+            txb8Visibility = Visibility.Visible;
+            txb9Visibility = Visibility.Visible;
+            cmbVisibility = Visibility.Hidden;
+            cmb2Visibility = Visibility.Hidden;
+            cmb3Visibility = Visibility.Hidden;
+            txbVisibility = Visibility.Hidden;
+        }
+
+        private bool CanExecuteButtonCommand()
+        {
+            return true;
+        }
+
+        private DelegateCommand radioButtonn1;
+        public DelegateCommand RadioButtonn1
+        {
+            get
+            {
+                if (radioButtonn1 == null)
+                {
+                    radioButtonn1 = new DelegateCommand(CreateButton1, CanExecuteButtonCommand1);
+                }
+
+                return radioButtonn1;
+            }
+        }
+
+        private void CreateButton1()
+        {
+            radioButton = false;
+            radioButton1 = true;
+            radioButton2 = false;
+            txb8Visibility = Visibility.Hidden;
+            txb9Visibility = Visibility.Hidden;
+            cmbVisibility = Visibility.Visible;
+            cmb2Visibility = Visibility.Visible;
+            cmb3Visibility = Visibility.Hidden;
+            txbVisibility = Visibility.Hidden;
+        }
+
+        private bool CanExecuteButtonCommand1()
+        {
+            return true;
+        }
+
+        private DelegateCommand radioButtonn2;
+        public DelegateCommand RadioButtonn2
+        {
+            get
+            {
+                if (radioButtonn2 == null)
+                {
+                    radioButtonn2 = new DelegateCommand(CreateButton2, CanExecuteButtonCommand2);
+                }
+
+                return radioButtonn2;
+            }
+        }
+
+        private void CreateButton2()
+        {
+            radioButton = false;
+            radioButton1 = false;
+            radioButton2 = true;
+            txb8Visibility = Visibility.Hidden;
+            txb9Visibility = Visibility.Hidden;
+            cmbVisibility = Visibility.Hidden;
+            cmb2Visibility = Visibility.Hidden;
+            cmb3Visibility = Visibility.Visible;
+            txbVisibility = Visibility.Visible;
+        }
+
+        private bool CanExecuteButtonCommand2()
+        {
+            return true;
         }
 
         private DelegateCommand editCommand;
@@ -1152,7 +1237,7 @@ namespace KLRESClient
             canExecute = CheckDoubleInputField(Price);
             canExecute = CheckComboBoxInputField(CmbGeneratorTypeSelectedItem);
             canExecute = CheckComboBoxInputField(CmbWorkingModeSelectedItem);
-            
+
             if (radioButton)
             {
                 if (!string.IsNullOrEmpty(SiteName) && !string.IsNullOrEmpty(groupName))
@@ -1173,7 +1258,7 @@ namespace KLRESClient
                     canExecute = CheckStringInputField(GroupName);
                 }
             }
-            else if (radioButton1)
+            if (radioButton1)
             {
                 if (!string.IsNullOrEmpty(CmbSiteNameSelectedItem) && !string.IsNullOrEmpty(Cmb2SiteNameSelectedItem))
                 {
@@ -1203,7 +1288,30 @@ namespace KLRESClient
                 }
             }
 
+            if (canExecute)
+            {
+                CreateInstanceOfGenerator();
+            }
+            
             return canExecute;
+        }
+
+        private void CreateInstanceOfGenerator()
+        {
+            bool hasMeas = this.cmbHasMeasSelectedItem.Equals("true") ? true : false;
+            generator = new Generator()
+            {
+                ActivePower = float.Parse(this.ActivePower),
+                BasePoint = float.Parse(this.BasePoint),
+                GeneratorType = (GeneratorType)Enum.Parse(typeof(GeneratorType), this.CmbGeneratorTypeSelectedItem),
+                HasMeasurment = hasMeas,
+                Name = this.Name,
+                Pmax = float.Parse(this.PMax),
+                Pmin = float.Parse(this.PMin),
+                Price = float.Parse(this.Price),
+                SetPoint = float.Parse(this.SetPoint),
+                WorkingMode = (WorkingMode)Enum.Parse(typeof(WorkingMode), this.CmbWorkingModeSelectedItem)
+            };
         }
 
         private bool CheckStringInputField(string txb)
