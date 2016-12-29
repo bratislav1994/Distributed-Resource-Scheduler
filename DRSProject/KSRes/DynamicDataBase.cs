@@ -67,15 +67,18 @@ namespace KSRes
 
         public LKResService GetService(string username)
         {
+            LKResService retVal = null;
+
             foreach (LKResService service in ActiveService)
             {
                 if (service.Username.Equals(username))
                 {
-                    return service;
+                    retVal = service;
+                    break;
                 }
             }
 
-            return null;
+            return retVal;
         }
 
         public void Registration(string username, string password)
@@ -178,7 +181,7 @@ namespace KSRes
         {
             if(generators == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidDataException();
             }
 
             bool edit = false;
@@ -286,28 +289,31 @@ namespace KSRes
 
         private void CheckIfLKServiceIsAlive()
         {
-            List<LKResService> serviceForRemove = new List<LKResService>();
-
-            foreach(LKResService user in ActiveService)
+            while (true)
             {
-                try
+                List<LKResService> serviceForRemove = new List<LKResService>();
+
+                foreach (LKResService user in ActiveService)
                 {
-                    user.Client.Ping();
+                    try
+                    {
+                        user.Client.Ping();
+                    }
+                    catch
+                    {
+                        serviceForRemove.Add(user);
+                    }
                 }
-                catch
+
+                foreach (LKResService user in serviceForRemove)
                 {
-                    serviceForRemove.Add(user);
+                    ActiveService.Remove(user);
                 }
+
+                serviceForRemove.Clear();
+
+                Thread.Sleep(1000);
             }
-
-            foreach(LKResService user in serviceForRemove)
-            {
-                ActiveService.Remove(user);
-            }
-
-            serviceForRemove.Clear();
-
-            Thread.Sleep(1000);
         }
 
         public void AddClient(IKSClient client)
@@ -317,9 +323,22 @@ namespace KSRes
 
         private void NotifyClients(UpdateInfo update, string username)
         {
+            List<IKSClient> notActiveClient = new List<IKSClient>();
             foreach(IKSClient client in Clients)
             {
-                client.Update(update, username);
+                try
+                {
+                    client.Update(update, username);
+                }
+                catch
+                {
+                    notActiveClient.Add(client);
+                }
+            }
+
+            foreach(IKSClient client in notActiveClient)
+            {
+                clients.Remove(client);
             }
         }
     }
