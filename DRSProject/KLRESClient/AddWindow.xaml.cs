@@ -22,41 +22,24 @@ namespace KLRESClient
     /// </summary>
     public partial class AddWindow : Window
     {
-
-        public AddWindow()
+        
+        public AddWindow(object dataContext)
         {
             InitializeComponent();
-            
-            combo_box1.Items.Add(true);
-            combo_box1.Items.Add(false);
-
-            foreach (GeneratorType genType in Enum.GetValues(typeof(GeneratorType)))
-            {
-                combo_box2.Items.Add(genType);
-            }
-
-            foreach (WorkingMode workMode in Enum.GetValues(typeof(WorkingMode)))
-            {
-                combo_box3.Items.Add(workMode);
-            }
-        }
-
-        private void Cmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            CmbSelectionChanged();
+            DataContext = dataContext;
         }
 
         private void CmbSelectionChanged()
         {
-            Site site = (Site)cmb.SelectedItem;
+            //Site site = (Site)cmb.SelectedItem;
 
-            foreach (Group group in ClientDatabase.Instance().Groups)
-            {
-                if (site.MRID.Equals(group.SiteID))
-                {
-                    cmb2.Items.Add(group);
-                }
-            }
+            //foreach (Group group in ClientDatabase.Instance().Groups)
+            //{
+            //    if (site.MRID.Equals(group.SiteID))
+            //    {
+            //        cmb2.Items.Add(group);
+            //    }
+            //}
         }
 
         private void Create(object sender, RoutedEventArgs e)
@@ -273,18 +256,18 @@ namespace KLRESClient
 
         private void ClickOnRadioButton1()
         {
-            text_box8.Visibility = Visibility.Hidden;
-            text_box9.Visibility = Visibility.Hidden;
-            cmb.Visibility = Visibility.Visible;
-            cmb2.Visibility = Visibility.Visible;
-            cmb3.Visibility = Visibility.Hidden;
-            txb.Visibility = Visibility.Hidden;
-            cmb.Items.Clear();
+            //text_box8.Visibility = Visibility.Hidden;
+            //text_box9.Visibility = Visibility.Hidden;
+            //cmb.Visibility = Visibility.Visible;
+            //cmb2.Visibility = Visibility.Visible;
+            //cmb3.Visibility = Visibility.Hidden;
+            //txb.Visibility = Visibility.Hidden;
+            //cmb.Items.Clear();
 
-            foreach (Site site in ClientDatabase.Instance().Sites)
-            {
-                cmb.Items.Add(site);
-            }
+            //foreach (Site site in ClientDatabase.Instance().Sites)
+            //{
+            //    cmb.Items.Add(site);
+            //}
         }
 
         private void radioButton2_Click(object sender, RoutedEventArgs e)
@@ -294,18 +277,18 @@ namespace KLRESClient
 
         private void ClickOnRadioButton2()
         {
-            text_box8.Visibility = Visibility.Hidden;
-            text_box9.Visibility = Visibility.Hidden;
-            cmb.Visibility = Visibility.Hidden;
-            cmb2.Visibility = Visibility.Hidden;
-            cmb3.Visibility = Visibility.Visible;
-            txb.Visibility = Visibility.Visible;
-            cmb3.Items.Clear();
+            //text_box8.Visibility = Visibility.Hidden;
+            //text_box9.Visibility = Visibility.Hidden;
+            //cmb.Visibility = Visibility.Hidden;
+            //cmb2.Visibility = Visibility.Hidden;
+            //cmb3.Visibility = Visibility.Visible;
+            //txb.Visibility = Visibility.Visible;
+            //cmb3.Items.Clear();
 
-            foreach (Site site in ClientDatabase.Instance().Sites)
-            {
-                cmb3.Items.Add(site);
-            }
+            //foreach (Site site in ClientDatabase.Instance().Sites)
+            //{
+            //    cmb3.Items.Add(site);
+            //}
         }
     }
 }
