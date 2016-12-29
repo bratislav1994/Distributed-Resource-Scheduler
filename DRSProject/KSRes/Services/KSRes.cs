@@ -13,7 +13,6 @@ namespace KSRes.Services
     public class KSRes : IKSRes, IKSForClient
     {
         public static DynamicDataBase dynamicDataBase = new DynamicDataBase();
-        
 
         #region ILKRes
         public void Login(string username, string password)
