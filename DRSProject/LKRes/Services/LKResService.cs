@@ -17,7 +17,11 @@ namespace LKRes.Services
 
         public void SendSetPoint(List<SetPoint> setPoints)
         {
-            throw new NotImplementedException();
+            foreach (SetPoint setpoint in setPoints)
+            {
+                Generator generator = LKForClientService.updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
+                generator.SetPoint = setpoint.Setpoint;
+            }
         }
     }
 }

@@ -28,6 +28,15 @@ namespace KSRESClient
             for (int i = 0; i < 5; i++)
             {
                 LKResService user = new LKResService("user" + (i + 1), null, null);
+                Site site = new Site();
+                site.MRID = Guid.NewGuid().ToString();
+                site.Name = "site" + i;
+                user.Sites.Add(site);
+                Group group = new Group();
+                group.MRID = Guid.NewGuid().ToString();
+                group.Name = "group" + i;
+                group.SiteID = site.MRID;
+                user.Gropus.Add(group);
                 allUsers.Add(user);
                 userNames.Add(user.Username);
             }
@@ -46,10 +55,12 @@ namespace KSRESClient
                 g.Price = i * 150;
                 g.SetPoint = i * 100;
                 g.WorkingMode = WorkingMode.REMOTE;
+                
                 if(j == 5)
                 {
                     j = 0;
                 }
+                g.GroupID = allUsers[j].Gropus.First().MRID;
                 allUsers[j].Generators.Add(g);
             }
 
@@ -207,6 +218,66 @@ namespace KSRESClient
         public void IssueCommand(string userName, double neededPower)
         {
             proxy.IssueCommand(userName, neededPower);
+        }
+
+        public Generator GetGeneratorFromId(string mrId)
+        {
+            foreach(LKResService user in allUsers)
+            {
+                foreach(Generator g in user.Generators)
+                {
+                    if(g.MRID.Equals(mrId))
+                    {
+                        return g;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public String GetGroupNameFromId(String mrId)
+        {
+            foreach (LKResService user in allUsers)
+            {
+                foreach (Group g in user.Gropus)
+                {
+                    if (g.MRID.Equals(mrId))
+                    {
+                        return g.Name;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public Group GetGroupFromId(String mrId)
+        {
+            foreach (LKResService user in allUsers)
+            {
+                foreach (Group g in user.Gropus)
+                {
+                    if (g.MRID.Equals(mrId))
+                    {
+                        return g;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public String GetSiteNameFromId(String mrId)
+        {
+            foreach (LKResService user in allUsers)
+            {
+                foreach (Site s in user.Sites)
+                {
+                    if (s.MRID.Equals(mrId))
+                    {
+                        return s.Name;
+                    }
+                }
+            }
+            return null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

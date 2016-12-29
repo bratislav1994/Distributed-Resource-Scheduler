@@ -72,7 +72,7 @@ namespace KSRes.Services
             IKSClient client = context.GetCallbackChannel<IKSClient>();
             dynamicDataBase.AddClient(client);
 
-            return dynamicDataBase.GetAllSystem();
+            return dynamicDataBase.ActiveService;
         }
 
         public void IssueCommand(string username, double requiredAP)
