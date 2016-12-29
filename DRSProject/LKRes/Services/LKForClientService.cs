@@ -94,6 +94,8 @@ namespace LKRes.Services
 
         public UpdateInfo GetMySystem()
         {
+            if (updateInfo == null)
+                throw new ArgumentNullException("Update is null!");
             return updateInfo;
         }
 
@@ -140,16 +142,33 @@ namespace LKRes.Services
 
         public void Add(UpdateInfo update)
         {
-            update.Generators[0].MRID = Guid.NewGuid().ToString();
-            update.Groups[0].MRID = Guid.NewGuid().ToString();
-            update.Sites[0].MRID = Guid.NewGuid().ToString();
+            if(update.Generators[0] != null)
+                update.Generators[0].MRID = Guid.NewGuid().ToString();
 
-            update.Generators[0].GroupID = update.Groups[0].MRID;
-            update.Groups[0].SiteID = update.Sites[0].MRID;
+            if(update.Groups[0] != null)
+                update.Groups[0].MRID = Guid.NewGuid().ToString();
 
-            updateInfo.Generators.Add(update.Generators[0]);
-            updateInfo.Sites.Add(update.Sites[0]);
-            updateInfo.Groups.Add(update.Groups[0]);
+            if(update.Sites[0] != null)
+                update.Sites[0].MRID = Guid.NewGuid().ToString();
+
+            //dodavanje novog generatora, grupe i sajta
+            if (update.Generators[0] != null && update.Groups[0] != null && update.Sites[0] != null)
+            {
+                update.Generators[0].GroupID = update.Groups[0].MRID;
+                update.Groups[0].SiteID = update.Sites[0].MRID;
+
+                updateInfo.Generators.Add(update.Generators[0]);
+                updateInfo.Sites.Add(update.Sites[0]);
+                updateInfo.Groups.Add(update.Groups[0]);
+            }
+            //dodavanje novog generatora i grupe. Sajt vec postoji.
+            else if (update.Generators[0] != null && update.Groups[0] != null && update.Sites[0] == null)
+            {
+                update.Generators[0].GroupID = update.Groups[0].MRID;
+
+                updateInfo.Generators.Add(update.Generators[0]);
+                updateInfo.Groups.Add(update.Groups[0]);
+            } 
         }
 
         public void Remove(UpdateInfo update)
