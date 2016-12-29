@@ -16,7 +16,8 @@ namespace KSRes
     {
         private Dictionary<string, string> registrationService = null;
         private List<LKResService> activeService = null;
-        private List<IKSClient> clients = new List<IKSClient>();
+        private List<IKSClient> clients = null;
+        private object lockObj = null;
 
         public Dictionary<string, string> RegistrationService
         {
@@ -47,6 +48,7 @@ namespace KSRes
             registrationService = new Dictionary<string, string>();
             activeService = new List<LKResService>();
             clients = new List<IKSClient>();
+            lockObj = new object();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
             CheckIfLKServiceIsAliveThread.Start();
@@ -67,15 +69,18 @@ namespace KSRes
 
         public LKResService GetService(string username)
         {
+            LKResService retVal = null;
+
             foreach (LKResService service in ActiveService)
             {
                 if (service.Username.Equals(username))
                 {
-                    return service;
+                    retVal = service;
+                    break;
                 }
             }
 
-            return null;
+            return retVal;
         }
 
         public void Registration(string username, string password)
@@ -86,7 +91,10 @@ namespace KSRes
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
-            RegistrationService.Add(username, password);
+            lock (lockObj)
+            {
+                RegistrationService.Add(username, password);
+            }
         }
 
         public void Login(string username, string password, ILKRes channel, string sessionID)
@@ -109,7 +117,10 @@ namespace KSRes
                 }
                 
                 LKResService newService = new LKResService(username, channel, sessionID);
-                ActiveService.Add(newService);
+                lock (lockObj)
+                {
+                    ActiveService.Add(newService);
+                }
             }
             else
             {
@@ -178,7 +189,7 @@ namespace KSRes
         {
             if(generators == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidDataException();
             }
 
             bool edit = false;
@@ -286,40 +297,65 @@ namespace KSRes
 
         private void CheckIfLKServiceIsAlive()
         {
-            List<LKResService> serviceForRemove = new List<LKResService>();
-
-            foreach(LKResService user in ActiveService)
+            while (true)
             {
-                try
+                List<LKResService> serviceForRemove = new List<LKResService>();
+
+                foreach (LKResService user in ActiveService)
                 {
-                    user.Client.Ping();
+                    try
+                    {
+                        user.Client.Ping();
+                    }
+                    catch
+                    {
+                        serviceForRemove.Add(user);
+                    }
                 }
-                catch
+
+                foreach (LKResService user in serviceForRemove)
                 {
-                    serviceForRemove.Add(user);
+                    lock (lockObj)
+                    {
+                        ActiveService.Remove(user);
+                    }
                 }
+
+                serviceForRemove.Clear();
+
+                Thread.Sleep(1000);
             }
-
-            foreach(LKResService user in serviceForRemove)
-            {
-                ActiveService.Remove(user);
-            }
-
-            serviceForRemove.Clear();
-
-            Thread.Sleep(1000);
         }
 
         public void AddClient(IKSClient client)
         {
-            Clients.Add(client);
+            lock (lockObj)
+            {
+                Clients.Add(client);
+            }
         }
 
         private void NotifyClients(UpdateInfo update, string username)
         {
+            List<IKSClient> notActiveClient = new List<IKSClient>();
             foreach(IKSClient client in Clients)
             {
-                client.Update(update, username);
+                try
+                {
+                    client.Update(update, username);
+                }
+                catch
+                {
+                    notActiveClient.Add(client);
+                }
+            }
+
+            foreach(IKSClient client in notActiveClient)
+            {
+                lock (lockObj)
+                {
+                    clients.Remove(client);
+                }
             }
         }
     }
