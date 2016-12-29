@@ -18,10 +18,35 @@ namespace KSRes
         private List<LKResService> activeService = null;
         private List<IKSClient> clients = new List<IKSClient>();
 
+        public Dictionary<string, string> RegistrationService
+        {
+            get
+            {
+                return registrationService;
+            }
+        }
+
+        public List<LKResService> ActiveService
+        {
+            get
+            {
+                return activeService;
+            }
+        }
+
+        public List<IKSClient> Clients
+        {
+            get
+            {
+                return clients;
+            }
+        }
+
         public DynamicDataBase()
         {
-            registrationService = new Dictionary<string, string>();
-            activeService = new List<LKResService>();
+            RegistrationService = new Dictionary<string, string>();
+            ActiveService = new List<LKResService>();
+            Clients = new List<IKSClient>();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
             CheckIfLKServiceIsAliveThread.Start();
@@ -31,7 +56,7 @@ namespace KSRes
         {
             string regService = null;
 
-            if (registrationService.TryGetValue(username, out regService))
+            if (RegistrationService.TryGetValue(username, out regService))
             {
                 return true;
             }
@@ -40,7 +65,7 @@ namespace KSRes
 
         private LKResService GetServiceSID(string sessionID)
         {
-            foreach (LKResService service in activeService)
+            foreach (LKResService service in ActiveService)
             {
                 if (service.SessionID.Equals(sessionID))
                 {
@@ -53,7 +78,7 @@ namespace KSRes
 
         public LKResService GetService(string username)
         {
-            foreach (LKResService service in activeService)
+            foreach (LKResService service in ActiveService)
             {
                 if (service.Username.Equals(username))
                 {
@@ -72,23 +97,23 @@ namespace KSRes
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
-            registrationService.Add(username, password);
+            RegistrationService.Add(username, password);
         }
 
         public void Login(string username, string password, ILKRes channel, string sessionID)
         {
-            foreach (LKResService service in activeService)
+            foreach (LKResService service in ActiveService)
             {
                 if (service.Username.Equals(username))
                 {
-                    if (!registrationService[username].Equals(password))
+                    if (!RegistrationService[username].Equals(password))
                     {
                         IdentificationExeption ex = new IdentificationExeption("Password is not correct.");
                         throw new FaultException<IdentificationExeption>(ex);
                     }
 
                     LKResService newService = new LKResService(username, channel, sessionID);
-                    activeService.Add(newService);
+                    ActiveService.Add(newService);
                 }
             }
         }
@@ -259,16 +284,11 @@ namespace KSRes
         }
         #endregion add/update/remove
 
-        public List<LKResService> GetAllSystem()
-        {
-            return activeService;
-        }
-
         private void CheckIfLKServiceIsAlive()
         {
             List<LKResService> serviceForRemove = new List<LKResService>();
 
-            foreach(LKResService user in activeService)
+            foreach(LKResService user in ActiveService)
             {
                 try
                 {
@@ -282,7 +302,7 @@ namespace KSRes
 
             foreach(LKResService user in serviceForRemove)
             {
-                activeService.Remove(user);
+                ActiveService.Remove(user);
             }
 
             serviceForRemove.Clear();
@@ -292,12 +312,12 @@ namespace KSRes
 
         public void AddClient(IKSClient client)
         {
-            clients.Add(client);
+            Clients.Add(client);
         }
 
         private void NotifyClients(UpdateInfo update, string username)
         {
-            foreach(IKSClient client in clients)
+            foreach(IKSClient client in Clients)
             {
                 client.Update(update, username);
             }
