@@ -13,6 +13,7 @@ namespace KSRes.Services
     public class KSRes : IKSRes, IKSForClient
     {
         public static DynamicDataBase dynamicDataBase = new DynamicDataBase();
+        
 
         #region ILKRes
         public void Login(string username, string password)
@@ -57,9 +58,9 @@ namespace KSRes.Services
             {
                 dynamicDataBase.Update(sessionID, update);
             }
-            catch
+            catch(Exception ex)
             {
-
+                throw ex;
             }
         }
         #endregion ILKRes
@@ -67,14 +68,18 @@ namespace KSRes.Services
         #region IKSForClient
         public List<LKResService> GetAllSystem()
         {
-            return dynamicDataBase.GetAllSystem();
+            OperationContext context = OperationContext.Current;
+            IKSClient client = context.GetCallbackChannel<IKSClient>();
+            dynamicDataBase.AddClient(client);
+
+            return dynamicDataBase.ActiveService;
         }
 
         public void IssueCommand(string username, double requiredAP)
         {
             List<Generator> remoteGenerators = new List<Generator>();
             List<SetPoint> setPoints = new List<SetPoint>();
-            LKResService user = dynamicDataBase.GetUser(username);
+            LKResService user = dynamicDataBase.GetService(username);
             double activePower = 0;
             double diff = 0;
 

@@ -12,6 +12,7 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using System.Threading;
 
 namespace CommonLibrary
 {
@@ -29,6 +30,7 @@ namespace CommonLibrary
         private GeneratorType generatorType;
         private WorkingMode workingMode;
         private string groupID;
+        private static object objLock = new object();
 
         public Generator()
         {
@@ -44,7 +46,10 @@ namespace CommonLibrary
             }
             set
             {
-                activePower = value;
+                lock (objLock)
+                {
+                    activePower = value;
+                }
                 RaisePropertyChanged("activePower");
             }
         }
@@ -129,6 +134,8 @@ namespace CommonLibrary
             set
             {
                 setPoint = value;
+                Thread SetActivePowerThread = new Thread(SetActivePower);
+                SetActivePowerThread.Start();
                 RaisePropertyChanged("setPoint");
             }
         }
@@ -184,6 +191,15 @@ namespace CommonLibrary
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
+
+        private void SetActivePower()
+        {
+            while (true)
+            {
+                Thread.Sleep(2000);
+                this.activePower = this.setPoint;
             }
         }
     }//end Generator
