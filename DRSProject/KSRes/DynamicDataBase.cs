@@ -44,23 +44,12 @@ namespace KSRes
 
         public DynamicDataBase()
         {
-            RegistrationService = new Dictionary<string, string>();
-            ActiveService = new List<LKResService>();
-            Clients = new List<IKSClient>();
+            registrationService = new Dictionary<string, string>();
+            activeService = new List<LKResService>();
+            clients = new List<IKSClient>();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
             CheckIfLKServiceIsAliveThread.Start();
-        }
-
-        private bool CheckRegistrationService(string username)
-        {
-            string regService = null;
-
-            if (RegistrationService.TryGetValue(username, out regService))
-            {
-                return true;
-            }
-            return false;
         }
 
         private LKResService GetServiceSID(string sessionID)
@@ -91,7 +80,7 @@ namespace KSRes
 
         public void Registration(string username, string password)
         {
-            if (CheckRegistrationService(username))
+            if (registrationService.ContainsKey(username))
             {
                 IdentificationExeption ex = new IdentificationExeption("Service is exist.");
                 throw new FaultException<IdentificationExeption>(ex);
@@ -102,19 +91,30 @@ namespace KSRes
 
         public void Login(string username, string password, ILKRes channel, string sessionID)
         {
-            foreach (LKResService service in ActiveService)
+            if(registrationService.ContainsKey(username))
             {
-                if (service.Username.Equals(username))
+                if( !registrationService[username].Equals(password))
                 {
-                    if (!RegistrationService[username].Equals(password))
+                    IdentificationExeption ex = new IdentificationExeption("Authentication error.");
+                    throw new FaultException<IdentificationExeption>(ex);
+                }
+
+                foreach(LKResService service in activeService)
+                {
+                    if(service.Username.Equals(username))
                     {
-                        IdentificationExeption ex = new IdentificationExeption("Password is not correct.");
+                        IdentificationExeption ex = new IdentificationExeption("Service is already logged in.");
                         throw new FaultException<IdentificationExeption>(ex);
                     }
-
-                    LKResService newService = new LKResService(username, channel, sessionID);
-                    ActiveService.Add(newService);
                 }
+                
+                LKResService newService = new LKResService(username, channel, sessionID);
+                ActiveService.Add(newService);
+            }
+            else
+            {
+                IdentificationExeption ex = new IdentificationExeption("Authentication error.");
+                throw new FaultException<IdentificationExeption>(ex);
             }
         }
 

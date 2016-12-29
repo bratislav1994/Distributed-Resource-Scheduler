@@ -22,6 +22,14 @@ namespace CommonLibrary
         private List<Group> groups;
         private List<Site> sites;
 
+        public UpdateInfo()
+        {
+            updateType = UpdateType.ADD;
+            generators = new List<Generator>();
+            groups = new List<Group>();
+            sites = new List<Site>();
+        }
+
         [DataMember]
         public UpdateType UpdateType
         {
