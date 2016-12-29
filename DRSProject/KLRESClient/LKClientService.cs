@@ -54,7 +54,7 @@ namespace KLRESClient
                         new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
             proxy = factory.CreateChannel();
 
-            getAllFromService = proxy.GetMySystem(); 
+            getAllFromService = proxy.GetMySystem();
 
             if (getAllFromService != null)
             {
@@ -73,7 +73,7 @@ namespace KLRESClient
             }
         }
 
-        
+
         public BindingList<bool> HasMeasurments
         {
             get

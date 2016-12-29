@@ -141,12 +141,12 @@
         <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="215,178,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="215,198,0,0" VerticalAlignment="Top"/>
 
-        <TextBox x:Name="text_box8" Text ="{Binding SiteName}" Visibility="{Binding Txb8Visibility}" HorizontalAlignment="Left" Height="23" Margin="315,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="text_box9" Text ="{Binding GroupName}" Visibility="{Binding Txb9Visibility}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb" SelectedItem="{Binding CmbSiteNameSelectedItem}" Visibility="{Binding CmbVisibility}" ItemsSource="{Binding LKClientService.SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb2" SelectedItem="{Binding Cmb2SiteNameSelectedItem}" Visibility="{Binding Cmb2Visibility}" ItemsSource="{Binding LKClientService.GroupNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,205,0,0" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb3" SelectedItem="{Binding Cmb3SiteNameSelectedItem}" Visibility="{Binding Cmb3Visibility}" ItemsSource="{Binding LKClientService.Cmb3SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="txb" Text ="{Binding TxbGroupName}" Visibility="{Binding TxbVisibility}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box8" Text ="{Binding SiteName}" Visibility="{Binding Txb8Visibility}" HorizontalAlignment="Left" Height="23" Margin="180,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box9" Text ="{Binding GroupName}" Visibility="{Binding Txb9Visibility, FallbackValue=Visible}" HorizontalAlignment="Left" Height="23" Margin="315,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb" DisplayMemberPath="Name" SelectedItem="{Binding CmbSiteNameSelectedItem}" Visibility="{Binding CmbVisibility, FallbackValue=Hidden}" ItemsSource="{Binding LKClientService.SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb2" DisplayMemberPath="Name" SelectedItem="{Binding Cmb2SiteNameSelectedItem}" Visibility="{Binding Cmb2Visibility, FallbackValue=Hidden}" ItemsSource="{Binding LKClientService.GroupNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,205,0,0" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb3" DisplayMemberPath="Name" SelectedItem="{Binding Cmb3SiteNameSelectedItem}" Visibility="{Binding Cmb3Visibility, FallbackValue=Hidden}" ItemsSource="{Binding LKClientService.Cmb3SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="txb" Text ="{Binding TxbGroupName}" Visibility="{Binding TxbVisibility, FallbackValue=Hidden}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
 
     </Grid>

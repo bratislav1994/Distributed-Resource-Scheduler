@@ -21,7 +21,8 @@ namespace KLRESClient
         public LKRESClientViewModel()
         {
             client = new LKClientService();
-            //radioButton = true;
+            txb8Visibility = false;
+            radioButton = true;
         }
 
         public LKClientService Client
@@ -476,8 +477,8 @@ namespace KLRESClient
             }
         }
 
-        private Visibility txb8Visibility;
-        public Visibility Txb8Visibility
+        private bool txb8Visibility;
+        public bool Txb8Visibility
         {
             get
             {
@@ -902,7 +903,7 @@ namespace KLRESClient
                 //}
                 else if (propName.Equals("RadioButton1"))
                 {
-                    txb8Visibility = Visibility.Hidden;
+                    txb8Visibility = false;
                     txb9Visibility = Visibility.Hidden;
                     cmbVisibility = Visibility.Visible;
                     cmb2Visibility = Visibility.Visible;
@@ -912,7 +913,7 @@ namespace KLRESClient
                 }
                 else if (propName.Equals("RadioButton2"))
                 {
-                    txb8Visibility = Visibility.Hidden;
+                    txb8Visibility = false;
                     txb9Visibility = Visibility.Hidden;
                     cmbVisibility = Visibility.Hidden;
                     cmb2Visibility = Visibility.Hidden;
@@ -1087,7 +1088,7 @@ namespace KLRESClient
             radioButton = true;
             radioButton1 = false;
             radioButton2 = false;
-            txb8Visibility = Visibility.Visible;
+            txb8Visibility = true;
             txb9Visibility = Visibility.Visible;
             cmbVisibility = Visibility.Hidden;
             cmb2Visibility = Visibility.Hidden;
@@ -1119,7 +1120,7 @@ namespace KLRESClient
             radioButton = false;
             radioButton1 = true;
             radioButton2 = false;
-            txb8Visibility = Visibility.Hidden;
+            txb8Visibility = false;
             txb9Visibility = Visibility.Hidden;
             cmbVisibility = Visibility.Visible;
             cmb2Visibility = Visibility.Visible;
@@ -1151,7 +1152,7 @@ namespace KLRESClient
             radioButton = false;
             radioButton1 = false;
             radioButton2 = true;
-            txb8Visibility = Visibility.Hidden;
+            txb8Visibility = false;
             txb9Visibility = Visibility.Hidden;
             cmbVisibility = Visibility.Hidden;
             cmb2Visibility = Visibility.Hidden;
@@ -1292,25 +1293,29 @@ namespace KLRESClient
             {
                 CreateInstanceOfGenerator();
             }
-            
+
             return canExecute;
         }
 
         private void CreateInstanceOfGenerator()
         {
-            bool hasMeas = this.cmbHasMeasSelectedItem.Equals("true") ? true : false;
+            string hasMeasure = this.cmbHasMeasSelectedItem.Substring(this.cmbHasMeasSelectedItem.LastIndexOf(':') + 1);
+            bool hasMeas = hasMeasure.Equals("true") ? true : false;
+            string genType = this.cmbGeneratorTypeSelectedItem.Substring(this.cmbGeneratorTypeSelectedItem.LastIndexOf(':') + 1);
+            string workMode = this.cmbWorkingModeSelectedItem.Substring(this.cmbWorkingModeSelectedItem.LastIndexOf(':') + 1);
+
             generator = new Generator()
             {
                 ActivePower = float.Parse(this.ActivePower),
                 BasePoint = float.Parse(this.BasePoint),
-                GeneratorType = (GeneratorType)Enum.Parse(typeof(GeneratorType), this.CmbGeneratorTypeSelectedItem),
+                GeneratorType = (GeneratorType)Enum.Parse(typeof(GeneratorType), genType),
                 HasMeasurment = hasMeas,
                 Name = this.Name,
                 Pmax = float.Parse(this.PMax),
                 Pmin = float.Parse(this.PMin),
                 Price = float.Parse(this.Price),
                 SetPoint = float.Parse(this.SetPoint),
-                WorkingMode = (WorkingMode)Enum.Parse(typeof(WorkingMode), this.CmbWorkingModeSelectedItem)
+                WorkingMode = (WorkingMode)Enum.Parse(typeof(WorkingMode), workMode)
             };
         }
 

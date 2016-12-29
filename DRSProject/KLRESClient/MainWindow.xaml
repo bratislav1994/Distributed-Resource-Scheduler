@@ -9,7 +9,7 @@
     <Grid Background="#FF526B87">
         <Canvas x:Name="canvas" Margin="120,20,0,50" HorizontalAlignment="Left" Width="680" Background="White">
 
-            <DataGrid x:Name="dataGridGenerators" SelectedItem="{Binding SelectedItem}" CanUserAddRows="false" ItemsSource="{Binding Client.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="140" VerticalAlignment="Top" Width="650" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Grid.Row="1" Canvas.Left="10" Canvas.Top="68">
+            <DataGrid x:Name="dataGridGenerators" SelectedItem="{Binding SelectedItem}" CanUserAddRows="false" ItemsSource="{Binding LKClientService.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="140" VerticalAlignment="Top" Width="650" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Grid.Row="1" Canvas.Left="10" Canvas.Top="68">
                 <DataGrid.Background>
                     <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
                 </DataGrid.Background>
