@@ -22,81 +22,24 @@ namespace KLRESClient
     /// </summary>
     public partial class AddWindow : Window
     {
-        private ComboBox cmb = null;
-        private ComboBox cmb2 = null;
-        private ComboBox cmb3 = null;
-        private TextBox txb = null;
-
-        public AddWindow()
+        
+        public AddWindow(object dataContext)
         {
             InitializeComponent();
-
-            cmb = new ComboBox()
-            {
-                Name = "cmb",
-                Margin = text_box8.Margin,
-                Width = text_box8.Width,
-            };
-
-            cmb.SelectionChanged += new SelectionChangedEventHandler(Cmb_SelectionChanged);
-
-            cmb2 = new ComboBox()
-            {
-                Name = "cmb2",
-                Margin = text_box9.Margin,
-                Width = text_box9.Width,
-            };
-
-            cmb3 = new ComboBox()
-            {
-                Name = "cmb3",
-                Margin = text_box8.Margin,
-                Width = text_box8.Width,
-            };
-
-            txb = new TextBox()
-            {
-                Name = "txb",
-                Height = text_box9.Height,
-                Margin = text_box9.Margin,
-                Width = text_box9.Width,
-            };
-
-            panel.Children.Add(cmb);
-            panel.Children.Add(cmb2);
-            panel.Children.Add(cmb3);
-            panel.Children.Add(txb);
-
-            combo_box1.Items.Add(true);
-            combo_box1.Items.Add(false);
-
-            foreach (GeneratorType genType in Enum.GetValues(typeof(GeneratorType)))
-            {
-                combo_box2.Items.Add(genType);
-            }
-
-            foreach (WorkingMode workMode in Enum.GetValues(typeof(WorkingMode)))
-            {
-                combo_box3.Items.Add(workMode);
-            }
-        }
-
-        private void Cmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            CmbSelectionChanged();
+            DataContext = dataContext;
         }
 
         private void CmbSelectionChanged()
         {
-            Site site = (Site)cmb.SelectedItem;
+            //Site site = (Site)cmb.SelectedItem;
 
-            foreach (Group group in ClientDatabase.Instance().Groups)
-            {
-                if (site.MRID.Equals(group.SiteID))
-                {
-                    cmb2.Items.Add(group);
-                }
-            }
+            //foreach (Group group in ClientDatabase.Instance().Groups)
+            //{
+            //    if (site.MRID.Equals(group.SiteID))
+            //    {
+            //        cmb2.Items.Add(group);
+            //    }
+            //}
         }
 
         private void Create(object sender, RoutedEventArgs e)
@@ -290,74 +233,7 @@ namespace KLRESClient
         {
             this.Close();
         }
-
-        private void text_box2_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box2);
-        }
-
-        private void text_box3_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box3);
-        }
-
-        private void text_box4_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box4);
-        }
-
-        private void combo_box1_GotFocus(object sender, RoutedEventArgs e)
-        {
-            ComboBoxBorderBrush(combo_box1);
-        }
-
-        private void text_box5_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box5);
-        }
-
-        private void text_box6_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box6);
-        }
-
-        private void text_box7_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box7);
-        }
-
-        private void combo_box2_GotFocus(object sender, RoutedEventArgs e)
-        {
-            ComboBoxBorderBrush(combo_box2);
-        }
-
-        private void combo_box3_GotFocus(object sender, RoutedEventArgs e)
-        {
-            ComboBoxBorderBrush(combo_box3);
-        }
-
-        private void text_box8_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box8);
-        }
-
-        private void text_box9_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBoxBorderBrush(text_box9);
-        }
-
-        private void TextBoxBorderBrush(TextBox txb)
-        {
-            txb.BorderBrush = null;
-            txb.BorderThickness = new Thickness(0);
-        }
-
-        private void ComboBoxBorderBrush(ComboBox cmb)
-        {
-            cmb.BorderBrush = null;
-            cmb.BorderThickness = new Thickness(0);
-        }
-
+        
         private void radioButton_Click(object sender, RoutedEventArgs e)
         {
             ClickOnRadioButton();
@@ -365,9 +241,12 @@ namespace KLRESClient
 
         private void ClickOnRadioButton()
         {
-            panel.Children.Clear();
-            panel.Children.Add(text_box8);
-            panel.Children.Add(text_box9);
+            text_box8.Visibility = Visibility.Visible;
+            text_box9.Visibility = Visibility.Visible;
+            cmb.Visibility = Visibility.Hidden;
+            cmb2.Visibility = Visibility.Hidden;
+            cmb3.Visibility = Visibility.Hidden;
+            txb.Visibility = Visibility.Hidden;
         }
 
         private void radioButton1_Click(object sender, RoutedEventArgs e)
@@ -377,15 +256,18 @@ namespace KLRESClient
 
         private void ClickOnRadioButton1()
         {
-            panel.Children.Clear();
-            panel.Children.Add(cmb);
-            panel.Children.Add(cmb2);
-            cmb2.Items.Clear();
+            //text_box8.Visibility = Visibility.Hidden;
+            //text_box9.Visibility = Visibility.Hidden;
+            //cmb.Visibility = Visibility.Visible;
+            //cmb2.Visibility = Visibility.Visible;
+            //cmb3.Visibility = Visibility.Hidden;
+            //txb.Visibility = Visibility.Hidden;
+            //cmb.Items.Clear();
 
-            foreach (Site site in ClientDatabase.Instance().Sites)
-            {
-                cmb.Items.Add(site);
-            }
+            //foreach (Site site in ClientDatabase.Instance().Sites)
+            //{
+            //    cmb.Items.Add(site);
+            //}
         }
 
         private void radioButton2_Click(object sender, RoutedEventArgs e)
@@ -395,14 +277,18 @@ namespace KLRESClient
 
         private void ClickOnRadioButton2()
         {
-            panel.Children.Clear();
-            panel.Children.Add(cmb3);
-            panel.Children.Add(txb);
+            //text_box8.Visibility = Visibility.Hidden;
+            //text_box9.Visibility = Visibility.Hidden;
+            //cmb.Visibility = Visibility.Hidden;
+            //cmb2.Visibility = Visibility.Hidden;
+            //cmb3.Visibility = Visibility.Visible;
+            //txb.Visibility = Visibility.Visible;
+            //cmb3.Items.Clear();
 
-            foreach (Site site in ClientDatabase.Instance().Sites)
-            {
-                cmb.Items.Add(site);
-            }
+            //foreach (Site site in ClientDatabase.Instance().Sites)
+            //{
+            //    cmb3.Items.Add(site);
+            //}
         }
     }
 }

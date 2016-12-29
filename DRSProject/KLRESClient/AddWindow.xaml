@@ -14,11 +14,11 @@
         <Label Content="basePoint:" HorizontalAlignment="Left" Margin="4,95,0,0" VerticalAlignment="Top"/>
         <Label Content="setPoint:" HorizontalAlignment="Left" Margin="4,126,0,0" VerticalAlignment="Top"/>
 
-        <TextBox x:Name="text_box2" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box2_GotFocus"/>
-        <TextBox x:Name="text_box3" HorizontalAlignment="Left" Height="23" Margin="95,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box3_GotFocus"/>
-        <TextBox x:Name="text_box4" HorizontalAlignment="Left" Height="23" Margin="95,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
-        <ComboBox x:Name="combo_box1" HorizontalAlignment="Left" Margin="95,70,0,0" VerticalAlignment="Top" Width="120" GotFocus="combo_box1_GotFocus"/>
-        <TextBox x:Name="text_box10" HorizontalAlignment="Left" Height="23" Margin="95,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box4_GotFocus"/>
+        <TextBox x:Name="text_box2" Text ="{Binding Name}" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="text_box3" Text ="{Binding ActivePower}" HorizontalAlignment="Left" Height="23" Margin="95,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box4" Text ="{Binding BasePoint}" HorizontalAlignment="Left" Height="23" Margin="95,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="combo_box1" SelectedItem="{Binding CmbHasMeasSelectedItem}" ItemsSource="{Binding LKClientService.HasMeasurments,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="95,70,0,0" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box10" Text ="{Binding SetPoint}" HorizontalAlignment="Left" Height="23" Margin="95,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
 
         <Label Content="pmin:" HorizontalAlignment="Left" Margin="215,18,0,0" VerticalAlignment="Top"/>
@@ -26,14 +26,14 @@
         <Label Content="price:" HorizontalAlignment="Left" Margin="215,65,0,0" VerticalAlignment="Top"/>
         <Label Content="generatorType:" HorizontalAlignment="Left" Margin="215,92,0,0" VerticalAlignment="Top"/>
         <Label Content="workingMode:" HorizontalAlignment="Left" Margin="215,121,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="text_box5" HorizontalAlignment="Left" Height="23" Margin="315,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box5_GotFocus"/>
+        <TextBox x:Name="text_box5" Text ="{Binding PMin}" HorizontalAlignment="Left" Height="23" Margin="315,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
-        <TextBox x:Name="text_box6" HorizontalAlignment="Left" Height="23" Margin="315,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box6_GotFocus"/>
-        <TextBox x:Name="text_box7" HorizontalAlignment="Left" Height="23" Margin="315,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box7_GotFocus"/>
-        <ComboBox x:Name="combo_box2" HorizontalAlignment="Left" Margin="315,91,0,0" VerticalAlignment="Top" Width="120" GotFocus="combo_box2_GotFocus"/>
-        <ComboBox x:Name="combo_box3" HorizontalAlignment="Left" Margin="315,120,0,0" VerticalAlignment="Top" Width="120" GotFocus="combo_box3_GotFocus"/>
+        <TextBox x:Name="text_box6" Text ="{Binding PMax}" HorizontalAlignment="Left" Height="23" Margin="315,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box7" Text ="{Binding Price}" HorizontalAlignment="Left" Height="23" Margin="315,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="combo_box2" SelectedItem="{Binding CmbGeneratorTypeSelectedItem}" ItemsSource="{Binding LKClientService.GeneratorTypes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,91,0,0" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="combo_box3" SelectedItem="{Binding CmbWorkingModeSelectedItem}" ItemsSource="{Binding LKClientService.WorkingModes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,120,0,0" VerticalAlignment="Top" Width="120" />
 
-        <Button x:Name="button" Content="Create" Height="50" Width="70" HorizontalAlignment="Left" Margin="40,260,0,0" VerticalAlignment="Top" Click="Create">
+        <Button x:Name="button" Command="{Binding CreateCommand}" Content="Create" Height="50" Width="70" HorizontalAlignment="Left" Margin="40,260,0,0" VerticalAlignment="Top">
             <Button.Style>
                 <Style  TargetType="{x:Type Button}">
                     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -123,17 +123,19 @@
                 </Style>
             </Button.Style>
         </Button>
-        
-        <RadioButton x:Name="radioButton" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" IsChecked="True" Click="radioButton_Click" />
-        <RadioButton x:Name="radioButton1" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" Click="radioButton1_Click"/>
-        <RadioButton x:Name="radioButton2" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Click="radioButton2_Click"/>
+
+        <RadioButton x:Name="radioButton" IsChecked="{Binding Path=LKClientService.RadioButton, Mode=TwoWay}" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="radioButton1" IsChecked="{Binding Path=LKClientService.RadioButton1, Mode=TwoWay}" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="radioButton2" IsChecked="{Binding Path=LKClientService.RadioButton2, Mode=TwoWay}" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" />
         <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="215,178,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="215,198,0,0" VerticalAlignment="Top"/>
-        <StackPanel Name="panel" HorizontalAlignment="Left" Height="100" Margin="293,152,0,0" VerticalAlignment="Top" Width="170">
-            <TextBox x:Name="text_box8" HorizontalAlignment="Left" Height="23" Margin="5,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box8_GotFocus"/>
-            <TextBox x:Name="text_box9" HorizontalAlignment="Left" Height="23" Margin="5,5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="text_box9_GotFocus"/>
 
-        </StackPanel>
+        <TextBox x:Name="text_box8" Text ="{Binding SiteName}" Visibility="{Binding Txb8Visibility}" HorizontalAlignment="Left" Height="23" Margin="315,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box9" Text ="{Binding GroupName}" Visibility="{Binding Txb9Visibility}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb" SelectedItem="{Binding CmbSiteNameSelectedItem}" Visibility="{Binding CmbVisibility}" ItemsSource="{Binding LKClientService.SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb2" SelectedItem="{Binding Cmb2SiteNameSelectedItem}" Visibility="{Binding Cmb2Visibility}" ItemsSource="{Binding LKClientService.GroupNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,205,0,0" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb3" SelectedItem="{Binding Cmb3SiteNameSelectedItem}" Visibility="{Binding Cmb3Visibility}" ItemsSource="{Binding LKClientService.Cmb3SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="txb" Text ="{Binding TxbGroupName}" Visibility="{Binding TxbVisibility}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
 
     </Grid>

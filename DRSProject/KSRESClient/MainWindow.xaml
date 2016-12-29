@@ -2,9 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:KSRESClient"
-        Title="MainWindow" Height="459.833" Width="782.741">
+        Title="MainWindow" Height="459.833" Width="971.741">
     <Grid>
-        <DataGrid x:Name="GeneratorsDataGrid" CanUserAddRows="false" ItemsSource="{Binding Client.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="347" VerticalAlignment="Top" Width="606" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Canvas.Left="10" Canvas.Top="68" Margin="10,72,0,0">
+        <DataGrid x:Name="GeneratorsDataGrid" SelectedItem="{Binding SelectedItem}" CanUserAddRows="false" ItemsSource="{Binding Client.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="347" VerticalAlignment="Top" Width="819" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Canvas.Left="10" Canvas.Top="68" Margin="10,72,0,0" SelectionChanged="GeneratorsDataGrid_SelectionChanged">
             <DataGrid.Background>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
             </DataGrid.Background>
@@ -23,8 +23,8 @@
         </DataGrid>
         <ComboBox x:Name="usersComboBox" SelectedItem="{Binding CbSelectedItem}" ItemsSource="{Binding Client.UserNames,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Left" Margin="85,21,0,0" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="label" Content="User : " HorizontalAlignment="Left" Margin="10,17,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="neededPower" Text ="{Binding NeededPower}" HorizontalAlignment="Left" Height="23" Margin="645,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="label1" Content="Needed power for client: " HorizontalAlignment="Left" Margin="496,29,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="issueCommand" Command="{Binding IssueCommand}" Content="Issue command" HorizontalAlignment="Left" Margin="669,75,0,0" VerticalAlignment="Top" Width="96"/>
+        <TextBox x:Name="neededPower" Text ="{Binding NeededPower}" HorizontalAlignment="Left" Height="23" Margin="834,21,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="label1" Content="Needed power for client: " HorizontalAlignment="Left" Margin="685,21,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="issueCommand" Command="{Binding IssueCommand}" Content="Issue command" HorizontalAlignment="Left" Margin="858,67,0,0" VerticalAlignment="Top" Width="96"/>
     </Grid>
 </Window>

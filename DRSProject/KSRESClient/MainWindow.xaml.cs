@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,11 +21,20 @@ namespace KSRESClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        KSRESClientViewModel model = new KSRESClientViewModel();
         public MainWindow()
         {
-            KSRESClientViewModel model = new KSRESClientViewModel();
             DataContext = model;
             InitializeComponent();
+        }
+
+        private void GeneratorsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (GeneratorsDataGrid.SelectedItem != null)
+            {
+                DetailView detailView = new DetailView(model);
+                detailView.ShowDialog();
+            }
         }
     }
 }

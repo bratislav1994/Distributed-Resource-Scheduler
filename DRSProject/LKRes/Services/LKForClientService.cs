@@ -7,13 +7,13 @@ using CommonLibrary.Interfaces;
 using CommonLibrary;
 using CommonLibrary.Exceptions;
 using System.ServiceModel;
-
+using System.Threading;
 
 namespace LKRes.Services
 {
     public class LKForClientService : ILKForClient
     {
-        private static UpdateInfo updateInfo = new UpdateInfo();
+        public static UpdateInfo updateInfo = new UpdateInfo();
         private IKSRes kSResProxy = null;
 
         public LKForClientService()
@@ -24,10 +24,78 @@ namespace LKRes.Services
                 new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
             kSResProxy = ksResFactory.CreateChannel();
+
+            Thread ChangePowerThread = new Thread(ChangeActivePower);
+            ChangePowerThread.Start();
+        }
+
+        private void ChangeActivePower()
+        {
+            Random randGenerator = new Random();
+            while (true)
+            {
+                Thread.Sleep(4000);
+
+                foreach (Group groupIterator in updateInfo.Groups)
+                {
+                    List<Generator> generetors = updateInfo.Generators.Where(gen => gen.GroupID.Equals(groupIterator.MRID)).ToList();
+                    foreach (Generator generatorIterator in generetors)
+                    {
+                        //samo radi ako je na lokalu
+                        if (generatorIterator.WorkingMode == WorkingMode.LOCAL && generatorIterator.HasMeasurment)
+                        {
+                            //povecaj za 10%
+                            if (randGenerator.Next(0, 1) == 0)
+                            {
+                                generatorIterator.ActivePower = generatorIterator.ActivePower + (generatorIterator.ActivePower / 10);
+                            }
+                            //smanji za 10%
+                            else
+                            {
+                                generatorIterator.ActivePower = generatorIterator.ActivePower - (generatorIterator.ActivePower / 10);
+                            }
+                        }
+                    }
+
+                    //izracujan ukupnu snagu i broj reprezentativnih generatora 
+                    double totalPower = 0;
+                    int numberOfGeneratorsWithMeasurments = 0;
+                    foreach (Generator genIt in generetors)
+                    {
+                        if (genIt.HasMeasurment)
+                        {
+                            totalPower += genIt.ActivePower;
+                            numberOfGeneratorsWithMeasurments++;
+                        }
+                    }
+
+                    //postavi snagu ne reprezentativnih generatrora na prosecnu vrednost reprezentativnih generatoa
+                    double averagePower = totalPower / numberOfGeneratorsWithMeasurments;
+                    foreach (Generator genIt in generetors)
+                    {
+                        if (!genIt.HasMeasurment)
+                        {
+                            genIt.ActivePower = averagePower;
+                        }
+                    }
+
+                    Dictionary<string, double> powerForProcessing = new Dictionary<string, double>(generetors.Count);
+                    foreach (Generator genIt in generetors)
+                    {
+                        powerForProcessing.Add(genIt.MRID, genIt.ActivePower);
+                    }
+
+                    //posalji snagu modulu 2
+                    kSResProxy.SendMeasurement(powerForProcessing);
+                }
+
+            }
         }
 
         public UpdateInfo GetMySystem()
         {
+            if (updateInfo == null)
+                throw new ArgumentNullException("Update is null!");
             return updateInfo;
         }
 
@@ -74,22 +142,39 @@ namespace LKRes.Services
 
         public void Add(UpdateInfo update)
         {
-            update.Generators[0].MRID = Guid.NewGuid().ToString();
-            update.Groups[0].MRID = Guid.NewGuid().ToString();
-            update.Sites[0].MRID = Guid.NewGuid().ToString();
+            if(update.Generators[0] != null)
+                update.Generators[0].MRID = Guid.NewGuid().ToString();
 
-            update.Generators[0].GroupID = update.Groups[0].MRID;
-            update.Groups[0].SiteID = update.Sites[0].MRID;
+            if(update.Groups[0] != null)
+                update.Groups[0].MRID = Guid.NewGuid().ToString();
 
-            updateInfo.Generators.Add(update.Generators[0]);
-            updateInfo.Sites.Add(update.Sites[0]);
-            updateInfo.Groups.Add(update.Groups[0]);
+            if(update.Sites[0] != null)
+                update.Sites[0].MRID = Guid.NewGuid().ToString();
+
+            //dodavanje novog generatora, grupe i sajta
+            if (update.Generators[0] != null && update.Groups[0] != null && update.Sites[0] != null)
+            {
+                update.Generators[0].GroupID = update.Groups[0].MRID;
+                update.Groups[0].SiteID = update.Sites[0].MRID;
+
+                updateInfo.Generators.Add(update.Generators[0]);
+                updateInfo.Sites.Add(update.Sites[0]);
+                updateInfo.Groups.Add(update.Groups[0]);
+            }
+            //dodavanje novog generatora i grupe. Sajt vec postoji.
+            else if (update.Generators[0] != null && update.Groups[0] != null && update.Sites[0] == null)
+            {
+                update.Generators[0].GroupID = update.Groups[0].MRID;
+
+                updateInfo.Generators.Add(update.Generators[0]);
+                updateInfo.Groups.Add(update.Groups[0]);
+            } 
         }
 
         public void Remove(UpdateInfo update)
         {
             Generator gen = null;
-            gen = updateInfo.Generators.Where(mrID => mrID.Equals(update.Generators[0].MRID)).FirstOrDefault();
+            gen = updateInfo.Generators.Where(g => g.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
 
             if(gen != null)
                 updateInfo.Generators.Remove(gen);
@@ -130,14 +215,23 @@ namespace LKRes.Services
 
         public void UpdateData(UpdateInfo update)
         {
-            Generator generator = updateInfo.Generators.Where(mrID => mrID.Equals(update.Generators[0].MRID)).FirstOrDefault();
-            generator = update.Generators[0];
+            Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
+            int index = updateInfo.Generators.IndexOf(generator);
 
-            Group group = updateInfo.Groups.Where(mrID => mrID.Equals(update.Groups[0].MRID)).FirstOrDefault();
-            group = update.Groups[0];
-            
-            Site site = updateInfo.Sites.Where(mrID => mrID.Equals(update.Sites[0].MRID)).FirstOrDefault();
-            site = update.Sites[0];
+            if (index != -1)
+                updateInfo.Generators[index] = update.Generators[0];
+
+            //nova grupa
+            if (update.Groups[0] != null)
+            {
+                updateInfo.Groups.Add(update.Groups[0]);
+            }
+
+            //novi sajt
+            if (update.Sites[0] != null)
+            {
+                updateInfo.Sites.Add(update.Sites[0]);
+            }
         }
     }
 }
