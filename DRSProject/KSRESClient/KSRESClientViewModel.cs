@@ -102,9 +102,15 @@ namespace KSRESClient
         {
             try
             {
-                Client.IssueCommand(CbSelectedItem, double.Parse(NeededPower));
+                double np = double.Parse(NeededPower);
+                if(np < 0)
+                {
+                    throw new Exception();
+                }
+                Client.IssueCommand(CbSelectedItem, np);
+
             }
-            catch
+            catch(Exception ex)
             {
                 MessageBox.Show("Needed power must be number.");
             }
