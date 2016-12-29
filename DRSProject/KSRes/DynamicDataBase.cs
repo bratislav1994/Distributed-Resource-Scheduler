@@ -14,49 +14,50 @@ namespace KSRes
 {
     public class DynamicDataBase
     {
-        private Dictionary<string, string> registrationUsers = null;
-        private List<LKResService> activeUsers = null;
+        private Dictionary<string, string> registrationService = null;
+        private List<LKResService> activeService = null;
+        private List<IKSClient> clients = new List<IKSClient>();
 
         public DynamicDataBase()
         {
-            registrationUsers = new Dictionary<string, string>();
-            activeUsers = new List<LKResService>();
+            registrationService = new Dictionary<string, string>();
+            activeService = new List<LKResService>();
 
-            Thread CheckIfLKClientIsAliveThread = new Thread(() => CheckIfLKClientIsAlive());
-            CheckIfLKClientIsAliveThread.Start();
+            Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
+            CheckIfLKServiceIsAliveThread.Start();
         }
 
-        public bool CheckRegistrationUser(string username)
+        private bool CheckRegistrationService(string username)
         {
-            string regUser = null;
+            string regService = null;
 
-            if (registrationUsers.TryGetValue(username, out regUser))
+            if (registrationService.TryGetValue(username, out regService))
             {
                 return true;
             }
             return false;
         }
 
-        public LKResService GetUserSID(string sessionID)
+        private LKResService GetServiceSID(string sessionID)
         {
-            foreach (LKResService user in activeUsers)
+            foreach (LKResService service in activeService)
             {
-                if (user.SessionID.Equals(sessionID))
+                if (service.SessionID.Equals(sessionID))
                 {
-                    return user;
+                    return service;
                 }
             }
 
             return null;
         }
 
-        public LKResService GetUser(string username)
+        public LKResService GetService(string username)
         {
-            foreach (LKResService user in activeUsers)
+            foreach (LKResService service in activeService)
             {
-                if (user.Username.Equals(username))
+                if (service.Username.Equals(username))
                 {
-                    return user;
+                    return service;
                 }
             }
 
@@ -65,50 +66,40 @@ namespace KSRes
 
         public void Registration(string username, string password)
         {
-            if (CheckRegistrationUser(username))
+            if (CheckRegistrationService(username))
             {
-                IdentificationExeption ex = new IdentificationExeption("User is exist.");
+                IdentificationExeption ex = new IdentificationExeption("Service is exist.");
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
-            registrationUsers.Add(username, password);
+            registrationService.Add(username, password);
         }
 
         public void Login(string username, string password, ILKRes channel, string sessionID)
         {
-            foreach (LKResService user in activeUsers)
+            foreach (LKResService service in activeService)
             {
-                if (user.Username.Equals(username))
+                if (service.Username.Equals(username))
                 {
-                    if (!registrationUsers[username].Equals(password))
+                    if (!registrationService[username].Equals(password))
                     {
                         IdentificationExeption ex = new IdentificationExeption("Password is not correct.");
                         throw new FaultException<IdentificationExeption>(ex);
                     }
 
-                    LKResService newUser = new LKResService(username, channel, sessionID);
-                }
-            }
-        }
-
-        public void Logout(string username)
-        {
-            foreach (LKResService user in activeUsers)
-            {
-                if (user.Username.Equals(username))
-                {
-                    activeUsers.Remove(user);
+                    LKResService newService = new LKResService(username, channel, sessionID);
+                    activeService.Add(newService);
                 }
             }
         }
 
         public void Update(string sessionID, UpdateInfo update)
         {
-            LKResService userUp = GetUserSID(sessionID);
+            LKResService serviceUp = GetServiceSID(sessionID);
 
-            if (userUp == null)
+            if (serviceUp == null)
             {
-                IdentificationExeption ex = new IdentificationExeption("User is not authenticate");
+                IdentificationExeption ex = new IdentificationExeption("Service is not authenticate");
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
@@ -121,42 +112,44 @@ namespace KSRes
             {
                 case UpdateType.ADD:
                 case UpdateType.UPDATE:
-                    AddOrUpdateSite(update.Sites, userUp);
-                    AddOrUpdateGroup(update.Groups, userUp);
-                    AddOrUpdateGenerator(update.Generators, userUp);
+                    AddOrUpdateSite(update.Sites, serviceUp);
+                    AddOrUpdateGroup(update.Groups, serviceUp);
+                    AddOrUpdateGenerator(update.Generators, serviceUp);     
                     break;
                 case UpdateType.REMOVE:
-                    RemoveSite(update.Sites, userUp);
-                    RemoveGroup(update.Groups, userUp);
-                    RemoveGenerator(update.Generators, userUp);
+                    RemoveSite(update.Sites, serviceUp);
+                    RemoveGroup(update.Groups, serviceUp);
+                    RemoveGenerator(update.Generators, serviceUp);
                     break;
             }
+
+            NotifyClients(update, serviceUp.Username);
         }
 
-        #region add/update/remove
-        public void AddOrUpdateSite(List<Site> sites, LKResService user)
+        #region private add/update/remove
+        private void AddOrUpdateSite(List<Site> sites, LKResService service)
         {
             if (sites != null)
             {
                 foreach(Site site in sites)
                 {
-                    user.Sites.Add(site);
+                    service.Sites.Add(site);
                 }
             }
         }
 
-        public void AddOrUpdateGroup(List<Group> groups, LKResService user)
+        private void AddOrUpdateGroup(List<Group> groups, LKResService service)
         {
             if (groups != null)
             {
                 foreach (Group group in groups)
                 {
-                    user.Gropus.Add(group);
+                    service.Gropus.Add(group);
                 }
             }
         }
 
-        public void AddOrUpdateGenerator(List<Generator> generators, LKResService user)
+        private void AddOrUpdateGenerator(List<Generator> generators, LKResService service)
         {
             if(generators == null)
             {
@@ -168,7 +161,7 @@ namespace KSRes
 
             foreach(Generator newGenerator in generators)
             {
-                foreach(Generator generator in user.Generators)
+                foreach(Generator generator in service.Generators)
                 {
                     if(newGenerator.MRID.Equals(generator.MRID))
                     {
@@ -193,17 +186,17 @@ namespace KSRes
                 }
             }
 
-            user.Generators.AddRange(addGenerator);
+            service.Generators.AddRange(addGenerator);
         }
 
-        public void RemoveSite(List<Site> sites, LKResService user)
+        private void RemoveSite(List<Site> sites, LKResService service)
         {
             List<Site> removeList = new List<Site>();
             if (sites != null)
             {
                 foreach (Site removesite in sites)
                 {
-                    foreach(Site site in user.Sites)
+                    foreach(Site site in service.Sites)
                     {
                         if(removesite.MRID.Equals(site.MRID))
                         {
@@ -214,19 +207,19 @@ namespace KSRes
 
                 foreach(Site site in removeList)
                 {
-                    user.Sites.Remove(site);
+                    service.Sites.Remove(site);
                 }
             }
         }
 
-        public void RemoveGroup(List<Group> groups, LKResService user)
+        private void RemoveGroup(List<Group> groups, LKResService service)
         {
             List<Group> removeList = new List<Group>();
             if (groups != null)
             {
                 foreach (Group removesite in groups)
                 {
-                    foreach (Group group in user.Gropus)
+                    foreach (Group group in service.Gropus)
                     {
                         if (removesite.MRID.Equals(group.MRID))
                         {
@@ -237,19 +230,19 @@ namespace KSRes
 
                 foreach (Group group in removeList)
                 {
-                    user.Gropus.Remove(group);
+                    service.Gropus.Remove(group);
                 }
             }
         }
 
-        public void RemoveGenerator(List<Generator> generators, LKResService user)
+        private void RemoveGenerator(List<Generator> generators, LKResService service)
         {
             List<Generator> removeList = new List<Generator>();
             if (generators != null)
             {
                 foreach (Generator removesite in generators)
                 {
-                    foreach (Generator generator in user.Generators)
+                    foreach (Generator generator in service.Generators)
                     {
                         if (removesite.MRID.Equals(generator.MRID))
                         {
@@ -260,7 +253,7 @@ namespace KSRes
 
                 foreach (Generator generator in removeList)
                 {
-                    user.Generators.Remove(generator);
+                    service.Generators.Remove(generator);
                 }
             }
         }
@@ -268,14 +261,14 @@ namespace KSRes
 
         public List<LKResService> GetAllSystem()
         {
-            return activeUsers;
+            return activeService;
         }
 
-        private void CheckIfLKClientIsAlive()
+        private void CheckIfLKServiceIsAlive()
         {
-            List<LKResService> userForRemove = new List<LKResService>();
+            List<LKResService> serviceForRemove = new List<LKResService>();
 
-            foreach(LKResService user in activeUsers)
+            foreach(LKResService user in activeService)
             {
                 try
                 {
@@ -283,18 +276,31 @@ namespace KSRes
                 }
                 catch
                 {
-                    userForRemove.Add(user);
+                    serviceForRemove.Add(user);
                 }
             }
 
-            foreach(LKResService user in userForRemove)
+            foreach(LKResService user in serviceForRemove)
             {
-                activeUsers.Remove(user);
+                activeService.Remove(user);
             }
 
-            userForRemove.Clear();
+            serviceForRemove.Clear();
 
             Thread.Sleep(1000);
+        }
+
+        public void AddClient(IKSClient client)
+        {
+            clients.Add(client);
+        }
+
+        private void NotifyClients(UpdateInfo update, string username)
+        {
+            foreach(IKSClient client in clients)
+            {
+                client.Update(update, username);
+            }
         }
     }
 }
