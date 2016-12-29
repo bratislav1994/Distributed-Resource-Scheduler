@@ -32,40 +32,6 @@ namespace LKResTest.ServicesTest
             Assert.DoesNotThrow(() => { lkResTest.GetMySystem(); });
         }
 
-        [Test]
-        public void LoginTest(string usernameTest, string passwordTest)
-        {
-
-        }
-
-        [Test]
-        public void RegistrationTest(string usernameTest, string passwordTest)
-        {
-
-        }
-
-        [Test]
-        public void UpdateTest(UpdateInfo updateTest)
-        {
-
-        }
-
-        [Test]
-        public void AddTest(UpdateInfo updateTest)
-        {
-
-        }
-
-        [Test]
-        public void RemoveTest(UpdateInfo updateTest)
-        {
-
-        }
-
-        [Test]
-        public void UpdateDataTest(UpdateInfo updateTest)
-        {
-
-        }
+        
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{FE22EAE6-876B-4C52-B1EE-EE1E03432769}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LKResTest", "LKResTest\LKResTest.csproj", "{3888CCA4-B287-4BF9-80D8-64A4C8C86D85}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSResTest", "KSResTest\KSResTest.csproj", "{685CDD25-9991-48EA-BB4E-C5FDE8057476}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KRESClientTest", "KRESClientTest\KRESClientTest.csproj", "{197D7CA5-1C1E-44C6-9B06-6832C31E86E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{685CDD25-9991-48EA-BB4E-C5FDE8057476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{685CDD25-9991-48EA-BB4E-C5FDE8057476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{685CDD25-9991-48EA-BB4E-C5FDE8057476}.Release|Any CPU.Build.0 = Release|Any CPU
+		{197D7CA5-1C1E-44C6-9B06-6832C31E86E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{197D7CA5-1C1E-44C6-9B06-6832C31E86E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{197D7CA5-1C1E-44C6-9B06-6832C31E86E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{197D7CA5-1C1E-44C6-9B06-6832C31E86E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3888CCA4-B287-4BF9-80D8-64A4C8C86D85} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 		{685CDD25-9991-48EA-BB4E-C5FDE8057476} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
+		{197D7CA5-1C1E-44C6-9B06-6832C31E86E8} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 	EndGlobalSection
 EndGlobal
