@@ -88,15 +88,15 @@ namespace KLRESClient
 
         private void CmbSelectionChanged()
         {
-            Site site = (Site)cmb.SelectedItem;
+            //Site site = (Site)cmb.SelectedItem;
 
-            foreach (Group group in ClientDatabase.Instance().Groups)
-            {
-                if (site.MRID.Equals(group.SiteID))
-                {
-                    cmb2.Items.Add(group);
-                }
-            }
+            //foreach (Group group in ClientDatabase.Instance().Groups)
+            //{
+            //    if (site.MRID.Equals(group.SiteID))
+            //    {
+            //        cmb2.Items.Add(group);
+            //    }
+            //}
         }
 
         private void Update(object sender, RoutedEventArgs e)
@@ -377,14 +377,14 @@ namespace KLRESClient
 
         private void ClickOnRadioButton1()
         {
-            panel.Children.Clear();
-            panel.Children.Add(cmb);
-            panel.Children.Add(cmb2);
+            //panel.Children.Clear();
+            //panel.Children.Add(cmb);
+            //panel.Children.Add(cmb2);
 
-            foreach (Site site in ClientDatabase.Instance().Sites)
-            {
-                cmb.Items.Add(site);
-            }
+            //foreach (Site site in ClientDatabase.Instance().Sites)
+            //{
+            //    cmb.Items.Add(site);
+            //}
         }
 
         private void radioButton2_Click(object sender, RoutedEventArgs e)
@@ -394,14 +394,14 @@ namespace KLRESClient
 
         private void ClickOnRadioButton2()
         {
-            panel.Children.Clear();
-            panel.Children.Add(cmb3);
-            panel.Children.Add(txb);
+            //panel.Children.Clear();
+            //panel.Children.Add(cmb3);
+            //panel.Children.Add(txb);
 
-            foreach (Site site in ClientDatabase.Instance().Sites)
-            {
-                cmb.Items.Add(site);
-            }
+            //foreach (Site site in ClientDatabase.Instance().Sites)
+            //{
+            //    cmb.Items.Add(site);
+            //}
         }
     }
 }

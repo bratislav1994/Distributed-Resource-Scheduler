@@ -17,18 +17,26 @@ namespace KLRESClient
         private BindingList<Generator> generators;
         private BindingList<Site> sites;
         private BindingList<Group> groups;
-        private List<bool> hasMeasurments;
+        private BindingList<bool> hasMeasurments;
         private List<GeneratorType> generatorTypes;
         private List<WorkingMode> workingModes;
+
+        private BindingList<Site> siteNames;
+        private BindingList<Group> groupNames;
+        private BindingList<Site> cmb3SiteNames;
 
         public LKClientService()
         {
             generators = new BindingList<Generator>();
             sites = new BindingList<Site>();
             groups = new BindingList<Group>();
-            hasMeasurments = new List<bool>() { true, false };
+            hasMeasurments = new BindingList<bool>() { true, false };
             generatorTypes = new List<GeneratorType>();
             workingModes = new List<WorkingMode>();
+
+            siteNames = new BindingList<Site>();
+            groupNames = new BindingList<Group>();
+            cmb3SiteNames = new BindingList<Site>();
 
             foreach (GeneratorType genType in Enum.GetValues(typeof(GeneratorType)))
             {
@@ -47,10 +55,26 @@ namespace KLRESClient
             proxy = factory.CreateChannel();
 
             getAllFromService = proxy.GetMySystem(); 
+
+            if (getAllFromService != null)
+            {
+                if (getAllFromService.Generators != null && getAllFromService.Generators.Count != 0)
+                {
+                    getAllFromService.Generators.ForEach(x => { Generators.Add(x); });
+                }
+                if (getAllFromService.Sites != null && getAllFromService.Sites.Count != 0)
+                {
+                    getAllFromService.Sites.ForEach(x => { Sites.Add(x); });
+                }
+                if (getAllFromService.Groups != null && getAllFromService.Groups.Count != 0)
+                {
+                    getAllFromService.Groups.ForEach(x => { Groups.Add(x); });
+                }
+            }
         }
 
         
-        public List<bool> HasMeasurments
+        public BindingList<bool> HasMeasurments
         {
             get
             {
@@ -152,6 +176,16 @@ namespace KLRESClient
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
+
         public BindingList<Generator> Generators
         {
             get
@@ -161,6 +195,7 @@ namespace KLRESClient
             set
             {
                 generators = value;
+                RaisePropertyChanged("Generators");
             }
         }
 
@@ -185,6 +220,45 @@ namespace KLRESClient
             set
             {
                 groups = value;
+            }
+        }
+
+        public BindingList<Site> SiteNames
+        {
+            get
+            {
+                return SiteNames;
+            }
+
+            set
+            {
+                SiteNames = value;
+            }
+        }
+
+        public BindingList<Group> GroupNames
+        {
+            get
+            {
+                return groupNames;
+            }
+
+            set
+            {
+                groupNames = value;
+            }
+        }
+
+        public BindingList<Site> Cmb3SiteNames
+        {
+            get
+            {
+                return cmb3SiteNames;
+            }
+
+            set
+            {
+                cmb3SiteNames = value;
             }
         }
 
