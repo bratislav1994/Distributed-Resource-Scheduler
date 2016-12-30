@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace LKRes.Services
 {
-    public class LKForClientService : ILKForClient
+    public class LKForClientService : ILKForClient, ILKRes
     {
         public static UpdateInfo updateInfo = new UpdateInfo();
         private IKSRes kSResProxy = null;
@@ -21,12 +21,12 @@ namespace LKRes.Services
         {
             try
             {
-                //DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-                //    new InstanceContext(this),
-                //    new NetTcpBinding(),
-                //    new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+                DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
+                    new InstanceContext(this),
+                    new NetTcpBinding(),
+                    new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
-                //kSResProxy = ksResFactory.CreateChannel();
+                kSResProxy = ksResFactory.CreateChannel();
             }
             catch (InvalidOperationException ex)
             {
@@ -35,6 +35,27 @@ namespace LKRes.Services
             
             Thread ChangePowerThread = new Thread(ChangeActivePower);
             ChangePowerThread.Start();
+        }
+
+        public string Ping()
+        {
+            return "OK";
+        }
+
+        public void SendSetPoint(List<SetPoint> setPoints)
+        {
+            UpdateInfo update = new UpdateInfo();
+            update.UpdateType = UpdateType.UPDATE;
+            update.Groups = null;
+            update.Sites = null;
+            foreach (SetPoint setpoint in setPoints)
+            {
+                Generator generator = LKForClientService.updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
+                generator.SetPoint = setpoint.Setpoint;
+                update.Generators.Add(generator);
+            }
+            Thread.Sleep(2500);
+            client.Update(update);
         }
 
         public void ChangeActivePower()
@@ -151,7 +172,7 @@ namespace LKRes.Services
                     UpdateData(update);
                 break;
             }
-
+            kSResProxy.Update(update);
             notifyThread = new Thread(() => NotifyClient(update));
             notifyThread.Start();
         }

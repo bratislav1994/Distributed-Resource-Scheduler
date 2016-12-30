@@ -112,12 +112,14 @@ namespace KSRes.Services
                             diff -= diff1;
                             setPoint.GeneratorID = remoteGenerator.MRID;
                             setPoint.Setpoint = remoteGenerator.Pmax;
+                            setPoints.Add(setPoint);
                         }
                         else if (diff <= diff1)
                         {
                             setPoint.GeneratorID = remoteGenerator.MRID;
                             setPoint.Setpoint = remoteGenerator.ActivePower + diff;
                             diff = 0;
+                            setPoints.Add(setPoint);
                             break;
                         }
                     }
@@ -139,6 +141,7 @@ namespace KSRes.Services
                                 setPoint.GeneratorID = remoteGenerator.MRID;
                                 setPoint.Setpoint = 0;
                                 diff -= remoteGenerator.ActivePower;
+                                setPoints.Add(setPoint);
                             }
                             else
                             {
@@ -147,6 +150,7 @@ namespace KSRes.Services
                                     setPoint.GeneratorID = remoteGenerator.MRID;
                                     setPoint.Setpoint = remoteGenerator.ActivePower - diff;
                                     diff = 0;
+                                    setPoints.Add(setPoint);
                                     break;
                                 }
                                 else
@@ -154,6 +158,7 @@ namespace KSRes.Services
                                     setPoint.GeneratorID = remoteGenerator.MRID;
                                     setPoint.Setpoint = remoteGenerator.Pmin;
                                     diff -= remoteGenerator.Pmin;
+                                    setPoints.Add(setPoint);
                                 }
                             }
                         }
@@ -161,6 +166,7 @@ namespace KSRes.Services
                 }
             }
 
+            dynamicDataBase.GetService(username).Client.SendSetPoint(setPoints);
         }
 
         #endregion IKSForClient

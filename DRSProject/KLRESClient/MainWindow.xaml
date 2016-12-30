@@ -7,23 +7,23 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="825">
     <Grid Background="#FF526B87">
-        <Canvas x:Name="canvas" Margin="120,20,0,50" HorizontalAlignment="Left" Width="680" Background="White">
+        <Canvas x:Name="canvas" Margin="115,60,0,10.4" HorizontalAlignment="Left" Width="680" Background="White">
 
-            <DataGrid x:Name="dataGridGenerators" SelectedItem="{Binding SelectedItem}" CanUserAddRows="false" ItemsSource="{Binding LKClientService.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="140" VerticalAlignment="Top" Width="650" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" Grid.Row="1" Canvas.Left="10" Canvas.Top="68">
+            <DataGrid x:Name="dataGridGenerators" SelectedItem="{Binding SelectedItem}" CanUserAddRows="false" ItemsSource="{Binding Client.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="135" VerticalAlignment="Top" Width="680" SelectionMode="Single" IsReadOnly="True" Foreground="#FF1C3A46" BorderBrush="{x:Null}" >
                 <DataGrid.Background>
                     <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
                 </DataGrid.Background>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="mrID" Binding="{Binding mrID}"/>
-                    <DataGridTextColumn Header="name" Binding="{Binding name}"/>
-                    <DataGridTextColumn Header="activePower" Binding="{Binding activePower}"/>
-                    <DataGridTextColumn Header="basePoint" Binding="{Binding basePoint}"/>
-                    <DataGridTextColumn Header="hasMeasurment" Binding="{Binding hasMeasurment}"/>
-                    <DataGridTextColumn Header="pmin" Width="40" Binding="{Binding pmin}"/>
-                    <DataGridTextColumn Header="pmax" Width="40" Binding="{Binding pmax}"/>
-                    <DataGridTextColumn Header="price" Width="40" Binding="{Binding price}"/>
-                    <DataGridTextColumn Header="generatorType" Binding="{Binding generatorType}"/>
-                    <DataGridTextColumn Header="workingMode" Width="*" Binding="{Binding workingMode}"/>
+                    <DataGridTextColumn Header="mrID" Binding="{Binding MRID}"/>
+                    <DataGridTextColumn Header="name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="activePower" Binding="{Binding ActivePower}"/>
+                    <DataGridTextColumn Header="basePoint" Binding="{Binding BasePoint}"/>
+                    <DataGridTextColumn Header="hasMeasurment" Binding="{Binding HasMeasurment}"/>
+                    <DataGridTextColumn Header="pmin" Width="40" Binding="{Binding Pmin}"/>
+                    <DataGridTextColumn Header="pmax" Width="40" Binding="{Binding Pmax}"/>
+                    <DataGridTextColumn Header="price" Width="40" Binding="{Binding Price}"/>
+                    <DataGridTextColumn Header="generatorType" Binding="{Binding GeneratorType}"/>
+                    <DataGridTextColumn Header="workingMode" Width="*" Binding="{Binding WorkingMode}"/>
                 </DataGrid.Columns>
             </DataGrid>
 

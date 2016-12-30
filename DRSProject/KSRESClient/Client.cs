@@ -71,6 +71,10 @@ namespace KSRESClient
             proxy = factory.CreateChannel();
 
             allUsers = proxy.GetAllSystem();
+            foreach(LKResService user in allUsers)
+            {
+                userNames.Add(user.Username);
+            }
             FillListForShowing();
         }
         public BindingList<Generator> Generators
@@ -110,6 +114,13 @@ namespace KSRESClient
             switch(update.UpdateType)
             {
                 case UpdateType.ADD:
+                    LKResService client = allUsers.Where(cln => cln.Username.Equals(username)).FirstOrDefault();
+                    if(client == null)
+                    {
+                        client = new LKResService(username, null, null);
+                        allUsers.Add(client);
+                        userNames.Add(client.Username);
+                    }
                     foreach(LKResService user in allUsers)
                     {
                         if(user.Username.Equals(username))

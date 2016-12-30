@@ -119,6 +119,7 @@ namespace KSRes
                 LKResService newService = new LKResService(username, channel, sessionID);
                 lock (lockObj)
                 {
+                    Console.WriteLine("User: {0} je logovan.", username);
                     ActiveService.Add(newService);
                 }
             }

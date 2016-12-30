@@ -933,7 +933,7 @@ namespace KLRESClient
                         CmbVisibility = Visibility.Hidden;
                         Cmb2Visibility = Visibility.Hidden;
                         Cmb3Visibility = Visibility.Visible;
-                        CmbVisibility = Visibility.Visible;
+                        TxbVisibility = Visibility.Visible;
                         //CreateCommand.RaiseCanExecuteChanged();
                     }
                     

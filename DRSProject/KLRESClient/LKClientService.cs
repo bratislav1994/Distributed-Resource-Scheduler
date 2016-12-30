@@ -54,6 +54,8 @@ namespace KLRESClient
                         new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
             proxy = factory.CreateChannel();
 
+            proxy.Registration("proba", "proba");
+            proxy.Login("proba", "proba");
             getAllFromService = proxy.GetMySystem();
 
             if (getAllFromService != null)
@@ -153,7 +155,7 @@ namespace KLRESClient
                         Generator gen = Generators.SingleOrDefault(p => p.MRID == update.Generators[0].MRID);
                         if (gen != null)
                         {
-                            gen = update.Generators[0];
+                            gen.ActivePower = update.Generators[0].ActivePower;
                         }
                     }
                     if (update.Groups != null)
