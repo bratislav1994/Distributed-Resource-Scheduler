@@ -8,7 +8,7 @@ using CommonLibrary.Interfaces;
 
 namespace LKRes.Services
 {
-    class LKResService : ILKRes
+    public class LKResService : ILKRes
     {
         public string Ping()
         {
