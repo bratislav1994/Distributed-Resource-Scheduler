@@ -15,21 +15,29 @@ namespace LKRes.Services
     {
         public static UpdateInfo updateInfo = new UpdateInfo();
         private IKSRes kSResProxy = null;
-
+        private ILKClient client = null;
+        Thread notifyThread = null;
         public LKForClientService()
         {
-            DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-                new InstanceContext(this),
-                new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+            try
+            {
+                //DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
+                //    new InstanceContext(this),
+                //    new NetTcpBinding(),
+                //    new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
-            kSResProxy = ksResFactory.CreateChannel();
-
+                //kSResProxy = ksResFactory.CreateChannel();
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine("Error: {0}.", ex.Message);
+            }
+            
             Thread ChangePowerThread = new Thread(ChangeActivePower);
             ChangePowerThread.Start();
         }
 
-        private void ChangeActivePower()
+        public void ChangeActivePower()
         {
             Random randGenerator = new Random();
             while (true)
@@ -86,7 +94,7 @@ namespace LKRes.Services
                     }
 
                     //posalji snagu modulu 2
-                    kSResProxy.SendMeasurement(powerForProcessing);
+                    //kSResProxy.SendMeasurement(powerForProcessing);
                 }
 
             }
@@ -94,8 +102,8 @@ namespace LKRes.Services
 
         public UpdateInfo GetMySystem()
         {
-            if (updateInfo == null)
-                throw new ArgumentNullException("Update is null!");
+            OperationContext context = OperationContext.Current;
+            client = context.GetCallbackChannel<ILKClient>();
             return updateInfo;
         }
 
@@ -108,6 +116,7 @@ namespace LKRes.Services
             catch (FaultException<IdentificationExeption> ex)
             {
                 Console.WriteLine("Error: {0}", ex.Message);
+                throw ex;
             }
         }
 
@@ -120,12 +129,16 @@ namespace LKRes.Services
             catch (FaultException<IdentificationExeption> ex)
             {
                 Console.WriteLine("Error: {0}", ex.Message);
+                throw ex;
             }
             
         }
 
         public void Update(UpdateInfo update)
         {
+            if (update == null)
+                throw new ArgumentNullException("Update can't be null!");
+
             switch (update.UpdateType)
             {
                 case UpdateType.ADD:
@@ -138,6 +151,9 @@ namespace LKRes.Services
                     UpdateData(update);
                 break;
             }
+
+            notifyThread = new Thread(() => NotifyClient(update));
+            notifyThread.Start();
         }
 
         public void Add(UpdateInfo update)
@@ -232,6 +248,12 @@ namespace LKRes.Services
             {
                 updateInfo.Sites.Add(update.Sites[0]);
             }
+        }
+
+        private void NotifyClient(UpdateInfo update)
+        {
+            Thread.Sleep(50);
+            client.Update(update);
         }
     }
 }

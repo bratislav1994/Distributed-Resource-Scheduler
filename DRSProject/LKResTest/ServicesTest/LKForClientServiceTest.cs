@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using CommonLibrary;
 using LKRes.Services;
+using System.ServiceModel;
 
 namespace LKResTest.ServicesTest
 {
     [TestFixture]
     public class LKForClientServiceTest
     {
-        private LKForClientService lkResTest;
+        private LKForClientService lkResTest = null;
 
         [OneTimeSetUp]
         public void SetupTest()
@@ -27,11 +28,35 @@ namespace LKResTest.ServicesTest
         }
 
         [Test]
-        public void GetMySystemTest()
+        public void ChangeActivePowerTest()
         {
-            Assert.DoesNotThrow(() => { lkResTest.GetMySystem(); });
-        }
+            LKForClientService.updateInfo = new UpdateInfo()
+            {
+                Generators = new List<Generator>()
+                {
+                   new Generator()
+                   {
 
-        
+                      MRID = "generator 1",
+                      GroupID = "group 1",
+                      WorkingMode = WorkingMode.LOCAL,
+                      HasMeasurment = true
+                   }
+                },
+                Groups = new List<Group>()
+                 {
+                     new Group()
+                     {
+                         MRID = "group 1"
+                     }
+                 },
+                Sites = new List<Site>()
+                {
+
+                }
+            };
+
+            lkResTest.ChangeActivePower();
+        }
     }
 }
