@@ -20,7 +20,7 @@ namespace KLRESClient
 
         public LKRESClientViewModel()
         {
-            client = new LKClientService();
+            client = new LKClientService(); 
             Txb8Visibility = Visibility.Visible;
             Txb9Visibility = Visibility.Visible;
             CmbVisibility = Visibility.Hidden;
