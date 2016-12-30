@@ -44,7 +44,7 @@
             <ComboBoxItem >REMOTE</ComboBoxItem>
         </ComboBox>
 
-        <Button x:Name="button" Command="{Binding CreateCommand}" Content="Create" Height="50" Width="70" HorizontalAlignment="Left" Margin="40,260,0,0" VerticalAlignment="Top">
+        <Button x:Name="button" Command="{Binding CreateCommand}" Content="Create" Height="50" Width="70" HorizontalAlignment="Left" Margin="40,260,0,0" VerticalAlignment="Top" Click="Click">
             <Button.Style>
                 <Style  TargetType="{x:Type Button}">
                     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -135,18 +135,18 @@
             </Button.Style>
         </Button>
 
-        <RadioButton x:Name="radioButton" Command="{Binding RadioButtonn}" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" />
-        <RadioButton x:Name="radioButton1" Command="{Binding RadioButtonn1}" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" />
-        <RadioButton x:Name="radioButton2" Command="{Binding RadioButtonn2}" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="radioButton" IsChecked="{Binding RadioButton, Mode=TwoWay}" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="radioButton1" IsChecked="{Binding RadioButton1, Mode=TwoWay}" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="radioButton2" IsChecked="{Binding RadioButton2, Mode=TwoWay}" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" />
         <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="215,178,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="215,198,0,0" VerticalAlignment="Top"/>
 
-        <TextBox x:Name="text_box8" Text ="{Binding SiteName}" Visibility="{Binding Txb8Visibility}" HorizontalAlignment="Left" Height="23" Margin="180,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="text_box9" Text ="{Binding GroupName}" Visibility="{Binding Txb9Visibility, FallbackValue=Visible}" HorizontalAlignment="Left" Height="23" Margin="315,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb" DisplayMemberPath="Name" SelectedItem="{Binding CmbSiteNameSelectedItem}" Visibility="{Binding CmbVisibility, FallbackValue=Hidden}" ItemsSource="{Binding LKClientService.SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb2" DisplayMemberPath="Name" SelectedItem="{Binding Cmb2SiteNameSelectedItem}" Visibility="{Binding Cmb2Visibility, FallbackValue=Hidden}" ItemsSource="{Binding LKClientService.GroupNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,205,0,0" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb3" DisplayMemberPath="Name" SelectedItem="{Binding Cmb3SiteNameSelectedItem}" Visibility="{Binding Cmb3Visibility, FallbackValue=Hidden}" ItemsSource="{Binding LKClientService.Cmb3SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="txb" Text ="{Binding TxbGroupName}" Visibility="{Binding TxbVisibility, FallbackValue=Hidden}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box8" Text ="{Binding SiteName}" Visibility="{Binding Txb8Visibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="180,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box9" Text ="{Binding GroupName}" Visibility="{Binding Txb9Visibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb" DisplayMemberPath="Name" SelectedItem="{Binding CmbSiteNameSelectedItem}" Visibility="{Binding CmbVisibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding LKClientService.SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb2" DisplayMemberPath="Name" SelectedItem="{Binding Cmb2SiteNameSelectedItem}" Visibility="{Binding Cmb2Visibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding LKClientService.GroupNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,205,0,0" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb3" DisplayMemberPath="Name" SelectedItem="{Binding Cmb3SiteNameSelectedItem}" Visibility="{Binding Cmb3Visibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding LKClientService.Cmb3SiteNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="txb" Text ="{Binding TxbGroupName}" Visibility="{Binding TxbVisibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
 
     </Grid>

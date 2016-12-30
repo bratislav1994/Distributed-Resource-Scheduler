@@ -44,7 +44,8 @@ namespace KLRESClient
 
         private void Create(object sender, RoutedEventArgs e)
         {
-            CreateUpdateInfoInstance();
+            //CreateUpdateInfoInstance();
+            this.Close();
         }
 
         private void CreateUpdateInfoInstance()
@@ -289,6 +290,11 @@ namespace KLRESClient
             //{
             //    cmb3.Items.Add(site);
             //}
+        }
+
+        private void Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

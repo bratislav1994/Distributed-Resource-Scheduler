@@ -21,7 +21,12 @@ namespace KLRESClient
         public LKRESClientViewModel()
         {
             client = new LKClientService();
-            txb8Visibility = false;
+            Txb8Visibility = Visibility.Visible;
+            Txb9Visibility = Visibility.Visible;
+            CmbVisibility = Visibility.Hidden;
+            Cmb2Visibility = Visibility.Hidden;
+            Cmb3Visibility = Visibility.Hidden;
+            TxbVisibility = Visibility.Hidden;
             radioButton = true;
         }
 
@@ -477,8 +482,8 @@ namespace KLRESClient
             }
         }
 
-        private bool txb8Visibility;
-        public bool Txb8Visibility
+        private Visibility txb8Visibility;
+        public Visibility Txb8Visibility
         {
             get
             {
@@ -891,35 +896,47 @@ namespace KLRESClient
                 {
                     CreateCommand.RaiseCanExecuteChanged();
                 }
-                //else if (propName.Equals("RadioButton"))
-                //{
-                //    txb8Visibility = Visibility.Visible;
-                //    txb9Visibility = Visibility.Visible;
-                //    cmbVisibility = Visibility.Hidden;
-                //    cmb2Visibility = Visibility.Hidden;
-                //    cmb3Visibility = Visibility.Hidden;
-                //    txbVisibility = Visibility.Hidden;
-                //    CreateCommand.RaiseCanExecuteChanged();
-                //}
+                else if (propName.Equals("RadioButton"))
+                {
+                    if (radioButton)
+                    {
+                        Txb8Visibility = Visibility.Visible;
+                        Txb9Visibility = Visibility.Visible;
+                        CmbVisibility = Visibility.Hidden;
+                        Cmb2Visibility = Visibility.Hidden;
+                        Cmb3Visibility = Visibility.Hidden;
+                        TxbVisibility = Visibility.Hidden;
+                        //CreateCommand.RaiseCanExecuteChanged();
+                    }
+                    
+                }
                 else if (propName.Equals("RadioButton1"))
                 {
-                    txb8Visibility = false;
-                    txb9Visibility = Visibility.Hidden;
-                    cmbVisibility = Visibility.Visible;
-                    cmb2Visibility = Visibility.Visible;
-                    cmb3Visibility = Visibility.Hidden;
-                    txbVisibility = Visibility.Hidden;
-                    CreateCommand.RaiseCanExecuteChanged();
+                    if (radioButton1)
+                    {
+                        Txb8Visibility = Visibility.Hidden;
+                        Txb9Visibility = Visibility.Hidden;
+                        CmbVisibility = Visibility.Visible;
+                        Cmb2Visibility = Visibility.Visible;
+                        Cmb3Visibility = Visibility.Hidden;
+                        TxbVisibility = Visibility.Hidden;
+                        //CreateCommand.RaiseCanExecuteChanged();
+                    }
+                    
                 }
                 else if (propName.Equals("RadioButton2"))
                 {
-                    txb8Visibility = false;
-                    txb9Visibility = Visibility.Hidden;
-                    cmbVisibility = Visibility.Hidden;
-                    cmb2Visibility = Visibility.Hidden;
-                    cmb3Visibility = Visibility.Visible;
-                    txbVisibility = Visibility.Visible;
-                    CreateCommand.RaiseCanExecuteChanged();
+                    if (radioButton2)
+                    {
+                        Txb8Visibility = Visibility.Hidden;
+                        Txb9Visibility = Visibility.Hidden;
+                        CmbVisibility = Visibility.Hidden;
+                        Cmb2Visibility = Visibility.Hidden;
+                        Cmb3Visibility = Visibility.Visible;
+                        CmbVisibility = Visibility.Visible;
+                        //CreateCommand.RaiseCanExecuteChanged();
+                    }
+                    
                 }
                 else if (propName.Equals("SiteName"))
                 {
@@ -1088,7 +1105,7 @@ namespace KLRESClient
             radioButton = true;
             radioButton1 = false;
             radioButton2 = false;
-            txb8Visibility = true;
+            txb8Visibility = Visibility.Visible;
             txb9Visibility = Visibility.Visible;
             cmbVisibility = Visibility.Hidden;
             cmb2Visibility = Visibility.Hidden;
@@ -1120,7 +1137,7 @@ namespace KLRESClient
             radioButton = false;
             radioButton1 = true;
             radioButton2 = false;
-            txb8Visibility = false;
+            txb8Visibility = Visibility.Hidden;
             txb9Visibility = Visibility.Hidden;
             cmbVisibility = Visibility.Visible;
             cmb2Visibility = Visibility.Visible;
@@ -1152,7 +1169,7 @@ namespace KLRESClient
             radioButton = false;
             radioButton1 = false;
             radioButton2 = true;
-            txb8Visibility = false;
+            txb8Visibility = Visibility.Hidden;
             txb9Visibility = Visibility.Hidden;
             cmbVisibility = Visibility.Hidden;
             cmb2Visibility = Visibility.Hidden;

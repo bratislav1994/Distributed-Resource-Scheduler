@@ -26,9 +26,10 @@ namespace KLRESClient
 
         public MainWindow()
         {
+            
+            InitializeComponent();
             LKRESClientViewModel model = new LKRESClientViewModel();
             DataContext = model;
-            InitializeComponent();
         }
 
         private void AddGenerator(object sender, RoutedEventArgs e)
