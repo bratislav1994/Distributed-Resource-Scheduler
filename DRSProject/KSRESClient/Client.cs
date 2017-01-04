@@ -25,45 +25,7 @@ namespace KSRESClient
             UserNames = new List<string>();
             userNames.Add("All");
             currentUser = null;
-            /*for (int i = 0; i < 5; i++)
-            {
-                LKResService user = new LKResService("user" + (i + 1), null, null);
-                Site site = new Site();
-                site.MRID = Guid.NewGuid().ToString();
-                site.Name = "site" + i;
-                user.Sites.Add(site);
-                Group group = new Group();
-                group.MRID = Guid.NewGuid().ToString();
-                group.Name = "group" + i;
-                group.SiteID = site.MRID;
-                user.Gropus.Add(group);
-                allUsers.Add(user);
-                userNames.Add(user.Username);
-            }
-            int j = 0;
-            for (int i = 1; i < 11; i++,j++)
-            {
-                Generator g = new Generator();
-                g.ActivePower = i * 100;
-                g.BasePoint = i * 100;
-                g.GeneratorType = GeneratorType.SOLAR;
-                g.HasMeasurment = true;
-                g.MRID = Guid.NewGuid().ToString();
-                g.Name = "gen" + i;
-                g.Pmax = i * 100;
-                g.Pmin = 0;
-                g.Price = i * 150;
-                g.SetPoint = i * 100;
-                g.WorkingMode = WorkingMode.REMOTE;
-                
-                if(j == 5)
-                {
-                    j = 0;
-                }
-                g.GroupID = allUsers[j].Gropus.First().MRID;
-                allUsers[j].Generators.Add(g);
-            }
-            */
+
             DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
                     new InstanceContext(this),
                         new NetTcpBinding(),
