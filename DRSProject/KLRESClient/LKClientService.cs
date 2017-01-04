@@ -1,62 +1,129 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommonLibrary;
-using CommonLibrary.Interfaces;
-using System.ComponentModel;
-using System.ServiceModel;
+﻿// <copyright file="LKClientService.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace KLRESClient
 {
+    using System;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.ServiceModel;
+    using CommonLibrary;
+    using CommonLibrary.Interfaces;
+    using System.IO;
+
+    /// <summary>
+    /// Implement interface ILKClient
+    /// </summary>
     public class LKClientService : ILKClient
     {
-        private UpdateInfo getAllFromService;
+        #region fields
+
+        /// <summary>
+        /// Represent service
+        /// </summary>
         private ILKForClient proxy = null;
-        private BindingList<Generator> generators;
-        private BindingList<Site> sites;
-        private BindingList<Group> groups;
-        private BindingList<bool> hasMeasurments;
-        private List<GeneratorType> generatorTypes;
-        private List<WorkingMode> workingModes;
 
-        private BindingList<Site> siteNames;
-        private BindingList<Group> groupNames;
-        private BindingList<Site> cmb3SiteNames;
+        /// <summary>
+        /// Generators bind to data grid
+        /// </summary>
+        private BindingList<Generator> generators = null;
 
+        /// <summary>
+        /// Sites bind to combo box
+        /// </summary>
+        private BindingList<Site> sites = null;
+
+        /// <summary>
+        /// Groups bind to combo box
+        /// </summary>
+        private BindingList<Group> groups = null;
+
+        /// <summary>
+        /// Bind to combo box with true or false values
+        /// </summary>
+        private BindingList<bool> hasMeasurments = null;
+
+        /// <summary>
+        /// Enum bind to combo box
+        /// </summary>
+        private BindingList<GeneratorType> generatorTypes = null;
+
+        /// <summary>
+        /// Enum bind to combo box
+        /// </summary>
+        private BindingList<WorkingMode> workingModes = null;
+
+        /// <summary>
+        /// List of groups bind to combo box depending on the selected site
+        /// </summary>
+        private BindingList<Group> groupNames = null;
+
+        /// <summary>
+        /// List of site bind to combo box
+        /// </summary>
+        private BindingList<Site> siteNames = null;
+
+        /// <summary>
+        /// List of groups bind to combo box in edit window
+        /// </summary>
+        private BindingList<Group> editGroupNames = null;
+
+        /// <summary>
+        /// Data context of master view model
+        /// </summary>
+        private object dataContext = null;
+
+        #endregion
+
+        #region constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LKClientService" /> class.
+        /// </summary>
         public LKClientService()
         {
-            generators = new BindingList<Generator>();
-            sites = new BindingList<Site>();
-            groups = new BindingList<Group>();
-            hasMeasurments = new BindingList<bool>() { true, false };
-            generatorTypes = new List<GeneratorType>();
-            workingModes = new List<WorkingMode>();
-
-            siteNames = new BindingList<Site>();
-            groupNames = new BindingList<Group>();
-            cmb3SiteNames = new BindingList<Site>();
+            this.generators = new BindingList<Generator>();
+            this.sites = new BindingList<Site>();
+            this.groups = new BindingList<Group>();
+            this.hasMeasurments = new BindingList<bool>() { true, false };
+            this.generatorTypes = new BindingList<GeneratorType>();
+            this.workingModes = new BindingList<WorkingMode>();
+            this.groupNames = new BindingList<Group>();
+            this.editGroupNames = new BindingList<Group>();
+            this.siteNames = new BindingList<Site>();
 
             foreach (GeneratorType genType in Enum.GetValues(typeof(GeneratorType)))
             {
-                generatorTypes.Add(genType);
+                this.generatorTypes.Add(genType);
             }
 
             foreach (WorkingMode workMode in Enum.GetValues(typeof(WorkingMode)))
             {
-                workingModes.Add(workMode);
+                this.workingModes.Add(workMode);
             }
 
             DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
                     new InstanceContext(this),
                         new NetTcpBinding(),
                         new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
-            proxy = factory.CreateChannel();
 
-            proxy.Registration("proba", "proba");
-            proxy.Login("proba", "proba");
-            getAllFromService = proxy.GetMySystem();
+            UpdateInfo getAllFromService = null;
+
+            try
+            {
+                //this.proxy = factory.CreateChannel();
+
+                //this.proxy.Registration("proba", "proba");
+                //this.proxy.Login("proba", "proba");
+                //getAllFromService = this.proxy.GetMySystem();
+            }
+            catch
+            {
+                throw new EndpointNotFoundException();
+            }
 
             if (getAllFromService != null)
             {
@@ -64,10 +131,12 @@ namespace KLRESClient
                 {
                     getAllFromService.Generators.ForEach(x => { Generators.Add(x); });
                 }
+
                 if (getAllFromService.Sites != null && getAllFromService.Sites.Count != 0)
                 {
                     getAllFromService.Sites.ForEach(x => { Sites.Add(x); });
                 }
+
                 if (getAllFromService.Groups != null && getAllFromService.Groups.Count != 0)
                 {
                     getAllFromService.Groups.ForEach(x => { Groups.Add(x); });
@@ -75,209 +144,339 @@ namespace KLRESClient
             }
         }
 
+        #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// The source of the event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets combo box of measurements
+        /// </summary>
         public BindingList<bool> HasMeasurments
         {
             get
             {
-                return hasMeasurments;
+                return this.hasMeasurments;
             }
+
             set
             {
-                hasMeasurments = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.hasMeasurments = value;
             }
         }
 
-        public List<GeneratorType> GeneratorTypes
+        /// <summary>
+        /// Gets or sets types of generator
+        /// </summary>
+        public BindingList<GeneratorType> GeneratorTypes
         {
             get
             {
-                return generatorTypes;
+                return this.generatorTypes;
             }
+
             set
             {
-                generatorTypes = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.generatorTypes = value;
             }
         }
 
-        public List<WorkingMode> WorkingModes
+        /// <summary>
+        /// Gets or sets working mode
+        /// </summary>
+        public BindingList<WorkingMode> WorkingModes
         {
             get
             {
-                return workingModes;
+                return this.workingModes;
             }
+
             set
             {
-                workingModes = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.workingModes = value;
             }
         }
 
-        public void Command(UpdateInfo update)
-        {
-            proxy.Update(update);
-        }
-
-        public void Update(UpdateInfo update)
-        {
-            switch (update.UpdateType)
-            {
-                case UpdateType.ADD:
-                    if (update.Generators != null)
-                    {
-                        Generators.Add(update.Generators[0]);
-                    }
-                    if (update.Groups != null)
-                    {
-                        Groups.Add(update.Groups[0]);
-                    }
-                    if (update.Sites != null)
-                    {
-                        Sites.Add(update.Sites[0]);
-                    }
-                    break;
-                case UpdateType.REMOVE:
-                    if (update.Generators != null)
-                    {
-                        Generators.Remove(update.Generators[0]);
-                    }
-                    if (update.Groups != null)
-                    {
-                        Groups.Remove(update.Groups[0]);
-                    }
-                    if (update.Sites != null)
-                    {
-                        Sites.Remove(update.Sites[0]);
-                    }
-                    break;
-                case UpdateType.UPDATE:
-                    if (update.Generators != null)
-                    {
-                        Generator gen = Generators.SingleOrDefault(p => p.MRID == update.Generators[0].MRID);
-                        if (gen != null)
-                        {
-                            gen.ActivePower = update.Generators[0].ActivePower;
-                        }
-                    }
-                    if (update.Groups != null)
-                    {
-                        Group group = Groups.SingleOrDefault(p => p.MRID == update.Groups[0].MRID);
-                        if (group != null)
-                        {
-                            group = update.Groups[0];
-                        }
-                    }
-                    if (update.Sites != null)
-                    {
-                        Site site = Sites.SingleOrDefault(p => p.MRID == update.Sites[0].MRID);
-                        if (site != null)
-                        {
-                            site = update.Sites[0];
-                        }
-                    }
-                    break;
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string propName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-            }
-        }
-
+        /// <summary>
+        /// Gets or sets generators
+        /// </summary>
         public BindingList<Generator> Generators
         {
             get
             {
-                return generators;
+                return this.generators;
             }
+
             set
             {
-                generators = value;
-                RaisePropertyChanged("Generators");
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.generators = value;
+                this.RaisePropertyChanged("Generators");
             }
         }
 
+        /// <summary>
+        /// Gets or sets sites
+        /// </summary>
         public BindingList<Site> Sites
         {
             get
             {
-                return sites;
+                return this.sites;
             }
+
             set
             {
-                sites = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.sites = value;
             }
         }
 
+        /// <summary>
+        /// Gets or sets groups
+        /// </summary>
         public BindingList<Group> Groups
         {
             get
             {
-                return groups;
+                return this.groups;
             }
+
             set
             {
-                groups = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.groups = value;
             }
         }
 
+        /// <summary>
+        /// Gets or sets site names
+        /// </summary>
         public BindingList<Site> SiteNames
         {
             get
             {
-                return SiteNames;
+                return this.siteNames;
             }
 
             set
             {
-                SiteNames = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.siteNames = value;
             }
         }
 
+        /// <summary>
+        /// Gets or sets group names
+        /// </summary>
         public BindingList<Group> GroupNames
         {
             get
             {
-                return groupNames;
+                return this.groupNames;
             }
 
             set
             {
-                groupNames = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.groupNames = value;
             }
         }
 
-        public BindingList<Site> Cmb3SiteNames
+        /// <summary>
+        /// Gets or sets group names for edit window
+        /// </summary>
+        public BindingList<Group> EditGroupNames
         {
             get
             {
-                return cmb3SiteNames;
+                return this.editGroupNames;
             }
 
             set
             {
-                cmb3SiteNames = value;
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.editGroupNames = value;
             }
         }
 
-        public string GetGroupNameFromId(string mrId)
+        /// <summary>
+        /// Gets or sets data context
+        /// </summary>
+        public object DataContext
         {
-            Group group = Groups.SingleOrDefault(p => p.MRID == mrId);
-            if (group != null)
+            get
             {
-                return group.Name;
+                return this.dataContext;
             }
 
-            return null;
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.dataContext = value;
+            }
         }
 
-        public Group GetGroupFromId(string mrId)
+        #endregion
+
+        #region Send UpdateInfo to service
+
+        /// <summary>
+        /// Represents the method that will send to LKRES service update info object
+        /// </summary>
+        /// <param name="update">update info which will be sent to service</param>
+        public void Command(UpdateInfo update)
         {
-            Group group = Groups.SingleOrDefault(p => p.MRID == mrId);
+            if (update == null)
+            {
+                throw new InvalidDataException();
+            }
+
+            this.proxy.Update(update);
+        }
+
+        #endregion
+
+        #region Receive UpdateInfo
+
+        /// <summary>
+        /// Represents the method that will receive update info object from LKRES service
+        /// </summary>
+        /// <param name="update">update info which will be receive from service</param>
+        public void Update(UpdateInfo update)
+        {
+            if (update == null)
+            {
+                throw new InvalidDataException();
+            }
+
+            switch (update.UpdateType)
+            {
+                case UpdateType.ADD:
+                    this.Generators.Add(update.Generators[0]);
+
+                    if (update.Groups != null)
+                    {
+                        this.Groups.Add(update.Groups[0]);
+                    }
+
+                    if (update.Sites != null)
+                    {
+                        this.Sites.Add(update.Sites[0]);
+                    }
+
+                    break;
+                case UpdateType.REMOVE:
+                    if (update.Generators != null)
+                    {
+                        this.Generators.Remove(this.Generators.SingleOrDefault(g => g.MRID.Equals(update.Generators[0].MRID)));
+                    }
+
+                    if (update.Groups != null)
+                    {
+                        this.Groups.Remove(this.Groups.SingleOrDefault(g => g.MRID.Equals(update.Groups[0].MRID)));
+                    }
+
+                    if (update.Sites != null)
+                    {
+                        this.Sites.Remove(this.Sites.SingleOrDefault(s => s.MRID.Equals(update.Groups[0].SiteID)));
+                    }
+
+                    break;
+                case UpdateType.UPDATE:
+                    if (update.Generators != null)
+                    {
+                        Generator gen = this.Generators.SingleOrDefault(p => p.MRID.Equals(update.Generators[0].MRID));
+
+                        if (gen != null)
+                        {
+                            gen.ActivePower = update.Generators[0].ActivePower;
+                            gen.GroupID = update.Generators[0].GroupID;
+                            gen.BasePoint = update.Generators[0].BasePoint;
+                            gen.GeneratorType = update.Generators[0].GeneratorType;
+                            gen.HasMeasurment = update.Generators[0].HasMeasurment;
+                            gen.Pmax = update.Generators[0].Pmax;
+                            gen.Pmin = update.Generators[0].Pmin;
+                            gen.Price = update.Generators[0].Price;
+                            gen.SetPoint = update.Generators[0].SetPoint;
+                            gen.WorkingMode = update.Generators[0].WorkingMode;
+                            gen.Name = update.Generators[0].Name;
+                        }
+                    }
+
+                    if (update.Groups != null)
+                    {
+                        this.Groups.Add(update.Groups[0]);
+                    }
+
+                    if (update.Sites != null)
+                    {
+                        this.Sites.Add(update.Sites[0]);
+                    }
+
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Helper functions
+
+        /// <summary>
+        /// Represents the method that will try to find group which contains id given from parameter and return that group if exist
+        /// </summary>
+        /// <param name="id">id from generator group id</param>
+        /// <returns>group if exists or null if can not be found</returns>
+        public Group GetGroupFromId(string id)
+        {
+            Group group = this.Groups.SingleOrDefault(p => p.MRID.Equals(id));
             if (group != null)
             {
                 return group;
@@ -286,20 +485,14 @@ namespace KLRESClient
             return null;
         }
 
-        public string GetSiteNameFromId(string mrId)
+        /// <summary>
+        /// Represents the method that will try to find site which contains id given from parameter and return that group if exist
+        /// </summary>
+        /// <param name="id">id from generator group id</param>
+        /// <returns>site if exists or null if can not be found</returns>
+        public Site GetSiteFromId(string id)
         {
-            Site site = Sites.SingleOrDefault(p => p.MRID == mrId);
-            if (site != null)
-            {
-                return site.Name;
-            }
-
-            return null;
-        }
-
-        public Site GetSiteFromId(string mrId)
-        {
-            Site site = Sites.SingleOrDefault(p => p.MRID == mrId);
+            Site site = this.Sites.SingleOrDefault(p => p.MRID.Equals(id));
             if (site != null)
             {
                 return site;
@@ -307,5 +500,65 @@ namespace KLRESClient
 
             return null;
         }
+
+        /// <summary>
+        /// Represents the method that will check is input field empty or not
+        /// </summary>
+        /// <param name="txb">input field</param>
+        /// <returns>true if validation is ok, or false</returns>
+        public bool CheckStringInputField(string txb)
+        {
+            return !string.IsNullOrEmpty(txb);
+        }
+
+        /// <summary>
+        /// Represents the method that will check if input field can be parsed to double
+        /// </summary>
+        /// <param name="txb">input field</param>
+        /// <returns>true if validation is ok, or false</returns>
+        public bool CheckDoubleInputField(string txb)
+        {
+            bool isOk = true;
+
+            if (string.IsNullOrEmpty(txb))
+            {
+                isOk = false;
+            }
+            else
+            {
+                try
+                {
+                    if (double.Parse(txb) < 1)
+                    {
+                        isOk = false;
+                    }
+                }
+                catch
+                {
+                    isOk = false;
+                    throw new Exception();
+                }
+            }
+
+            return isOk;
+        }
+        #endregion
+
+        #region RaisePropertyChanged
+
+        /// <summary>
+        /// Represents the method that will handle the System.ComponentModel.INotifyPropertyChanged.PropertyChanged
+        /// event raised when a property is changed on a component.
+        /// </summary>
+        /// <param name="propName">changed property</param>
+        private void RaisePropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
+
+        #endregion
     }
 }

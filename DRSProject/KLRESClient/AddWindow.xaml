@@ -5,148 +5,269 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KLRESClient"
         mc:Ignorable="d"
-        Title="AddWindow" Height="350" Width="500">
-    <Grid>
+        Title="AddWindow" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" Height="350" Width="500">
+    <Window.Resources>
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+                <Border
+                  x:Name="Border" 
+                  Grid.ColumnSpan="2"
+                  CornerRadius="0"
+                  Background="#FF3F3F3F"
+                  BorderBrush="#FF97A0A5"
+                  BorderThickness="1" />
+                <Border 
+                  Grid.Column="0"
+                  CornerRadius="0" 
+                  Margin="1" 
+                  Background="#FF3F3F3F" 
+                  BorderBrush="#FF97A0A5"
+                  BorderThickness="0,0,1,0" />
+                <Path 
+                  x:Name="Arrow"
+                  Grid.Column="1"     
+                  Fill="White"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
+                />
+            </Grid>
+        </ControlTemplate>
 
-        <Label Content="name:" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="hasMeasurment:" HorizontalAlignment="Left" Margin="5,67,0,0" VerticalAlignment="Top"/>
-        <Label Content="activePower:" HorizontalAlignment="Left" Margin="5,41,0,0" VerticalAlignment="Top"/>
-        <Label Content="basePoint:" HorizontalAlignment="Left" Margin="4,95,0,0" VerticalAlignment="Top"/>
-        <Label Content="setPoint:" HorizontalAlignment="Left" Margin="4,126,0,0" VerticalAlignment="Top"/>
+        <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
+            <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
+        </ControlTemplate>
 
-        <TextBox x:Name="text_box2" Text ="{Binding Name}" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="text_box3" Text ="{Binding ActivePower}" HorizontalAlignment="Left" Height="23" Margin="95,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="text_box4" Text ="{Binding BasePoint}" HorizontalAlignment="Left" Height="23" Margin="95,98,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="combo_box1" SelectedItem="{Binding CmbHasMeasSelectedItem}" ItemsSource="{Binding LKClientService.HasMeasurments,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="95,70,0,0" VerticalAlignment="Top" Width="120" >
-            <ComboBoxItem Name="cbi1">true</ComboBoxItem>
-            <ComboBoxItem Name="cbi2">false</ComboBoxItem>
+        <Style x:Key="{x:Type ComboBox}" TargetType="{x:Type ComboBox}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="MinHeight" Value="20"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <ToggleButton 
+                            Name="ToggleButton" 
+                            Template="{StaticResource ComboBoxToggleButton}" 
+                            Grid.Column="2" 
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                            ClickMode="Press">
+                            </ToggleButton>
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            Margin="3,3,23,3"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left" />
+                            <TextBox x:Name="PART_EditableTextBox"
+                            Style="{x:Null}" 
+                            Template="{StaticResource ComboBoxTextBox}" 
+                            HorizontalAlignment="Left" 
+                            VerticalAlignment="Center" 
+                            Margin="3,3,23,3"
+                            Focusable="True" 
+                            Background="#FF3F3F3F"
+                            Foreground="Green"
+                            Visibility="Hidden"
+                            IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                            <Popup 
+                            Name="Popup"
+                            Placement="Bottom"
+                            IsOpen="{TemplateBinding IsDropDownOpen}"
+                            AllowsTransparency="True" 
+                            Focusable="False"
+                            PopupAnimation="Slide">
+
+                                <Grid Name="DropDown"
+                              SnapsToDevicePixels="True"                
+                              MinWidth="{TemplateBinding ActualWidth}"
+                              MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border 
+                                x:Name="DropDownBorder"
+                                Background="#555555"
+
+                                BorderThickness="1"
+                                BorderBrush="#888888"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </Trigger>
+                            <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                                <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEditable"  Value="true">
+                                <Setter Property="IsTabStop" Value="false"/>
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="{x:Type ComboBoxItem}" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                        <Border Name="Border"
+                              Padding="2"
+                              SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#C2C2B6"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Background="#FFD4D7DB">
+
+        <Label Content="name" HorizontalAlignment="Left" Margin="4,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="hasMeasurment" HorizontalAlignment="Left" Margin="4,70,0,0" VerticalAlignment="Top"/>
+        <Label Content="activePower" HorizontalAlignment="Left" Margin="4,40,0,0" VerticalAlignment="Top"/>
+        <Label Content="basePoint" HorizontalAlignment="Left" Margin="4,100,0,0" VerticalAlignment="Top"/>
+        <Label Content="setPoint" HorizontalAlignment="Left" Margin="4,130,0,0" VerticalAlignment="Top"/>
+
+        <TextBox x:Name="text_box2" Text ="{Binding AddWindowVM.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="text_box3" Text ="{Binding AddWindowVM.ActivePower, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box4" Text ="{Binding AddWindowVM.BasePoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="combo_box1" SelectedItem="{Binding AddWindowVM.CmbHasMeasSelectedItem}" ItemsSource="{Binding Client.HasMeasurments,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="95,73,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+
         </ComboBox>
-        <TextBox x:Name="text_box10" Text ="{Binding SetPoint}" HorizontalAlignment="Left" Height="23" Margin="95,128,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box10" Text ="{Binding AddWindowVM.SetPoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,133,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
 
-        <Label Content="pmin:" HorizontalAlignment="Left" Margin="215,18,0,0" VerticalAlignment="Top"/>
-        <Label Content="pmax:" HorizontalAlignment="Left" Margin="215,39,0,0" VerticalAlignment="Top"/>
-        <Label Content="price:" HorizontalAlignment="Left" Margin="215,65,0,0" VerticalAlignment="Top"/>
-        <Label Content="generatorType:" HorizontalAlignment="Left" Margin="215,92,0,0" VerticalAlignment="Top"/>
-        <Label Content="workingMode:" HorizontalAlignment="Left" Margin="215,121,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="text_box5" Text ="{Binding PMin}" HorizontalAlignment="Left" Height="23" Margin="315,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <Label Content="pmin:" HorizontalAlignment="Left" Margin="220,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="pmax:" HorizontalAlignment="Left" Margin="220,40,0,0" VerticalAlignment="Top"/>
+        <Label Content="price:" HorizontalAlignment="Left" Margin="220,70,0,0" VerticalAlignment="Top"/>
+        <Label Content="generatorType:" HorizontalAlignment="Left" Margin="220,100,0,0" VerticalAlignment="Top"/>
+        <Label Content="workingMode:" HorizontalAlignment="Left" Margin="220,130,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="text_box5" Text ="{Binding AddWindowVM.PMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="315,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
-        <TextBox x:Name="text_box6" Text ="{Binding PMax}" HorizontalAlignment="Left" Height="23" Margin="315,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="text_box7" Text ="{Binding Price}" HorizontalAlignment="Left" Height="23" Margin="315,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="combo_box2" SelectedItem="{Binding CmbGeneratorTypeSelectedItem}" ItemsSource="{Binding LKClientService.GeneratorTypes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,91,0,0" VerticalAlignment="Top" Width="120" >
-            <ComboBoxItem >WIND_STATIC</ComboBoxItem>
-            <ComboBoxItem >WIND_DYNAMIC</ComboBoxItem>
-            <ComboBoxItem >SOLAR</ComboBoxItem>
-            <ComboBoxItem >MICROHYDRO</ComboBoxItem>
+        <TextBox x:Name="text_box6" Text ="{Binding AddWindowVM.PMax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="315,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box7" Text ="{Binding AddWindowVM.Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="315,73,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="combo_box2" SelectedItem="{Binding AddWindowVM.CmbGeneratorTypeSelectedItem}" ItemsSource="{Binding Client.GeneratorTypes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,103,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+
         </ComboBox>
-        <ComboBox x:Name="combo_box3" SelectedItem="{Binding CmbWorkingModeSelectedItem}" ItemsSource="{Binding LKClientService.WorkingModes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,120,0,0" VerticalAlignment="Top" Width="120" >
-            <ComboBoxItem >LOCAL</ComboBoxItem>
-            <ComboBoxItem >REMOTE</ComboBoxItem>
+        <ComboBox x:Name="combo_box3" SelectedItem="{Binding AddWindowVM.CmbWorkingModeSelectedItem}" ItemsSource="{Binding Client.WorkingModes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,133,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+
         </ComboBox>
 
-        <Button x:Name="button" Command="{Binding CreateCommand}" Content="Create" Height="50" Width="70" HorizontalAlignment="Left" Margin="40,260,0,0" VerticalAlignment="Top" Click="Click">
+        <Button x:Name="button" Command="{Binding AddWindowVM.CreateCommand}" Content="Create" Height="50" Width="60" HorizontalAlignment="Left" Margin="60,260,0,0" VerticalAlignment="Top">
             <Button.Style>
                 <Style  TargetType="{x:Type Button}">
-                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="#FF474444"/>
-                    <Setter Property="BorderBrush" Value="#cccccc"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                    <Setter Property="Foreground" Value="White"/>
-
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border x:Name="B"
-            							Background="{TemplateBinding Background}"
-            							BorderBrush="{TemplateBinding BorderBrush}"
-            							BorderThickness="{TemplateBinding BorderThickness}"
-            							SnapsToDevicePixels="true">
-                                    <ContentPresenter x:Name="Presenter" Margin="{TemplateBinding Padding}"
-            								VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-            								HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-            								RecognizesAccessKey="True"
-            								SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF7A7777" />
-                                        <Setter Property="BorderBrush" Value="#FF80BBD1" />
-
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#FF99A2A6" />
-                                        <Setter Property="BorderBrush" Value="#1ba1e2"/>
-
-                                    </Trigger>
-                                    <Trigger Property="IsFocused" Value="true">
-                                        <Setter TargetName="B" Property="BorderBrush" Value="#FF73C3EA" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
+                    <Setter Property="Foreground" Value="Blue" />
+                    <Setter Property="IsEnabled" Value="True"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#FFADADAD"/>
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </Button.Style>
         </Button>
-        <Button x:Name="button1" Content="Cancel" HorizontalAlignment="Left" Margin="140,259,0,0" VerticalAlignment="Top" Height="50" Width="70" Click="Cancel">
+        <Button x:Name="button1" Command="{Binding AddWindowVM.CancelCommand}" Content="Cancel" HorizontalAlignment="Left" Margin="180,260,0,0" VerticalAlignment="Top" Height="50" Width="60">
             <Button.Style>
                 <Style  TargetType="{x:Type Button}">
-                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="#FF474444"/>
-                    <Setter Property="BorderBrush" Value="#cccccc"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                    <Setter Property="Foreground" Value="White"/>
-
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border x:Name="B"
-            							Background="{TemplateBinding Background}"
-            							BorderBrush="{TemplateBinding BorderBrush}"
-            							BorderThickness="{TemplateBinding BorderThickness}"
-            							SnapsToDevicePixels="true">
-                                    <ContentPresenter x:Name="Presenter" Margin="{TemplateBinding Padding}"
-            								VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-            								HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-            								RecognizesAccessKey="True"
-            								SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF7A7777" />
-                                        <Setter Property="BorderBrush" Value="#FF80BBD1" />
-
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#FF99A2A6" />
-                                        <Setter Property="BorderBrush" Value="#1ba1e2"/>
-
-                                    </Trigger>
-                                    <Trigger Property="IsFocused" Value="true">
-                                        <Setter TargetName="B" Property="BorderBrush" Value="#FF73C3EA" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
+                    <Setter Property="Foreground" Value="Blue" />
+                    <Setter Property="IsEnabled" Value="True"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#FFADADAD"/>
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </Button.Style>
         </Button>
 
-        <RadioButton x:Name="radioButton" IsChecked="{Binding RadioButton, Mode=TwoWay}" Content="Add in new site and group" HorizontalAlignment="Left" Margin="10,178,0,0" VerticalAlignment="Top" />
-        <RadioButton x:Name="radioButton1" IsChecked="{Binding RadioButton1, Mode=TwoWay}" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" />
-        <RadioButton x:Name="radioButton2" IsChecked="{Binding RadioButton2, Mode=TwoWay}" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" />
-        <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="215,178,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="215,198,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="radioButton" IsChecked="{Binding AddWindowVM.RadioButton, Mode=TwoWay}" Content="Add in new site and group" HorizontalAlignment="Left" Margin="4,178,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="radioButton1" IsChecked="{Binding AddWindowVM.RadioButton1, Mode=TwoWay}" Content="Add in existing site and group" HorizontalAlignment="Left" Margin="4,198,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="radioButton2" IsChecked="{Binding AddWindowVM.RadioButton2, Mode=TwoWay}" Content="Add in existing site and new group" HorizontalAlignment="Left" Margin="4,218,0,0" VerticalAlignment="Top" />
+        <Label x:Name="label" Content="site name:" HorizontalAlignment="Left" Margin="220,178,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label2" Content="group name:" HorizontalAlignment="Left" Margin="220,208,0,0" VerticalAlignment="Top"/>
 
-        <TextBox x:Name="text_box8" Text ="{Binding SiteName}" Visibility="{Binding Txb8Visibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,178,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="text_box9" Text ="{Binding GroupName}" Visibility="{Binding Txb9Visibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb" DisplayMemberPath="Name" SelectedItem="{Binding CmbSiteNameSelectedItem}" Visibility="{Binding CmbVisibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding Client.Sites,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb2" DisplayMemberPath="Name" SelectedItem="{Binding Cmb2SiteNameSelectedItem}" Visibility="{Binding Cmb2Visibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding Client.Groups,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,205,0,0" VerticalAlignment="Top" Width="120" />
-        <ComboBox x:Name="cmb3" DisplayMemberPath="Name" SelectedItem="{Binding Cmb3SiteNameSelectedItem}" Visibility="{Binding Cmb3Visibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding Client.Sites,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,178,0,0" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="txb" Text ="{Binding TxbGroupName}" Visibility="{Binding TxbVisibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box8" Text ="{Binding AddWindowVM.SiteName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding AddWindowVM.Txb8Visibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,181,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box9" Text ="{Binding AddWindowVM.GroupName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding AddWindowVM.Txb9Visibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,211,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <ComboBox x:Name="cmb" SelectedItem="{Binding AddWindowVM.CmbSiteNameSelectedItem}" Visibility="{Binding AddWindowVM.CmbVisibility, FallbackValue=Hidden, Mode=TwoWay}"  ItemsSource="{Binding Client.Sites,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,181,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}mrID: {0}&#x0a;Name: {1}">
+                                <Binding Path="MRID"/>
+                                <Binding Path="Name"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ComboBox x:Name="cmb2" SelectedItem="{Binding AddWindowVM.Cmb2GroupNameSelectedItem}" Visibility="{Binding AddWindowVM.Cmb2Visibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding Client.GroupNames,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,211,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}mrID: {0}&#x0a;Name: {1}">
+                                <Binding Path="MRID"/>
+                                <Binding Path="Name"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ComboBox x:Name="cmb3" SelectedItem="{Binding AddWindowVM.Cmb3SiteNameSelectedItem}" Visibility="{Binding AddWindowVM.Cmb3Visibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding Client.Sites,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,181,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}mrID: {0}&#x0a;Name: {1}">
+                                <Binding Path="MRID"/>
+                                <Binding Path="Name"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBox x:Name="txb" Text ="{Binding AddWindowVM.TxbGroupName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding AddWindowVM.TxbVisibility, Mode=TwoWay}" HorizontalAlignment="Left" Height="23" Margin="315,211,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
 
     </Grid>
