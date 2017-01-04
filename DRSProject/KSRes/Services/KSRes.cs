@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommonLibrary;
 using System.ServiceModel;
 using CommonLibrary.Exceptions;
+using KSRes.Access;
 
 namespace KSRes.Services
 {
@@ -76,6 +77,8 @@ namespace KSRes.Services
 
         public void IssueCommand(string username, double requiredAP)
         {
+            LocalDB.Instance.AddConsuption(new Data.ConsuptionHistory() { Username = username, Consuption = requiredAP });
+             
             List<Generator> remoteGenerators = new List<Generator>();
             List<SetPoint> setPoints = new List<SetPoint>();
             LKResService user = dynamicDataBase.GetService(username);
