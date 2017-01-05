@@ -214,7 +214,7 @@ namespace KSRes
                         generator.GeneratorType = newGenerator.GeneratorType;
 
                         edit = true;
-                        break;
+                        //break;
                     }
                 }
                 if(!edit)
@@ -223,7 +223,11 @@ namespace KSRes
                 }
             }
 
-            service.Generators.AddRange(addGenerator);
+            //service.Generators.AddRange(addGenerator);
+            foreach(Generator generator in addGenerator)
+            {
+                service.Generators.Add(generator);
+            }
         }
 
         private void RemoveSite(List<Site> sites, LKResService service)
@@ -356,6 +360,7 @@ namespace KSRes
                 lock (lockObj)
                 {
                     clients.Remove(client);
+                    //obavestiti luku
                 }
             }
         }

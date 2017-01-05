@@ -1,8 +1,11 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">VISIBLE_FILES</s:String>
-	<s:Boolean x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=DC87C61BD7CA472AA77D8269998CC335/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=DC87C61BD7CA472AA77D8269998CC335/ProductVersion/@EntryValue">2016.3.1</s:String>
-	<s:String x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=DC87C61BD7CA472AA77D8269998CC335/SnapshotLocation/@EntryValue">C:\Users\Batinic\AppData\Local\Temp\ssm.Nyvugen.tmp</s:String>
+	<s:Boolean x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=983E599D4C104D19B7FE6EEABDFBBB7E/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=983E599D4C104D19B7FE6EEABDFBBB7E/ProductVersion/@EntryValue">2016.3.1</s:String>
+	<s:String x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=983E599D4C104D19B7FE6EEABDFBBB7E/SnapshotLocation/@EntryValue">C:\Users\Gogic\AppData\Local\Temp\ssm.Lokotaz.tmp</s:String>
+	
+	
+	
 	
 	
 	</wpf:ResourceDictionary>

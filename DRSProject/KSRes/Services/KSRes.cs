@@ -13,7 +13,20 @@ namespace KSRes.Services
 {
     public class KSRes : IKSRes, IKSForClient
     {
-        public static DynamicDataBase dynamicDataBase = new DynamicDataBase();
+        private static DynamicDataBase dynamicDataBase = new DynamicDataBase();
+
+        public static DynamicDataBase DynamicDataBase
+        {
+            get
+            {
+                return dynamicDataBase;
+            }
+
+            private set
+            {
+                dynamicDataBase = value;
+            }
+        }
 
         #region ILKRes
         public void Login(string username, string password)
@@ -24,7 +37,7 @@ namespace KSRes.Services
 
             try
             {
-                dynamicDataBase.Login(username, password, service, sessionID);
+                DynamicDataBase.Login(username, password, service, sessionID);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -36,7 +49,7 @@ namespace KSRes.Services
         {
             try
             {
-                dynamicDataBase.Registration(username, password);
+                DynamicDataBase.Registration(username, password);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -56,9 +69,9 @@ namespace KSRes.Services
 
             try
             {
-                dynamicDataBase.Update(sessionID, update);
+                DynamicDataBase.Update(sessionID, update);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -70,40 +83,61 @@ namespace KSRes.Services
         {
             OperationContext context = OperationContext.Current;
             IKSClient client = context.GetCallbackChannel<IKSClient>();
-            dynamicDataBase.AddClient(client);
+            DynamicDataBase.AddClient(client);
 
-            return dynamicDataBase.ActiveService;
+            return DynamicDataBase.ActiveService;
         }
 
         public void IssueCommand(string username, double requiredAP)
         {
-            LocalDB.Instance.AddConsuption(new Data.ConsuptionHistory() { Username = username, Consuption = requiredAP });
-             
+            if (DynamicDataBase.GetService(username) == null)
+            {
+                throw new ArgumentException();
+            }
+
+            if (requiredAP < 0)
+            {
+                throw new ArgumentException();
+            }
+
+            LocalDB.Instance.AddConsuption(new Data.ConsuptionHistory()
+            {
+                Username = username,
+                Consuption = requiredAP
+            });
+
+            List<SetPoint> setPoints = P(username, requiredAP);
+
+            DynamicDataBase.GetService(username).Client.SendSetPoint(setPoints);
+
+
+            #endregion IKSForClient
+        }
+
+        private List<SetPoint> P(string username, double requiredAP)
+        {
             List<Generator> remoteGenerators = new List<Generator>();
             List<SetPoint> setPoints = new List<SetPoint>();
-            LKResService user = dynamicDataBase.GetService(username);
+            LKResService user = DynamicDataBase.GetService(username);
             double activePower = 0;
             double diff = 0;
 
-            foreach(Generator generator in user.Generators)
-            {
-                activePower += generator.ActivePower;
-            }
-
-            diff = requiredAP - activePower;
-
             foreach (Generator generator in user.Generators)
             {
+                activePower += generator.ActivePower;
+
                 if (generator.WorkingMode == WorkingMode.REMOTE)
                 {
                     remoteGenerators.Add(generator);
                 }
             }
-            
+
+            diff = requiredAP - activePower;
+
             if (diff > 0)
             {
                 List<Generator> sortedList = remoteGenerators.OrderBy(o => o.Price).ToList();
-                foreach (Generator remoteGenerator in remoteGenerators)
+                foreach (Generator remoteGenerator in sortedList)
                 {
                     double diff1 = 0;
                     if ((diff1 = remoteGenerator.Pmax - remoteGenerator.ActivePower) > 0)
@@ -132,9 +166,9 @@ namespace KSRes.Services
             {
                 diff = Math.Abs(diff);
                 List<Generator> sortedList = remoteGenerators.OrderByDescending(o => o.Price).ToList();
-                foreach (Generator remoteGenerator in remoteGenerators)
+                foreach (Generator remoteGenerator in sortedList)
                 {
-                    if ( remoteGenerator.ActivePower > 0 )
+                    if (remoteGenerator.ActivePower > 0)
                     {
                         SetPoint setPoint = new SetPoint();
                         if (diff != 0)
@@ -160,7 +194,7 @@ namespace KSRes.Services
                                 {
                                     setPoint.GeneratorID = remoteGenerator.MRID;
                                     setPoint.Setpoint = remoteGenerator.Pmin;
-                                    diff -= remoteGenerator.Pmin;
+                                    diff -= remoteGenerator.ActivePower - remoteGenerator.Pmin;
                                     setPoints.Add(setPoint);
                                 }
                             }
@@ -168,10 +202,7 @@ namespace KSRes.Services
                     }
                 }
             }
-
-            dynamicDataBase.GetService(username).Client.SendSetPoint(setPoints);
+            return setPoints;
         }
-
-        #endregion IKSForClient
     }
 }
