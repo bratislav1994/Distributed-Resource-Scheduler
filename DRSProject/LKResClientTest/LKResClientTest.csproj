@@ -31,10 +31,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NSubstitute">
-      <HintPath>..\..\..\..\..\Desktop\verzije\DRSProject9\KSResTest\NSubstitute.dll</HintPath>
+      <HintPath>..\KSResTest\NSubstitute.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\..\Desktop\verzije\DRSProject9\LKResTest\bin\Debug\nunit.framework.dll</HintPath>
+      <HintPath>..\KSResTest\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="Prism">
