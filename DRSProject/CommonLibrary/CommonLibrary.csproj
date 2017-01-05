@@ -53,6 +53,7 @@
     <Compile Include="Interfaces\ILKClient.cs" />
     <Compile Include="Interfaces\ILKForClient.cs" />
     <Compile Include="Interfaces\ILKRes.cs" />
+    <Compile Include="Interfaces\ILoadForecast.cs" />
     <Compile Include="LKResService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetPoint.cs" />
