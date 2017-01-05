@@ -25,20 +25,32 @@ namespace KSRESClient
             UserNames = new List<string>();
             userNames.Add("All");
             currentUser = null;
+        }
 
-            DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
-                    new InstanceContext(this),
-                        new NetTcpBinding(),
-                        new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
-            proxy = factory.CreateChannel();
+        public IKSForClient Proxy
+        {
+            get
+            {
+                return proxy;
+            }
 
-            allUsers = proxy.GetAllSystem();
-            foreach(LKResService user in allUsers)
+            set
+            {
+                proxy = value;
+                GetAllUser();
+            }
+        }
+
+        private void GetAllUser()
+        {
+            allUsers = Proxy.GetAllSystem();
+            foreach (LKResService user in allUsers)
             {
                 userNames.Add(user.Username);
             }
             FillListForShowing();
         }
+
         public BindingList<Generator> Generators
         {
             get
@@ -65,6 +77,7 @@ namespace KSRESClient
                 RaisePropertyChanged("Usernames");
             }
         }
+
 
         public void Update(UpdateInfo update, string username)
         {
@@ -266,7 +279,7 @@ namespace KSRESClient
 
         public void IssueCommand(string userName, double neededPower)
         {
-            proxy.IssueCommand(userName, neededPower);
+            Proxy.IssueCommand(userName, neededPower);
         }
 
         public Generator GetGeneratorFromId(string mrId)

@@ -29,14 +29,7 @@ namespace KRESClientTest
             Assert.AreNotEqual(null, model.Client);
         }
 
-        [Test]
-        public void ClientPropTestNull()
-        {
-            Client c = null;
-            model.Client = c;
-            
-            Assert.AreNotEqual(null, model.Client);
-        }
+
 
         [Test]
         public void CbSelectedItemPropTest()
