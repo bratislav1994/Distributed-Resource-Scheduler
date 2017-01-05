@@ -130,7 +130,6 @@ namespace KSRESClient
                     throw new Exception();
                 }
                 Client.IssueCommand(CbSelectedItem, np);
-
             }
             catch(Exception ex)
             {

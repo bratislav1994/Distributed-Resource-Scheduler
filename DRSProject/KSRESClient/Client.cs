@@ -25,18 +25,57 @@ namespace KSRESClient
             UserNames = new List<string>();
             userNames.Add("All");
             currentUser = null;
+            int j = 0;
 
+            for (int i = 0; i < 5; i++)
+            {
+                LKResService user = new LKResService("user" + i, null, null);
+                Site s = new Site();
+                s.MRID = Guid.NewGuid().ToString();
+                s.Name = "site" + i;
+                Group g = new Group();
+                g.MRID = Guid.NewGuid().ToString();
+                g.Name = "group" + i;
+                g.SiteID = s.MRID;
+                user.Gropus.Add(g);
+                user.Sites.Add(s);
+                allUsers.Add(user);
+                userNames.Add(user.Username);
+            }
+
+            for (int i = 0;i < 9;i++,j++)
+            {
+                Generator g = new Generator();
+                g.ActivePower = (i + 1) * 100;
+                g.BasePoint = (i + 1) * 100;
+                g.GeneratorType = GeneratorType.SOLAR;
+                g.HasMeasurment = true;
+                g.MRID = Guid.NewGuid().ToString();
+                g.Name = "generator" + i;
+                g.Pmax = (i + 1) * 100;
+                g.Pmin = (i + 1) * 100; 
+                g.Price = (i + 1) * 100; 
+                g.SetPoint = (i + 1) * 100;
+                g.WorkingMode = WorkingMode.REMOTE;
+                if(j == 5)
+                {
+                    j = 0;
+                }
+                g.GroupID = allUsers[j].Gropus.First().MRID;
+                allUsers[j].Generators.Add(g);
+            }
+            
             DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
                     new InstanceContext(this),
                         new NetTcpBinding(),
                         new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
             proxy = factory.CreateChannel();
 
-            allUsers = proxy.GetAllSystem();
+            /*allUsers = proxy.GetAllSystem();
             foreach(LKResService user in allUsers)
             {
                 userNames.Add(user.Username);
-            }
+            }*/
             FillListForShowing();
         }
         public BindingList<Generator> Generators
