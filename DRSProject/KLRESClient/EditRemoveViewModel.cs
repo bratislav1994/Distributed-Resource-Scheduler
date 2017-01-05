@@ -864,7 +864,7 @@ namespace KLRESClient
             {
                 this.CreateInstanceOfGeneratorEdit();
 
-                if (this.editRadioButton1)
+                if (this.EditRadioButton1)
                 {
                     this.generator.GroupID = this.EditCmb2GroupNameSelectedItem.MRID;
                 }
@@ -931,12 +931,12 @@ namespace KLRESClient
                     UpdateType = UpdateType.UPDATE
                 };
 
-                this.Client.Command(this.updateInfo);
                 this.ClearInputFieldsEditWindow();
+                this.Client.Command(this.updateInfo);
             }
             catch
             {
-                MessageBox.Show("Error during execution Edit command.");
+                // MessageBox.Show("Error during execution Edit command.");
             }
         }
 
@@ -1055,12 +1055,12 @@ namespace KLRESClient
                     UpdateType = UpdateType.REMOVE
                 };
 
-                this.Client.Command(this.updateInfo);
                 this.SelectedItem = null;
+                this.Client.Command(this.updateInfo);
             }
             catch
             {
-                MessageBox.Show("Error during execution Remove command.");
+                // MessageBox.Show("Error during execution Remove command.");
             }
         }
 
