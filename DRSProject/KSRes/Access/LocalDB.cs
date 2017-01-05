@@ -39,5 +39,14 @@ namespace KSRes.Access
                 return false;
             }
         }
+
+        public List<ConsuptionHistory> ReadConsuptions(string username)
+        {
+            using (var access = new AccessDB())
+            {
+                List<ConsuptionHistory> consuptions = access.History.Where(x => x.Username.Equals(username)).ToList();
+                return consuptions;
+            }
+        }
     }
 }

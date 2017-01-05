@@ -10,10 +10,25 @@ namespace KSRes.Data
 {
     public class ConsuptionHistory
     {
+        private int id;
         private String username;
         private double consuption;
 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
+
+            set
+            {
+                id = value;
+            }
+        }
+
         public String Username
         {
             get

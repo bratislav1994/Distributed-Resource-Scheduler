@@ -10,5 +10,6 @@ namespace KSRes.Access
     public interface ILocalDB
     {
         bool AddConsuption(ConsuptionHistory history);
+        List<ConsuptionHistory> ReadConsuptions(string username);
     }
 }
