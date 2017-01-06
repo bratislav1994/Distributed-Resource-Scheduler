@@ -81,39 +81,46 @@ namespace KSRESClient
 
         public void Update(UpdateInfo update, string username)
         {
-            if (update == null || update.Generators == null ||
-                update.Groups == null || update.Sites == null) 
+            if (update == null)
             {
                 throw new ArgumentException();
-            }   
-            switch(update.UpdateType)
+            }
+
+            switch (update.UpdateType)
             {
                 case UpdateType.ADD:
                     LKResService client = allUsers.Where(cln => cln.Username.Equals(username)).FirstOrDefault();
-                    if(client == null)
+                    if (client == null)
                     {
                         client = new LKResService(username, null, null);
                         allUsers.Add(client);
                         userNames.Add(client.Username);
                     }
-                    foreach(LKResService user in allUsers)
+                    foreach (LKResService user in allUsers)
                     {
-                        if(user.Username.Equals(username))
+                        if (user.Username.Equals(username))
                         {
-                            foreach(Generator g in update.Generators)
+                            foreach (Generator g in update.Generators)
                             {
                                 user.Generators.Add(g);
                             }
-                            foreach(Group group in update.Groups)
+
+                            if (update.Groups != null)
                             {
-                                user.Gropus.Add(group);
+                                foreach (Group group in update.Groups)
+                                {
+                                    user.Gropus.Add(group);
+                                }
                             }
-                            foreach(Site s in update.Sites)
+
+                            if (update.Sites != null)
                             {
-                                user.Sites.Add(s);
+                                foreach (Site s in update.Sites)
+                                {
+                                    user.Sites.Add(s);
+                                }
                             }
                             FillListForShowing();
-                            break;
                         }
                     }
                     break;
@@ -121,116 +128,111 @@ namespace KSRESClient
                     List<Generator> removingListGen = new List<Generator>();
                     List<Group> removingListGr = new List<Group>();
                     List<Site> removingListS = new List<Site>();
-                    foreach (LKResService user in allUsers)
+                    LKResService removeUser = GetUser(username);
+
+                    if (removeUser != null)
                     {
-                        if (user.Username.Equals(username))
+                        foreach (Generator g in update.Generators)
                         {
-                            foreach(Generator g in update.Generators)
+                            foreach (Generator g1 in removeUser.Generators)
                             {
-                                foreach (Generator g1 in user.Generators)
+                                if (g.MRID.Equals(g1.MRID))
                                 {
-                                    if (g.MRID.Equals(g1.MRID))
-                                    {
-                                        removingListGen.Add(g1);
-                                    }
+                                    removingListGen.Add(g1);
                                 }
-                                foreach(Generator g2 in removingListGen)
-                                {
-                                    user.Generators.Remove(g2);
-                                }
-                                removingListGen.Clear();
                             }
+
+                            foreach (Generator g2 in removingListGen)
+                            {
+                                removeUser.Generators.Remove(g2);
+                            }
+                            removingListGen.Clear();
+                        }
+
+                        if (update.Groups != null)
+                        {
                             foreach (Group g in update.Groups)
                             {
-                                foreach (Group g1 in user.Gropus)
+                                foreach (Group g1 in removeUser.Gropus)
                                 {
                                     if (g.MRID.Equals(g1.MRID))
                                     {
                                         removingListGr.Add(g1);
                                     }
                                 }
+
                                 foreach (Group g2 in removingListGr)
                                 {
-                                    user.Gropus.Remove(g2);
+                                    removeUser.Gropus.Remove(g2);
                                 }
                                 removingListGr.Clear();
                             }
+                        }
+
+                        if (update.Sites != null)
+                        {
                             foreach (Site g in update.Sites)
                             {
-                                foreach (Site g1 in user.Sites)
+                                foreach (Site g1 in removeUser.Sites)
                                 {
                                     if (g.MRID.Equals(g1.MRID))
                                     {
                                         removingListS.Add(g1);
                                     }
                                 }
+
                                 foreach (Site g2 in removingListS)
                                 {
-                                    user.Sites.Remove(g2);
+                                    removeUser.Sites.Remove(g2);
                                 }
                                 removingListS.Clear();
                             }
-                            FillListForShowing();
-                            break;
                         }
+                        FillListForShowing();
                     }
                     break;
                 case UpdateType.UPDATE:
                     Dictionary<int, Generator> tempListGen = new Dictionary<int, Generator>();
-                    Dictionary<int, Group> tempLisrGr = new Dictionary<int, Group>();
-                    Dictionary<int, Site> tempLisrS = new Dictionary<int, Site>();
-                    foreach (LKResService user in allUsers)
+
+                    LKResService updataUser = GetUser(username);
+
+                    if (updataUser != null)
                     {
-                        if (user.Username.Equals(username))
+                        foreach (Generator g in update.Generators)
                         {
-                            foreach(Generator g in update.Generators)
+                            foreach (Generator g1 in updataUser.Generators)
                             {
-                                foreach(Generator g1 in user.Generators)
+                                if (g.MRID.Equals(g1.MRID))
                                 {
-                                    if(g.MRID.Equals(g1.MRID))
-                                    {
-                                        tempListGen.Add(user.Generators.IndexOf(g1), g1);
-                                    }
+                                    tempListGen.Add(updataUser.Generators.IndexOf(g1), g);
                                 }
                             }
-                            foreach(KeyValuePair<int,Generator> kp in tempListGen)
-                            {
-                                user.Generators[kp.Key] = kp.Value;
-                            }
-                            foreach (Group g in update.Groups)
-                            {
-                                foreach (Group g1 in user.Gropus)
-                                {
-                                    if (g.MRID.Equals(g1.MRID))
-                                    {
-                                        tempLisrGr.Add(user.Gropus.IndexOf(g1), g1);
-                                    }
-                                }
-                            }
-                            foreach (KeyValuePair<int, Group> kp in tempLisrGr)
-                            {
-                                user.Gropus[kp.Key] = kp.Value;
-                            }
-                            foreach (Site g in update.Sites)
-                            {
-                                foreach (Site g1 in user.Sites)
-                                {
-                                    if (g.MRID.Equals(g1.MRID))
-                                    {
-                                        tempLisrS.Add(user.Sites.IndexOf(g1), g1);
-                                    }
-                                }
-                            }
-                            foreach (KeyValuePair<int, Site> kp in tempLisrS)
-                            {
-                                user.Sites[kp.Key] = kp.Value;
-                            }
-                            FillListForShowing();
-                            break;
                         }
+
+                        foreach (KeyValuePair<int, Generator> kp in tempListGen)
+                        {
+                            updataUser.Generators[kp.Key] = kp.Value;
+                        }
+
+
+                        if (update.Groups != null)
+                        {
+                            foreach (Group group in update.Groups)
+                            {
+                                updataUser.Gropus.Add(group);
+                            }
+                        }
+
+                        if (update.Sites != null)
+                        {
+                            foreach (Site s in update.Sites)
+                            {
+                                updataUser.Sites.Add(s);
+                            }
+                        }
+
+                        FillListForShowing();
                     }
-                    break;
-                default:
                     break;
             }
         }
@@ -275,6 +277,21 @@ namespace KSRESClient
                 }
             }
             FillListForShowing();
+        }
+
+        public LKResService GetUser(string username)
+        {
+            LKResService user = null;
+            try
+            {
+                user = allUsers.Where(x => x.Username.Equals(username)).First();
+            }
+            catch
+            {
+                user = null;
+            }
+
+            return user;
         }
 
         public void IssueCommand(string userName, double neededPower)
