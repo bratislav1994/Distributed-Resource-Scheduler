@@ -256,5 +256,97 @@ namespace LKResClientTest
         {
             Assert.AreNotEqual(null, this.addWindowVM.ClickAddCommand);
         }
+
+        [Test]
+        public void PropertyChanged()
+        {
+            string receivedEvents = null;
+
+            this.addWindowVM.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+                receivedEvents = e.PropertyName;
+            };
+
+            this.addWindowVM.Name = "testing";
+            Assert.IsNotNull(receivedEvents);
+            Assert.AreEqual("Name", receivedEvents);
+
+            this.addWindowVM.Client.Groups.Clear();
+
+            this.addWindowVM.Client.Groups.Add(new Group() { SiteID = "1" });
+            this.addWindowVM.Client.Groups.Add(new Group() { SiteID = "2" });
+            this.addWindowVM.CmbSiteNameSelectedItem = new Site() { MRID = "1" };
+        }
+
+        [Test]
+        public void AddClickCommandActionTest()
+        {
+            Assert.IsTrue(this.addWindowVM.ClickAddCommand.CanExecute());
+            this.addWindowVM.ClickAddCommand.Execute();
+        }
+
+        [Test]
+        public void CancelCommandActionTest()
+        {
+            this.addWindowVM.CancelCommand.Execute();
+        }
+
+        [Test]
+        public void CreateCommandActionTest()
+        {
+            this.addWindowVM.Name = string.Empty;
+            this.addWindowVM.ActivePower = "20";
+            this.addWindowVM.BasePoint = "20";
+            this.addWindowVM.SetPoint = "20";
+            this.addWindowVM.PMin = "20";
+            this.addWindowVM.PMax = "10";
+            this.addWindowVM.Price = "20";
+            this.addWindowVM.Price = "20";
+            this.addWindowVM.SiteName = "test";
+            this.addWindowVM.GroupName = "test";
+            this.addWindowVM.RadioButton = true;
+
+            Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
+
+            this.addWindowVM.Name = "test";
+
+            Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
+
+
+            this.addWindowVM.SiteName = string.Empty;
+            Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
+
+
+            this.addWindowVM.SiteName = "test";
+            this.addWindowVM.PMin = "10";
+            this.addWindowVM.PMax = "20";
+            Assert.IsTrue(this.addWindowVM.CreateCommand.CanExecute());
+            this.addWindowVM.CreateCommand.Execute();
+
+
+            this.addWindowVM.RadioButton = false;
+            this.addWindowVM.RadioButton1 = true;
+
+
+            this.addWindowVM.CmbSiteNameSelectedItem = null;
+            this.addWindowVM.Cmb2GroupNameSelectedItem = new Group() { MRID = "1" };
+
+            Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
+
+            this.addWindowVM.CmbSiteNameSelectedItem = new Site();
+            Assert.IsTrue(this.addWindowVM.CreateCommand.CanExecute());
+            this.addWindowVM.CreateCommand.Execute();
+
+            this.addWindowVM.RadioButton1 = false;
+            this.addWindowVM.RadioButton2 = true;
+            this.addWindowVM.TxbGroupName = string.Empty;
+            this.addWindowVM.Cmb3SiteNameSelectedItem = new Site();
+
+            Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
+
+            this.addWindowVM.TxbGroupName = "test";
+            Assert.IsTrue(this.addWindowVM.CreateCommand.CanExecute());
+            this.addWindowVM.CreateCommand.Execute();
+        }
     }
 }

@@ -280,12 +280,12 @@ namespace LKResClientTest
             g.Pmax = 50;
 
             update.Generators.Add(g);
-            update.Groups = null;
-            update.Sites = null;
+            update.Groups.Add(new Group());
+            update.Sites.Add(new Site());
             this.client.Update(update);
             Assert.AreEqual(1, this.client.Generators.Count);
-            Assert.AreEqual(1, this.client.Groups.Count);
-            Assert.AreEqual(1, this.client.Sites.Count);
+            Assert.AreEqual(2, this.client.Groups.Count);
+            Assert.AreEqual(2, this.client.Sites.Count);
         }
 
         [Test]
@@ -299,6 +299,21 @@ namespace LKResClientTest
             Assert.Throws<InvalidDataException>(() => this.client.Command(null));
             //Assert.Throws<NullReferenceException>(() => this.client.Command(update));
             //this.client.Command(update);
+        }
+
+        [Test]
+        public void RaisePropertyChangedTest()
+        {
+            string receivedEvents = null;
+
+            this.client.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+                receivedEvents = e.PropertyName;
+            };
+
+            this.client.Generators = new BindingList<Generator>();
+            Assert.IsNotNull(receivedEvents);
+            Assert.AreEqual("Generators", receivedEvents);
         }
     }
 }
