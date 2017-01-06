@@ -1,9 +1,11 @@
 ﻿using CommonLibrary;
+using CommonLibrary.Interfaces;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +23,12 @@ namespace KSRESClient
                 if (client == null)
                 {
                     client = new Client();
+
+                    DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
+                    new InstanceContext(client),
+                        new NetTcpBinding(),
+                        new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
+                    client.Proxy = factory.CreateChannel();
                 }
                 return client;
             }
