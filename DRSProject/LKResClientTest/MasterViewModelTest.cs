@@ -99,5 +99,11 @@ namespace LKResClientTest
         {
             Assert.AreNotEqual(null, this.masterVM.ExitCommand);
         }
+
+        [Test]
+        public void ExitCommandAction()
+        {
+            this.masterVM.ExitCommand.Execute();
+        }
     }
 }

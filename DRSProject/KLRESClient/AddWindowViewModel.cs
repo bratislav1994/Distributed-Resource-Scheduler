@@ -724,7 +724,7 @@ namespace KLRESClient
         /// <summary>
         /// Show window for adding generator
         /// </summary>
-        private void AddClickCommandAction()
+        public void AddClickCommandAction()
         {
             this.win1 = new AddWindow(this.Client.DataContext);
             this.win1.ShowDialog();
@@ -794,7 +794,7 @@ namespace KLRESClient
                 canExecute = false;
             }
 
-            if (this.radioButton)
+            if (this.RadioButton)
             {
                 if (!string.IsNullOrEmpty(this.SiteName) && !string.IsNullOrEmpty(this.groupName))
                 {
@@ -816,7 +816,7 @@ namespace KLRESClient
                     }
                 }
             }
-            else if (this.radioButton1)
+            else if (this.RadioButton1)
             {
                 if (this.CmbSiteNameSelectedItem != null && this.Cmb2GroupNameSelectedItem != null)
                 {
@@ -831,7 +831,7 @@ namespace KLRESClient
                     }
                 }
             }
-            else if (this.radioButton2)
+            else if (this.RadioButton2)
             {
                 if (this.Cmb3SiteNameSelectedItem != null && !string.IsNullOrEmpty(this.TxbGroupName))
                 {
@@ -855,7 +855,7 @@ namespace KLRESClient
             {
                 this.CreateInstanceOfGenerator();
 
-                if (this.radioButton1)
+                if (this.RadioButton1)
                 {
                     this.generator.GroupID = this.Cmb2GroupNameSelectedItem.MRID;
                 }
@@ -927,7 +927,7 @@ namespace KLRESClient
             }
             catch
             {
-                MessageBox.Show("Error during execution Create command.");
+                // MessageBox.Show("Error during execution Create command.");
             }
         }
 
