@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Interfaces;
+using KSRes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NUnit.Framework;
@@ -256,5 +257,6 @@ namespace KSResTest
             NUnit.Framework.Assert.AreEqual(retVal[4].GeneratorID, "6");
             NUnit.Framework.Assert.AreEqual(retVal[4].Setpoint, 8);
         }
+
     }
 }

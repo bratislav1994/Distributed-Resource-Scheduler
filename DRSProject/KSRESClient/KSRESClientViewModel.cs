@@ -125,7 +125,7 @@ namespace KSRESClient
         
         private bool CanExecuteIssueCommand()
         {
-            return (!string.IsNullOrEmpty(NeededPower) && NeededPower !="All") && (CbSelectedItem != null && CbSelectedItem != "All");
+            return !string.IsNullOrEmpty(NeededPower) && (CbSelectedItem != null && CbSelectedItem != "All");
         }
 
         private void IssueCommandAction()

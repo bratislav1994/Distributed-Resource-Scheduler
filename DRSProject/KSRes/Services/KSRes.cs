@@ -21,11 +21,6 @@ namespace KSRes.Services
             {
                 return dynamicDataBase;
             }
-
-            private set
-            {
-                dynamicDataBase = value;
-            }
         }
 
         #region ILKRes

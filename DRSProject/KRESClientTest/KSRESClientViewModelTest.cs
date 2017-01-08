@@ -1,7 +1,11 @@
-﻿using KSRESClient;
+﻿using CommonLibrary;
+using CommonLibrary.Interfaces;
+using KSRESClient;
+using NSubstitute;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +16,8 @@ namespace KRESClientTest
     public class KSRESClientViewModelTest
     {
         KSRESClientViewModel model;
+        Client client = null;
+        private IKSForClient mockService;
 
         [OneTimeSetUp]
         public void Setup()
@@ -49,16 +55,6 @@ namespace KRESClientTest
 
             Assert.AreEqual(NeededPower, model.NeededPower);
             Assert.AreNotEqual(null, model.NeededPower);
-        }
-
-        [Test]
-        public void SelectedItemPropTest()
-        {
-            object SelectedItem = new object();
-            model.SelectedItem = SelectedItem;
-
-            Assert.AreEqual(SelectedItem, model.SelectedItem);
-            Assert.AreNotEqual(null, model.SelectedItem);
         }
 
         [Test]
@@ -190,5 +186,105 @@ namespace KRESClientTest
             Assert.AreEqual(GenGroup, model.GenGroup);
             Assert.AreNotEqual(null, model.GenGroup);
         }
+
+        [Test]
+        public void PropertyChanged()
+        {
+            string receivedEvents = null;
+
+            this.model.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+                receivedEvents = e.PropertyName;
+            };
+
+            this.model.CbSelectedItem = "testing";
+            Assert.IsNotNull(receivedEvents);
+            Assert.AreEqual("CbSelectedItem", receivedEvents);
+        }
+
+        [Test]
+        public void PropertyChanged_01()
+        {
+            string receivedEvents = null;
+
+            this.model.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+                receivedEvents = e.PropertyName;
+            };
+
+            this.model.NeededPower = "testing";
+            Assert.IsNotNull(receivedEvents);
+            Assert.AreEqual("NeededPower", receivedEvents);
+        }
+
+        [Test]
+        public void PropertyChanged_02()
+        {
+            string receivedEvents = null;
+
+            Generator gen = new Generator();
+            gen.MRID = "1";
+            gen.ActivePower = 5;
+            gen.BasePoint = 8;
+            gen.GeneratorType = GeneratorType.WIND_STATIC;
+            gen.GroupID = "1";
+            gen.HasMeasurment = true;
+            gen.Name = "a";
+            gen.Pmax = 5;
+            gen.Pmin = 1;
+            gen.Price = 1;
+            gen.SetPoint = 5;
+            gen.WorkingMode = WorkingMode.REMOTE;
+
+            Group group = new Group();
+            group.MRID = "1";
+            group.Name = "group";
+            group.SiteID = "1";
+
+            Site site = new Site();
+            site.Name = "site";
+            site.MRID = "1";
+
+            client = new Client();
+
+            UpdateInfo update = new UpdateInfo();
+            update.Generators.Add(gen);
+            update.Sites.Add(site);
+            update.Groups.Add(group);
+
+            client.Update(update, "temp");
+
+            model.Client = client;
+
+            this.model.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+                receivedEvents = e.PropertyName;
+            };
+
+            this.model.SelectedItem = gen;
+            Assert.IsNotNull(receivedEvents);
+            Assert.AreEqual("SelectedItem", receivedEvents);
+        }
+
+        [Test]
+        public void IssueCommandTest()
+        {
+            mockService = Substitute.For<IKSForClient>();
+            mockService.GetAllSystem().Returns(new List<LKResService>());
+
+            client = new Client();
+            client.Proxy = mockService;
+            model.Client = client;
+            model.NeededPower = String.Empty;
+            model.CbSelectedItem = String.Empty;
+
+            Assert.IsFalse(this.model.IssueCommand.CanExecute());
+
+            model.NeededPower = "5";
+            model.CbSelectedItem = "temp";
+
+            Assert.IsTrue(this.model.IssueCommand.CanExecute());
+            Assert.DoesNotThrow(() => this.model.IssueCommand.Execute());
+        } 
     }
 }
