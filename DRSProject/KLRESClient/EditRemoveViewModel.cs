@@ -244,6 +244,18 @@ namespace KLRESClient
             }
         }
 
+        public EditWindow EditWin
+        {
+            get
+            {
+                return this.win1;
+            }
+            set
+            {
+                this.win1 = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets selected generator
         /// </summary>
@@ -1073,19 +1085,6 @@ namespace KLRESClient
         /// </summary>
         private void EditClickCommandAction()
         {
-            this.EditName = this.generator.Name;
-            this.EditActivePower = this.generator.ActivePower.ToString();
-            this.EditBasePoint = this.generator.BasePoint.ToString();
-            this.EditSetPoint = this.generator.SetPoint.ToString();
-            this.EditPMin = this.generator.Pmin.ToString();
-            this.EditPMax = this.generator.Pmax.ToString();
-            this.EditPrice = this.generator.Price.ToString();
-            this.EditSiteName = string.Empty;
-            this.EditGroupName = string.Empty;
-            this.EditTxbGroupName = string.Empty;
-            this.EditCmbHasMeasSelectedItem = this.generator.HasMeasurment;
-            this.EditCmbGeneratorTypeSelectedItem = this.generator.GeneratorType;
-            this.EditCmbWorkingModeSelectedItem = this.generator.WorkingMode;
             this.EditTxb8Visibility = Visibility.Hidden;
             this.EditTxb9Visibility = Visibility.Hidden;
             this.EditCmbVisibility = Visibility.Visible;
@@ -1095,9 +1094,28 @@ namespace KLRESClient
             this.EditRadioButton = false;
             this.EditRadioButton1 = true;
             this.EditRadioButton2 = false;
+            this.EditSiteName = string.Empty;
+            this.EditGroupName = string.Empty;
+            this.EditTxbGroupName = string.Empty;
+            this.EditCmb3SiteNameSelectedItem = null;
+
+            this.generator = this.SelectedItem;
+
+            this.EditName = this.generator.Name;
+            this.EditActivePower = this.generator.ActivePower.ToString();
+            this.EditBasePoint = this.generator.BasePoint.ToString();
+            this.EditSetPoint = this.generator.SetPoint.ToString();
+            this.EditPMin = this.generator.Pmin.ToString();
+            this.EditPMax = this.generator.Pmax.ToString();
+            this.EditPrice = this.generator.Price.ToString();
+
+            this.EditCmbHasMeasSelectedItem = this.generator.HasMeasurment;
+            this.EditCmbGeneratorTypeSelectedItem = this.generator.GeneratorType;
+            this.EditCmbWorkingModeSelectedItem = this.generator.WorkingMode;
+
             this.EditCmbSiteNameSelectedItem = this.Client.GetSiteFromId(this.Client.GetGroupFromId(this.generator.GroupID).SiteID);
             this.EditCmb2GroupNameSelectedItem = this.Client.GetGroupFromId(this.generator.GroupID);
-            this.EditCmb3SiteNameSelectedItem = null;
+
             this.group = null;
             this.generator = null;
             this.site = null;
@@ -1193,10 +1211,9 @@ namespace KLRESClient
                         this.generator = this.SelectedItem;
                         this.group = this.Client.GetGroupFromId(this.generator.GroupID);
                         this.site = this.Client.GetSiteFromId(this.group.SiteID);
+                        this.ClickEditCommand.RaiseCanExecuteChanged();
+                        this.RemoveCommand.RaiseCanExecuteChanged();
                     }
-
-                    this.RemoveCommand.RaiseCanExecuteChanged();
-                    this.ClickEditCommand.RaiseCanExecuteChanged();
                 }
             }
         }

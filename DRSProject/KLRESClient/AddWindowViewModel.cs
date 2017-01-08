@@ -220,6 +220,18 @@ namespace KLRESClient
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public AddWindow AddWin
+        {
+            get
+            {
+                return this.win1;
+            }
+            set
+            {
+                this.win1 = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets instance of client
         /// </summary>

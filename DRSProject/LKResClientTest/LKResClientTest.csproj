@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="AddWindowViewModelTest.cs" />
     <Compile Include="EditRemoveViewModelTest.cs" />
+    <Compile Include="HomeWindowViewModelTest.cs" />
     <Compile Include="LKClientServiceTest.cs" />
     <Compile Include="MasterViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

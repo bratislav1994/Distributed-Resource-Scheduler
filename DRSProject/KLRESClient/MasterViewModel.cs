@@ -6,11 +6,12 @@
 
 namespace KLRESClient
 {
+    using CommonLibrary.Interfaces;
     using Prism.Commands;
     using System;
-    /// <summary>
-    /// Contains sub view models
-    /// </summary>
+    using System.ServiceModel;    /// <summary>
+                                  /// Contains sub view models
+                                  /// </summary>
     public class MasterViewModel
     {
         #region fields
@@ -38,7 +39,9 @@ namespace KLRESClient
         /// <summary>
         /// Use for closing MainWindow
         /// </summary>
-        private Window mainWindow = null;
+        private MainWindow mainWindow = null;
+
+        private HomeWindowViewModel homeVM = null;
 
         #endregion
 
@@ -50,15 +53,11 @@ namespace KLRESClient
         /// <param name="win">main window</param>
         public MasterViewModel(MainWindow win)
         {
-            //if (win == null)
-            //{
-            //    throw new ArgumentNullException();
-            //}
-
             this.mainWindow = win;
-            this.client = new LKClientService() { DataContext = this };
-            this.addWindowVM = new AddWindowViewModel(this.client);
-            this.editRemoveWindowVM = new EditRemoveViewModel(this.client);
+            this.homeVM = new HomeWindowViewModel();
+            this.Client = homeVM.Client;
+            this.addWindowVM = new AddWindowViewModel(this.Client);
+            this.editRemoveWindowVM = new EditRemoveViewModel(this.Client);
         }
 
         #endregion
@@ -77,11 +76,6 @@ namespace KLRESClient
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException();
-                }
-
                 this.client = value;
             }
         }
@@ -125,6 +119,22 @@ namespace KLRESClient
                 }
 
                 this.editRemoveWindowVM = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets view model for edit and remove
+        /// </summary>
+        public HomeWindowViewModel HomeVM
+        {
+            get
+            {
+                return this.homeVM;
+            }
+
+            set
+            {
+                this.homeVM = value;
             }
         }
 

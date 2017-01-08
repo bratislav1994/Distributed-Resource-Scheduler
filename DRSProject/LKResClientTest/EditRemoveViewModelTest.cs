@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.ServiceModel;
 using System.Windows;
 using System.Collections.Generic;
-
+using System.Threading;
 
 namespace LKResClientTest
 {
@@ -322,8 +322,10 @@ namespace LKResClientTest
             this.viewModel.Client.Groups.Clear();
             this.viewModel.Client.Sites.Clear();
 
-            this.viewModel.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
-            this.viewModel.Client.Sites.Add(new Site() { MRID = "3" });
+            EditRemoveViewModel temp = new EditRemoveViewModel(client);
+
+            temp.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
+            temp.Client.Sites.Add(new Site() { MRID = "3" });
 
             Generator g = new Generator()
             {
@@ -341,11 +343,27 @@ namespace LKResClientTest
                 WorkingMode = WorkingMode.LOCAL
             };
 
-            this.viewModel.Client.Generators.Add(g);
-            this.viewModel.SelectedItem = g;
+            temp.Client.Generators.Add(g);
+            temp.SelectedItem = null;
+            temp.SelectedItem = g;
 
-            Assert.IsTrue(this.viewModel.ClickEditCommand.CanExecute());
-            this.viewModel.ClickEditCommand.Execute();
+            temp.EditName = string.Empty;
+            temp.EditActivePower = string.Empty;
+
+
+            // The dispatcher thread
+            var t = new Thread(() =>
+            {
+                temp.EditWin = new EditWindow(temp.Client.DataContext);
+
+                temp.ClickEditCommand.Execute();
+                Assert.IsFalse(this.viewModel.ClickEditCommand.CanExecute());
+            });
+
+            //// Configure the thread
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
 
         [Test]
@@ -369,8 +387,9 @@ namespace LKResClientTest
             this.viewModel.Client.Groups.Clear();
             this.viewModel.Client.Sites.Clear();
 
-            this.viewModel.Client.Generators.Add(g);
+
             this.viewModel.Client.Generators.Add(new Generator() { MRID = "5", GroupID = "2" });
+            this.viewModel.Client.Generators.Add(g);
             this.viewModel.Client.Generators.Add(new Generator() { MRID = "6", GroupID = "4" });
             this.viewModel.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
             //this.viewModel.Client.Groups.Add(new Group() { MRID = "4", SiteID = "3" });
@@ -389,6 +408,38 @@ namespace LKResClientTest
             this.viewModel.Client.Groups.Add(new Group() { MRID = "5", SiteID = "3" });
             this.viewModel.Client.Sites.Add(new Site() { MRID = "3" });
             this.viewModel.SelectedItem = g;
+            Assert.IsTrue(this.viewModel.RemoveCommand.CanExecute());
+            this.viewModel.RemoveCommand.Execute();
+
+            // close bracket coveraged
+            this.viewModel.Client.Generators.Clear();
+            this.viewModel.Client.Groups.Clear();
+            this.viewModel.Client.Sites.Clear();
+
+            this.viewModel.Client.Generators.Add(new Generator() { MRID = "a", GroupID = "5" });
+            this.viewModel.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
+            this.viewModel.Client.Sites.Add(new Site() { MRID = "3" });
+            this.viewModel.SelectedItem = g;
+
+            Assert.IsTrue(this.viewModel.RemoveCommand.CanExecute());
+            this.viewModel.RemoveCommand.Execute();
+
+
+
+
+            this.viewModel.Client.Generators.Clear();
+            this.viewModel.Client.Groups.Clear();
+            this.viewModel.Client.Sites.Clear();
+
+            this.viewModel.Client.Generators.Add(new Generator() { MRID = "b" });
+            Generator gen = new Generator() { MRID = "a", GroupID = "2" };
+            this.viewModel.Client.Generators.Add(gen);
+            this.viewModel.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
+            this.viewModel.Client.Groups.Add(new Group() { MRID = "5", SiteID = "3" });
+
+            this.viewModel.Client.Sites.Add(new Site() { MRID = "3" });
+            this.viewModel.SelectedItem = gen;
+
             Assert.IsTrue(this.viewModel.RemoveCommand.CanExecute());
             this.viewModel.RemoveCommand.Execute();
         }
@@ -456,7 +507,32 @@ namespace LKResClientTest
 
             this.viewModel.EditTxbGroupName = "test";
             Assert.IsTrue(this.viewModel.EditCommand.CanExecute());
-            this.viewModel.EditCommand.Execute();
+
+            UpdateInfo update = new UpdateInfo();
+            update.UpdateType = UpdateType.ADD;
+            update.Generators.Add(new Generator());
+            update.Groups.Add(new Group());
+            update.Sites.Add(new Site());
+
+            ILKForClient mockService2 = Substitute.For<ILKForClient>();
+            mockService2.Login("proba", "proba");
+            mockService2.GetMySystem().Returns(update);
+            mockService2.Update(update);
+
+            client.Proxy = mockService2;
+            client.LogIn("proba", "proba");
+            client.Command(update);
+
+            var t = new Thread(() =>
+            {
+                this.viewModel.EditWin = new EditWindow(this.viewModel.Client.DataContext);
+                this.viewModel.EditWin = this.viewModel.EditWin;
+                this.viewModel.EditCommand.Execute();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
 
         public void FillInputFields()

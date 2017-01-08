@@ -21,29 +21,37 @@ namespace LKResClientTest
 
         private LKClientService client = null;
 
-        /// <summary>
-        /// Represent service
-        /// </summary>
-        private ILKForClient proxy = null;
 
         private ILKForClient mockService = null;
-        private ILKClient mockService2 = null;
+        private ILKForClient mockService2 = null;
 
         #endregion
 
         [OneTimeSetUp]
         public void SetupTest()
         {
-            proxy = null;
-            //Assert.Throws<EndpointNotFoundException>(() => client = new LKClientService());
-
-            //mockService2 = Substitute.For<ILKClient>();
-
-            //mockService = Substitute.For<ILKForClient>();
-            //mockService.Registration("proba", "proba");
-            //mockService.Login("proba", "proba");
-            //UpdateInfo update = mockService.GetMySystem();
             client = new LKClientService();
+            mockService = Substitute.For<ILKForClient>();
+            mockService.Registration("proba", "proba");
+            UpdateInfo update = new UpdateInfo();
+            update.UpdateType = UpdateType.ADD;
+            update.Generators.Add(new Generator());
+            update.Groups.Add(new Group());
+            update.Sites.Add(new Site());
+            mockService.GetMySystem().Returns(update);
+
+            //mockService.Update(new UpdateInfo());
+
+            mockService2 = Substitute.For<ILKForClient>();
+            mockService2.Login("proba", "proba");
+            mockService2.GetMySystem().Returns(update);
+            mockService2.Update(update);
+
+            client.Proxy = mockService;
+            client.Registration("proba", "proba");
+            client.Proxy = mockService2;
+            client.LogIn("proba", "proba");
+            client.Command(update);
         }
 
         [Test]
@@ -286,19 +294,6 @@ namespace LKResClientTest
             Assert.AreEqual(1, this.client.Generators.Count);
             Assert.AreEqual(2, this.client.Groups.Count);
             Assert.AreEqual(2, this.client.Sites.Count);
-        }
-
-        [Test]
-        public void CommandTest()
-        {
-            UpdateInfo update = new UpdateInfo();
-            update.UpdateType = UpdateType.ADD;
-            update.Generators.Add(new Generator());
-            update.Groups.Add(new Group());
-            update.Sites.Add(new Site());
-            Assert.Throws<InvalidDataException>(() => this.client.Command(null));
-            //Assert.Throws<NullReferenceException>(() => this.client.Command(update));
-            //this.client.Command(update);
         }
 
         [Test]

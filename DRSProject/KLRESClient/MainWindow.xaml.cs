@@ -20,6 +20,8 @@ namespace KLRESClient
         {
             this.InitializeComponent();
             this.DataContext = new MasterViewModel(this);
+            HomeWindow homeWin = new HomeWindow(this.DataContext);
+            homeWin.ShowDialog();
         }
     }
 }

@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.ServiceModel;
 using System.Windows;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace LKResClientTest
 {
@@ -282,13 +283,31 @@ namespace LKResClientTest
         public void AddClickCommandActionTest()
         {
             Assert.IsTrue(this.addWindowVM.ClickAddCommand.CanExecute());
-            this.addWindowVM.ClickAddCommand.Execute();
+
+            var t = new Thread(() =>
+            {
+                this.addWindowVM.AddWin = new AddWindow(this.addWindowVM.Client.DataContext);
+                AddWindow add = this.addWindowVM.AddWin;
+                this.addWindowVM.ClickAddCommand.Execute();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
 
         [Test]
         public void CancelCommandActionTest()
         {
-            this.addWindowVM.CancelCommand.Execute();
+            var t = new Thread(() =>
+            {
+                this.addWindowVM.AddWin = new AddWindow(this.addWindowVM.Client.DataContext);
+                this.addWindowVM.CancelCommand.Execute();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
 
         [Test]
@@ -346,7 +365,31 @@ namespace LKResClientTest
 
             this.addWindowVM.TxbGroupName = "test";
             Assert.IsTrue(this.addWindowVM.CreateCommand.CanExecute());
-            this.addWindowVM.CreateCommand.Execute();
+
+            UpdateInfo update = new UpdateInfo();
+            update.UpdateType = UpdateType.ADD;
+            update.Generators.Add(new Generator());
+            update.Groups.Add(new Group());
+            update.Sites.Add(new Site());
+
+            ILKForClient mockService2 = Substitute.For<ILKForClient>();
+            mockService2.Login("proba", "proba");
+            mockService2.GetMySystem().Returns(update);
+            mockService2.Update(update);
+
+            client.Proxy = mockService2;
+            client.LogIn("proba", "proba");
+            client.Command(update);
+
+            var t = new Thread(() =>
+            {
+                this.addWindowVM.AddWin = new AddWindow(this.addWindowVM.Client.DataContext);
+                this.addWindowVM.CreateCommand.Execute();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
     }
 }

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Prism.Commands;
 using System;
 using System.ServiceModel;
+using System.Threading;
 
 namespace LKResClientTest
 {
@@ -48,10 +49,17 @@ namespace LKResClientTest
         [OneTimeSetUp]
         public void SetupTest()
         {
-            //Assert.Throws<EndpointNotFoundException>(() => this.masterVM = new MasterViewModel(this.mainWindow));
-            //this.mainWindow = new MainWindow();
+            MainWindow window = null;
 
-            this.masterVM = new MasterViewModel(this.mainWindow);
+            var t = new Thread(() =>
+            {
+                window = new MainWindow();
+                this.masterVM = new MasterViewModel(window);
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
 
         [Test]
@@ -68,10 +76,19 @@ namespace LKResClientTest
         public void ClientTest()
         {
             Assert.AreNotEqual(null, this.masterVM.Client);
-            Assert.Throws<ArgumentNullException>(() => this.masterVM.Client = null);
+            //Assert.Throws<ArgumentNullException>(() => this.masterVM.Client = null);
             LKClientService client2 = new LKClientService();
             this.masterVM.Client = client2;
             Assert.AreEqual(client2, this.masterVM.Client);
+        }
+
+        [Test]
+        public void HomeWindowVMTest()
+        {
+            Assert.AreNotEqual(null, this.masterVM.HomeVM);
+            HomeWindowViewModel home = new HomeWindowViewModel();
+            this.masterVM.HomeVM = home;
+            Assert.AreEqual(home, this.masterVM.HomeVM);
         }
 
         [Test]
@@ -103,7 +120,18 @@ namespace LKResClientTest
         [Test]
         public void ExitCommandAction()
         {
-            this.masterVM.ExitCommand.Execute();
+            MainWindow window = null;
+
+            var t = new Thread(() =>
+            {
+                window = new MainWindow();
+                this.masterVM = new MasterViewModel(window);
+                this.masterVM.ExitCommand.Execute();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
     }
 }

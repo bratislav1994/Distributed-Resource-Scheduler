@@ -1,0 +1,82 @@
+﻿<Window x:Class="KLRESClient.HomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KLRESClient"
+        xmlns:ff="clr-namespace:KLRESClient"
+        mc:Ignorable="d"
+        
+        Title="HomeWindow" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" Height="350" Width="500">
+
+
+
+    <Window.Resources>
+
+
+        <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
+            <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
+        </ControlTemplate>
+
+
+
+    </Window.Resources>
+
+    <Grid Background="#FFD4D7DB">
+
+
+        <TextBox x:Name="text_box1" Text ="{Binding HomeVM.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="180,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+
+        <PasswordBox x:Name="text_box2" ff:PasswordBoxAssistant.BindPassword="true" ff:PasswordBoxAssistant.BoundPassword="{Binding Path=HomeVM.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="180,55,0,0" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="text_box3" Text ="{Binding HomeVM.Username2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="180,165,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <PasswordBox x:Name="text_box4" ff:PasswordBoxAssistant.BindPassword="true" ff:PasswordBoxAssistant.BoundPassword="{Binding Path=HomeVM.Password2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="180,195,0,0" VerticalAlignment="Top" Width="120" />
+
+        <Label Content="username:" HorizontalAlignment="Left" Margin="95,22,0,0" VerticalAlignment="Top"/>
+        <Label Content="password:" HorizontalAlignment="Left" Margin="95,53,0,0" VerticalAlignment="Top"/>
+        <Label Content="username:" HorizontalAlignment="Left" Margin="95,163,0,0" VerticalAlignment="Top"/>
+        <Label Content="password:" HorizontalAlignment="Left" Margin="95,194,0,0" VerticalAlignment="Top"/>
+
+        <Button x:Name="button" Command="{Binding HomeVM.LoginCommand}" Content="Login" Height="50" Width="60" HorizontalAlignment="Left" Margin="203,90,0,0" VerticalAlignment="Top">
+            <Button.Style>
+                <Style  TargetType="{x:Type Button}">
+                    <Setter Property="Foreground" Value="Blue" />
+                    <Setter Property="IsEnabled" Value="True"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#FFADADAD"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button x:Name="button1" Command="{Binding HomeVM.RegistrateCommand}" Content="Registrate" HorizontalAlignment="Left" Margin="203,230,0,0" VerticalAlignment="Top" Height="50" Width="60">
+            <Button.Style>
+                <Style  TargetType="{x:Type Button}">
+                    <Setter Property="Foreground" Value="Blue" />
+                    <Setter Property="IsEnabled" Value="True"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#FFADADAD"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <ComboBox x:Name="cmb3" SelectedItem="{Binding EditRemoveWindowVM.EditCmb3SiteNameSelectedItem}" Visibility="{Binding EditRemoveWindowVM.EditCmb3Visibility, FallbackValue=Hidden, Mode=TwoWay}" ItemsSource="{Binding Client.Sites,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,181,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}mrID: {0}&#x0a;Name: {1}">
+                                <Binding Path="MRID"/>
+                                <Binding Path="Name"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+
+    </Grid>
+</Window>

@@ -11,7 +11,7 @@ namespace KLRESClient
     /// <summary>
     /// Interaction logic for AddWindow
     /// </summary>
-    public partial class AddWindow : System.Windows.Window
+    public partial class AddWindow : Window
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AddWindow" /> class.

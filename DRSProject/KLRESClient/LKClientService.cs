@@ -78,6 +78,7 @@ namespace KLRESClient
 
         #endregion
 
+
         #region constructor
 
         /// <summary>
@@ -104,49 +105,56 @@ namespace KLRESClient
             {
                 this.workingModes.Add(workMode);
             }
+        }
 
-            DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
-                    new InstanceContext(this),
-                        new NetTcpBinding(),
-                        new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
+        public void Registration(string username, string password)
+        {
+            this.proxy.Registration(username, password);
+            Initialize();
+        }
 
-            UpdateInfo getAllFromService = null;
+        public void LogIn(string username, string password)
+        {
+            this.proxy.Login(username, password);
+            Initialize();
+        }
 
-            try
+        public void Initialize()
+        {
+            UpdateInfo getAllFromService = this.Proxy.GetMySystem();
+
+            if (getAllFromService.Generators.Count != 0)
             {
-                //this.proxy = factory.CreateChannel();
-
-                //this.proxy.Registration("proba", "proba");
-                //this.proxy.Login("proba", "proba");
-                //getAllFromService = this.proxy.GetMySystem();
+                getAllFromService.Generators.ForEach(x => { Generators.Add(x); });
             }
-            catch
+
+            if (getAllFromService.Sites.Count != 0)
             {
-                throw new EndpointNotFoundException();
+                getAllFromService.Sites.ForEach(x => { Sites.Add(x); });
             }
 
-            if (getAllFromService != null)
+            if (getAllFromService.Groups.Count != 0)
             {
-                if (getAllFromService.Generators != null && getAllFromService.Generators.Count != 0)
-                {
-                    getAllFromService.Generators.ForEach(x => { Generators.Add(x); });
-                }
-
-                if (getAllFromService.Sites != null && getAllFromService.Sites.Count != 0)
-                {
-                    getAllFromService.Sites.ForEach(x => { Sites.Add(x); });
-                }
-
-                if (getAllFromService.Groups != null && getAllFromService.Groups.Count != 0)
-                {
-                    getAllFromService.Groups.ForEach(x => { Groups.Add(x); });
-                }
+                getAllFromService.Groups.ForEach(x => { Groups.Add(x); });
             }
         }
 
         #endregion
 
         #region Properties
+
+        public ILKForClient Proxy
+        {
+            get
+            {
+                return this.proxy;
+            }
+
+            set
+            {
+                this.proxy = value;
+            }
+        }
 
         /// <summary>
         /// The source of the event
@@ -374,11 +382,6 @@ namespace KLRESClient
         /// <param name="update">update info which will be sent to service</param>
         public void Command(UpdateInfo update)
         {
-            if (update == null)
-            {
-                throw new InvalidDataException();
-            }
-
             this.proxy.Update(update);
         }
 

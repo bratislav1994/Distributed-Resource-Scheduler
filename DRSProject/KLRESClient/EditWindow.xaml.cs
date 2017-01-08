@@ -11,7 +11,7 @@ namespace KLRESClient
     /// <summary>
     /// Interaction logic for EditWindow
     /// </summary>
-    public partial class EditWindow : System.Windows.Window
+    public partial class EditWindow : Window
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EditWindow" /> class.
