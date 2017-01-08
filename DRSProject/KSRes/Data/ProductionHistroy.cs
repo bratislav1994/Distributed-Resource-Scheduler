@@ -1,0 +1,72 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KSRes.Data
+{
+    public class ProductionHistroy
+    {
+        private int id;
+        private String username;
+        private String mrid;
+        private double activePower;
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
+
+            set
+            {
+                id = value;
+            }
+        }
+
+        public String Username
+        {
+            get
+            {
+                return username;
+            }
+
+            set
+            {
+                username = value;
+            }
+        }
+
+        public double ActivePower
+        {
+            get
+            {
+                return activePower;
+            }
+
+            set
+            {
+                activePower = value;
+            }
+        }
+
+        public string MRID
+        {
+            get
+            {
+                return mrid;
+            }
+
+            set
+            {
+                mrid = value;
+            }
+        }
+    }
+}

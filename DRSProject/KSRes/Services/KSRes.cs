@@ -14,7 +14,7 @@ namespace KSRes.Services
     public class KSRes : IKSRes, IKSForClient
     {
         private static DynamicDataBase dynamicDataBase = new DynamicDataBase();
-
+       
         public static DynamicDataBase DynamicDataBase
         {
             get
@@ -54,7 +54,12 @@ namespace KSRes.Services
 
         public void SendMeasurement(Dictionary<string, double> measurments)
         {
-            throw new NotImplementedException();
+            OperationContext context = OperationContext.Current;
+            string sessionID = context.Channel.SessionId;
+
+            string username = dynamicDataBase.GetServiceSID(sessionID).Username;
+
+            dynamicDataBase.SendMeasurement(username, measurments);
         }
 
         public void Update(UpdateInfo update)

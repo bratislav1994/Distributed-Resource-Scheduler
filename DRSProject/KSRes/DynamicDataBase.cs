@@ -1,6 +1,8 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Exceptions;
 using CommonLibrary.Interfaces;
+using KSRes.Access;
+using KSRes.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +19,9 @@ namespace KSRes
         private Dictionary<string, string> registrationService = null;
         private List<LKResService> activeService = null;
         private List<IKSClient> clients = null;
+        private List<ProductionHistroy> multiThreadBuffer = null;
         private object lockObj = null;
+        private object lockObj1 = new object();
 
         public Dictionary<string, string> RegistrationService
         {
@@ -49,12 +53,16 @@ namespace KSRes
             activeService = new List<LKResService>();
             clients = new List<IKSClient>();
             lockObj = new object();
+            multiThreadBuffer = new List<ProductionHistroy>();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
             CheckIfLKServiceIsAliveThread.Start();
+
+            Thread ProcessingDataThread = new Thread(() => ProcessingData());
+            ProcessingDataThread.Start();
         }
 
-        private LKResService GetServiceSID(string sessionID)
+        public LKResService GetServiceSID(string sessionID)
         {
             foreach (LKResService service in ActiveService)
             {
@@ -161,6 +169,54 @@ namespace KSRes
             }
 
             NotifyClients(update, serviceUp.Username);
+        }
+
+        public void SendMeasurement(string username, Dictionary<string, double> measurments)
+        {
+            UpdateInfo update = new UpdateInfo();
+            update.UpdateType = UpdateType.UPDATE;
+            update.Groups = null;
+            update.Sites = null;
+
+            LKResService service = GetService(username);
+
+            foreach (string mrid in measurments.Keys)
+            {
+                ProductionHistroy productionHistory = new ProductionHistroy();
+                productionHistory.Username = username;
+                productionHistory.MRID = mrid;
+                productionHistory.ActivePower = measurments[mrid];
+
+                lock (lockObj1)
+                {
+                    multiThreadBuffer.Add(productionHistory);
+                }
+
+                Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).First();
+                generator.ActivePower = measurments[mrid];
+
+                update.Generators.Add(generator);
+            }  
+
+            foreach(IKSClient client in clients)
+            {
+                client.Update(update, username);
+            }
+        }
+
+        public void ProcessingData()
+        {
+            Thread.Sleep(10000);
+
+            foreach(ProductionHistroy productionHistory in multiThreadBuffer)
+            {
+                LocalDB.Instance.AddProductions(productionHistory);
+            }
+
+            lock (lockObj1)
+            {
+                multiThreadBuffer.Clear();
+            }
         }
 
         #region private add/update/remove
