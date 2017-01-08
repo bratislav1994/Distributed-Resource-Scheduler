@@ -11,5 +11,7 @@ namespace KSRes.Access
     {
         bool AddConsuption(ConsuptionHistory history);
         List<ConsuptionHistory> ReadConsuptions(string username);
+        bool AddProductions(ProductionHistroy history);
+        List<ProductionHistroy> ReadProductions(string username);
     }
 }

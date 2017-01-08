@@ -31,7 +31,20 @@ namespace KSRes.Access
         {
             using (var access = new AccessDB())
             {
-                access.History.Add(history);
+                access.ConsuptionHistory.Add(history);
+                int i = access.SaveChanges();
+
+                if (i > 0)
+                    return true;
+                return false;
+            }
+        }
+
+        public bool AddProductions(ProductionHistroy history)
+        {
+            using (var access = new AccessDB())
+            {
+                access.ProductionHistory.Add(history);
                 int i = access.SaveChanges();
 
                 if (i > 0)
@@ -44,8 +57,17 @@ namespace KSRes.Access
         {
             using (var access = new AccessDB())
             {
-                List<ConsuptionHistory> consuptions = access.History.Where(x => x.Username.Equals(username)).ToList();
+                List<ConsuptionHistory> consuptions = access.ConsuptionHistory.Where(x => x.Username.Equals(username)).ToList();
                 return consuptions;
+            }
+        }
+
+        public List<ProductionHistroy> ReadProductions(string username)
+        {
+            using (var access = new AccessDB())
+            {
+                List<ProductionHistroy> productions = access.ProductionHistory.Where(x => x.Username.Equals(username)).ToList();
+                return productions;
             }
         }
     }

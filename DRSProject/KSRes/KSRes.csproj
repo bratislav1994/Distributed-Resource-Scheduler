@@ -73,6 +73,7 @@
     <Compile Include="Access\ILocalDB.cs" />
     <Compile Include="Access\LocalDB.cs" />
     <Compile Include="Data\ConsuptionHistory.cs" />
+    <Compile Include="Data\ProductionHistroy.cs" />
     <Compile Include="DynamicDataBase.cs" />
     <Compile Include="Services\KSRes.cs" />
     <Compile Include="Program.cs" />
