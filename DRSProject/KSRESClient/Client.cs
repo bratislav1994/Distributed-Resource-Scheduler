@@ -25,11 +25,6 @@ namespace KSRESClient
             UserNames = new List<string>();
             userNames.Add("All");
             currentUser = null;
-
-            LKResService service = new LKResService("temp", null, null);
-            allUsers.Add(service);
-            userNames.Add(service.Username);
-
         }
 
         public IKSForClient Proxy
@@ -299,9 +294,9 @@ namespace KSRESClient
             return user;
         }
 
-        public void IssueCommand(string userName, double neededPower)
+        public void IssueCommand(double neededPower)
         {
-            Proxy.IssueCommand(userName, neededPower);
+            Proxy.IssueCommand(neededPower);
         }
 
         public Generator GetGeneratorFromId(string mrId)
