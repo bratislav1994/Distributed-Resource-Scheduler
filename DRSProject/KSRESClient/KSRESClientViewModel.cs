@@ -48,7 +48,6 @@ namespace KSRESClient
                 if(propName.Equals("CbSelectedItem"))
                 {
                     Client.SetCurrentUser(CbSelectedItem);
-                    IssueCommand.RaiseCanExecuteChanged();
                 }
                 else if(propName.Equals("NeededPower"))
                 {
@@ -125,7 +124,7 @@ namespace KSRESClient
         
         private bool CanExecuteIssueCommand()
         {
-            return !string.IsNullOrEmpty(NeededPower) && (CbSelectedItem != null && CbSelectedItem != "All");
+            return !string.IsNullOrEmpty(NeededPower);
         }
 
         private void IssueCommandAction()
@@ -137,7 +136,7 @@ namespace KSRESClient
                 {
                     throw new Exception();
                 }
-                Client.IssueCommand(CbSelectedItem, np);
+                Client.IssueCommand(np);
             }
             catch(Exception ex)
             {

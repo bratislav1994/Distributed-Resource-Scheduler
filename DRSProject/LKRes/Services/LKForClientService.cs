@@ -14,27 +14,29 @@ namespace LKRes.Services
     [CallbackBehavior(UseSynchronizationContext = false)]
     public class LKForClientService : ILKForClient, ILKRes
     {
-        public static UpdateInfo updateInfo = new UpdateInfo();
+        public UpdateInfo updateInfo = new UpdateInfo();
         public static object lockObj = new object();
         private IKSRes kSResProxy = null;
         private ILKClient client = null;
         Thread notifyThread = null;
+
+        public IKSRes KSResProxy
+        {
+            get { return KSResProxy; }
+            set { KSResProxy = value; }
+        }
+
         public LKForClientService()
         {
-            try
-            {
-                DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-                    new InstanceContext(this),
-                    new NetTcpBinding(),
-                    new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
-                kSResProxy = ksResFactory.CreateChannel();
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine("Error: {0}.", ex.Message);
-            }
-            
+            DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
+                new InstanceContext(this),
+                new NetTcpBinding(),
+                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+
+            kSResProxy = ksResFactory.CreateChannel();
+
+
             Thread ChangePowerThread = new Thread(ChangeActivePower);
             ChangePowerThread.Start();
         }
@@ -48,7 +50,7 @@ namespace LKRes.Services
         {
             foreach (SetPoint setpoint in setPoints)
             {
-                Generator generator = LKForClientService.updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
+                Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
 
                 lock (lockObj)
                 {
@@ -59,13 +61,11 @@ namespace LKRes.Services
 
         public void ChangeActivePower()
         {
-
             while (true)
             {
                 Thread.Sleep(4000);
                 lock (lockObj)
                 {
-
                     Random randGenerator = new Random();
                     Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
 
@@ -193,10 +193,9 @@ namespace LKRes.Services
             notifyThread.Start();
         }
 
-        public void Add(UpdateInfo update)
+        private void Add(UpdateInfo update)
         {
-            if(update.Generators != null)
-                update.Generators[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
+            update.Generators[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
 
             if(update.Groups != null)
                 update.Groups[0].MRID = Guid.NewGuid().ToString().Substring(0, 10); ;
@@ -221,15 +220,15 @@ namespace LKRes.Services
 
                 updateInfo.Generators.Add(update.Generators[0]);
                 updateInfo.Groups.Add(update.Groups[0]);
-            } 
-            else if(update.Generators != null && update.Groups == null && update.Sites == null)
+            }
+            //else if(update.Generators != null && update.Groups == null && update.Sites == null)
+            else
             {
                 updateInfo.Generators.Add(update.Generators[0]);
             }
-
         }
 
-        public void Remove(UpdateInfo update)
+        private void Remove(UpdateInfo update)
         {
             Generator gen = null;
             gen = updateInfo.Generators.Where(g => g.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
@@ -254,7 +253,7 @@ namespace LKRes.Services
             }
         }
 
-        public void UpdateData(UpdateInfo update)
+        private void UpdateData(UpdateInfo update)
         {
             Generator gen = updateInfo.Generators.Where(g => g.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
 
@@ -297,3 +296,5 @@ namespace LKRes.Services
         }
     }
 }
+
+

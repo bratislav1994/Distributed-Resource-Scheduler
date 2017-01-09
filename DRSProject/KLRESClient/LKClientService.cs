@@ -526,29 +526,24 @@ namespace KLRESClient
         /// <returns>true if validation is ok, or false</returns>
         public bool CheckDoubleInputField(string txb)
         {
-            bool isOk = true;
-
             if (string.IsNullOrEmpty(txb))
             {
-                isOk = false;
-            }
-            else
-            {
-                try
-                {
-                    if (double.Parse(txb) < 1)
-                    {
-                        isOk = false;
-                    }
-                }
-                catch
-                {
-                    isOk = false;
-                    //throw new Exception();
-                }
+                return false;
             }
 
-            return isOk;
+            try
+            {
+                if (double.Parse(txb) < 1)
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
         #endregion
 

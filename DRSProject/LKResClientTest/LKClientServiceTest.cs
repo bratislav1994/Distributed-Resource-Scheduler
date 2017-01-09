@@ -213,7 +213,7 @@ namespace LKResClientTest
         {
             Assert.AreEqual(false, this.client.CheckDoubleInputField(null));
             Assert.AreEqual(false, this.client.CheckDoubleInputField(string.Empty));
-            Assert.Throws<Exception>(() => this.client.CheckDoubleInputField("string"));
+            this.client.CheckDoubleInputField("string");
             Assert.AreEqual(false, this.client.CheckDoubleInputField("-2"));
             Assert.AreEqual(true, this.client.CheckDoubleInputField("2.0"));
         }

@@ -162,23 +162,19 @@
         <Label Content="name" HorizontalAlignment="Left" Margin="4,10,0,0" VerticalAlignment="Top"/>
         <Label Content="hasMeasurment" HorizontalAlignment="Left" Margin="4,70,0,0" VerticalAlignment="Top"/>
         <Label Content="activePower" HorizontalAlignment="Left" Margin="4,40,0,0" VerticalAlignment="Top"/>
-        <Label Content="basePoint" HorizontalAlignment="Left" Margin="4,100,0,0" VerticalAlignment="Top"/>
-        <Label Content="setPoint" HorizontalAlignment="Left" Margin="4,130,0,0" VerticalAlignment="Top"/>
 
         <TextBox x:Name="text_box2" Text ="{Binding AddWindowVM.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="text_box3" Text ="{Binding AddWindowVM.ActivePower, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <TextBox x:Name="text_box4" Text ="{Binding AddWindowVM.BasePoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,103,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
         <ComboBox x:Name="combo_box1" SelectedItem="{Binding AddWindowVM.CmbHasMeasSelectedItem}" ItemsSource="{Binding Client.HasMeasurments,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="95,73,0,0" VerticalAlignment="Top" Height="23" Width="120" >
 
         </ComboBox>
-        <TextBox x:Name="text_box10" Text ="{Binding AddWindowVM.SetPoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="95,133,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
 
         <Label Content="pmin:" HorizontalAlignment="Left" Margin="220,10,0,0" VerticalAlignment="Top"/>
         <Label Content="pmax:" HorizontalAlignment="Left" Margin="220,40,0,0" VerticalAlignment="Top"/>
         <Label Content="price:" HorizontalAlignment="Left" Margin="220,70,0,0" VerticalAlignment="Top"/>
         <Label Content="generatorType:" HorizontalAlignment="Left" Margin="220,100,0,0" VerticalAlignment="Top"/>
-        <Label Content="workingMode:" HorizontalAlignment="Left" Margin="220,130,0,0" VerticalAlignment="Top"/>
+        <Label Content="workingMode:" HorizontalAlignment="Left" Margin="4,100,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="text_box5" Text ="{Binding AddWindowVM.PMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="315,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
 
         <TextBox x:Name="text_box6" Text ="{Binding AddWindowVM.PMax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="315,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
@@ -186,7 +182,7 @@
         <ComboBox x:Name="combo_box2" SelectedItem="{Binding AddWindowVM.CmbGeneratorTypeSelectedItem}" ItemsSource="{Binding Client.GeneratorTypes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,103,0,0" VerticalAlignment="Top" Height="23" Width="120" >
 
         </ComboBox>
-        <ComboBox x:Name="combo_box3" SelectedItem="{Binding AddWindowVM.CmbWorkingModeSelectedItem}" ItemsSource="{Binding Client.WorkingModes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="315,133,0,0" VerticalAlignment="Top" Height="23" Width="120" >
+        <ComboBox x:Name="combo_box3" SelectedItem="{Binding AddWindowVM.CmbWorkingModeSelectedItem}" ItemsSource="{Binding Client.WorkingModes,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="95,103,0,0" VerticalAlignment="Top" Height="23" Width="120" >
 
         </ComboBox>
 

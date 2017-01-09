@@ -24,7 +24,7 @@
         <ComboBox x:Name="usersComboBox" SelectedItem="{Binding CbSelectedItem}" ItemsSource="{Binding Client.UserNames,UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Left" Margin="85,21,0,0" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="label" Content="User : " HorizontalAlignment="Left" Margin="10,17,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="neededPower" Text ="{Binding NeededPower, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="834,21,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="label1" Content="Needed power for client: " HorizontalAlignment="Left" Margin="685,21,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1" Content="Needed power for all clients: " HorizontalAlignment="Left" Margin="669,21,0,0" VerticalAlignment="Top"/>
         <Button x:Name="issueCommand" Command="{Binding IssueCommand}" Content="Issue command" HorizontalAlignment="Left" Margin="858,67,0,0" VerticalAlignment="Top" Width="96"/>
     </Grid>
 </Window>
