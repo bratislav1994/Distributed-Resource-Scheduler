@@ -1,29 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommonLibrary.Interfaces;
-using CommonLibrary;
-using CommonLibrary.Exceptions;
-using System.ServiceModel;
-using System.Threading;
+﻿// <copyright file="LKForClientService.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace LKRes.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.ServiceModel;
+    using System.Threading;
+    using CommonLibrary;
+    using CommonLibrary.Exceptions;
+    using CommonLibrary.Interfaces;
+
+    /// <summary>
+    /// Class represent a LKRes server who communicating with LKResClient and KSRes module
+    /// </summary>
     [CallbackBehavior(UseSynchronizationContext = false)]
     public class LKForClientService : ILKForClient, ILKRes
     {
+        /// <summary>
+        /// Property to lock a shared resource
+        /// </summary>
+        public static object LockObj = new object();
+        
+        /// <summary>
+        /// Temporary data base
+        /// </summary>
         public UpdateInfo updateInfo = new UpdateInfo();
-        public static object lockObj = new object();
+        
+        /// <summary>
+        /// proxy for KSRes module
+        /// </summary>
         private IKSRes kSResProxy = null;
+        
+        /// <summary>
+        /// proxy for LK client
+        /// </summary>
         private ILKClient client = null;
+        
+        /// <summary>
+        /// The thread that informs the client about changes
+        /// </summary>
         Thread notifyThread = null;
 
         public IKSRes KSResProxy
         {
-            get { return KSResProxy; }
-            set { KSResProxy = value; }
+            get { return kSResProxy; }
+            set { kSResProxy = value; }
+        }
+
+        public ILKClient Client
+        {
+            get { return client; }
+            set { client = value; }
         }
 
         public LKForClientService()
@@ -52,7 +84,7 @@ namespace LKRes.Services
             {
                 Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
 
-                lock (lockObj)
+                lock (LockObj)
                 {
                     generator.SetPoint = setpoint.Setpoint;
                 }
@@ -64,7 +96,7 @@ namespace LKRes.Services
             while (true)
             {
                 Thread.Sleep(4000);
-                lock (lockObj)
+                lock (LockObj)
                 {
                     Random randGenerator = new Random();
                     Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
