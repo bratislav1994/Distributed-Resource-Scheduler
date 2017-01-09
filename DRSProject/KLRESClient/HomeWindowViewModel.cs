@@ -1,14 +1,25 @@
-﻿using System;
-using CommonLibrary.Interfaces;
-using Prism.Commands;
-using System.ComponentModel;
-using System.ServiceModel;
-using System.Windows;
+﻿// <copyright file="HomeWindowViewModel.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace KLRESClient
 {
+    using System.ComponentModel;
+    using System.ServiceModel;
+    using System.Windows;
+    using CommonLibrary.Interfaces;
+    using Prism.Commands;
+
+    /// <summary>
+    /// View model for login and register users
+    /// </summary>
     public class HomeWindowViewModel : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Use for showing or closing HomeWindow
+        /// </summary>
         private HomeWindow homeWin = null;
 
         /// <summary>
@@ -22,15 +33,33 @@ namespace KLRESClient
         private DelegateCommand loginCommand;
 
         /// <summary>
-        /// registrate command
+        /// register command
         /// </summary>
         private DelegateCommand registrateCommand;
 
+        /// <summary>
+        /// username for login
+        /// </summary>
         private string username = string.Empty;
+
+        /// <summary>
+        /// password for password
+        /// </summary>
         private string password = string.Empty;
+
+        /// <summary>
+        /// username for register
+        /// </summary>
         private string username2 = string.Empty;
+
+        /// <summary>
+        /// password for register
+        /// </summary>
         private string password2 = string.Empty;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeWindowViewModel" /> class.
+        /// </summary>
         public HomeWindowViewModel()
         {
             this.client = this.Client;
@@ -38,8 +67,14 @@ namespace KLRESClient
 
         #region Properties
 
+        /// <summary>
+        /// The source of the event
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Gets or sets instance of client
+        /// </summary>
         public LKClientService Client
         {
             get
@@ -65,6 +100,9 @@ namespace KLRESClient
             }
         }
 
+        /// <summary>
+        /// Gets or sets home window
+        /// </summary>
         public HomeWindow HomeWin
         {
             get
@@ -149,6 +187,22 @@ namespace KLRESClient
         #endregion
 
         /// <summary>
+        /// Gets information if register command can be executed
+        /// </summary>
+        public DelegateCommand RegistrateCommand
+        {
+            get
+            {
+                if (this.registrateCommand == null)
+                {
+                    this.registrateCommand = new DelegateCommand(this.RegistrateCommandAction, this.CanRegistrate);
+                }
+
+                return this.registrateCommand;
+            }
+        }
+
+        /// <summary>
         /// Gets information if login command can be executed
         /// </summary>
         public DelegateCommand LoginCommand
@@ -164,6 +218,10 @@ namespace KLRESClient
             }
         }
 
+        /// <summary>
+        /// Validation for username and password
+        /// </summary>
+        /// <returns>true if validation of username and password are correct, otherwise false</returns>
         private bool CanLogin()
         {
             if (!this.Client.CheckStringInputField(this.Username) || string.IsNullOrWhiteSpace(this.Username))
@@ -184,6 +242,9 @@ namespace KLRESClient
             return true;
         }
 
+        /// <summary>
+        /// login command action
+        /// </summary>
         private void LoginCommandAction()
         {
             try
@@ -198,21 +259,9 @@ namespace KLRESClient
         }
 
         /// <summary>
-        /// Gets information if registrate command can be executed
+        /// Validation of input fields
         /// </summary>
-        public DelegateCommand RegistrateCommand
-        {
-            get
-            {
-                if (this.registrateCommand == null)
-                {
-                    this.registrateCommand = new DelegateCommand(this.RegistrateCommandAction, this.CanRegistrate);
-                }
-
-                return this.registrateCommand;
-            }
-        }
-
+        /// <returns>true if username and password are in correct format, otherwise false</returns>
         private bool CanRegistrate()
         {
             if (!this.Client.CheckStringInputField(this.Username2) || string.IsNullOrWhiteSpace(this.Username2))
@@ -233,6 +282,9 @@ namespace KLRESClient
             return true;
         }
 
+        /// <summary>
+        /// register command action
+        /// </summary>
         private void RegistrateCommandAction()
         {
             try

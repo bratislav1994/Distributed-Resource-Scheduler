@@ -6,9 +6,9 @@
 
 namespace KLRESClient
 {
+    using System;
     using Prism.Commands;
-    using System; 
-    
+
     /// <summary>
     /// Contains sub view models
     /// </summary>
@@ -41,6 +41,9 @@ namespace KLRESClient
         /// </summary>
         private MainWindow mainWindow = null;
 
+        /// <summary>
+        /// Represent view model for login and register actions
+        /// </summary>
         private HomeWindowViewModel homeVM = null;
 
         #endregion
@@ -55,7 +58,7 @@ namespace KLRESClient
         {
             this.mainWindow = win;
             this.homeVM = new HomeWindowViewModel();
-            this.Client = homeVM.Client;
+            this.Client = this.homeVM.Client;
             this.Client.DataContext = this;
             this.addWindowVM = new AddWindowViewModel(this.Client);
             this.editRemoveWindowVM = new EditRemoveViewModel(this.Client);

@@ -4,8 +4,6 @@
 // by company ( http://www.example.com )
 // </copyright>
 
-using System;
-
 namespace KLRESClient
 {
     using System.Collections.Generic;
@@ -210,12 +208,16 @@ namespace KLRESClient
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Gets or sets instance of add window
+        /// </summary>
         public AddWindow AddWin
         {
             get
             {
                 return this.win1;
             }
+
             set
             {
                 this.win1 = value;
@@ -900,7 +902,7 @@ namespace KLRESClient
             }
             catch
             {
-                 MessageBox.Show("Error during execution Create command.");
+                MessageBox.Show("Error during execution Create command.");
             }
         }
 

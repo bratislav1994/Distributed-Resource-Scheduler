@@ -234,12 +234,16 @@ namespace KLRESClient
             }
         }
 
+        /// <summary>
+        /// Gets or sets instance of edit window
+        /// </summary>
         public EditWindow EditWin
         {
             get
             {
                 return this.win1;
             }
+
             set
             {
                 this.win1 = value;
@@ -766,7 +770,7 @@ namespace KLRESClient
                 }
                 else
                 {
-                    if (double.Parse(this.EditActivePower) > double.Parse(this.EditPMax) || 
+                    if (double.Parse(this.EditActivePower) > double.Parse(this.EditPMax) ||
                         double.Parse(this.EditActivePower) < double.Parse(this.EditPMin))
                     {
                         canExecute = false;
@@ -905,7 +909,7 @@ namespace KLRESClient
                 Sites = sites,
                 UpdateType = UpdateType.UPDATE
             };
-            
+
             try
             {
                 this.Client.Command(this.updateInfo);
@@ -1093,7 +1097,7 @@ namespace KLRESClient
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
 
-                if (propName.Equals("EditName") || propName.Equals("EditActivePower") || propName.Equals("EditPMin") || 
+                if (propName.Equals("EditName") || propName.Equals("EditActivePower") || propName.Equals("EditPMin") ||
                     propName.Equals("EditPMax") || propName.Equals("EditPrice") || propName.Equals("EditCmbHasMeasSelectedItem") ||
                     propName.Equals("EditCmbGeneratorTypeSelectedItem") || propName.Equals("EditCmbWorkingModeSelectedItem") ||
                     propName.Equals("EditSiteName") || propName.Equals("EditGroupName") || propName.Equals("EditTxbGroupName") ||

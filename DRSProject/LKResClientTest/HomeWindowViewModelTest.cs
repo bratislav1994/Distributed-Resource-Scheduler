@@ -128,30 +128,45 @@ namespace LKResClientTest
             this.homeVM.Username = "testing";
             Assert.IsNotNull(receivedEvents);
             Assert.AreEqual("Username", receivedEvents);
+        }
 
+        [Test]
+        public void PasswordAsistant()
+        {
             var t = new Thread(() =>
             {
-                PasswordBox box = new PasswordBox();
-                bool wascalled = false;
+                App app = new App();
+                app.InitializeComponent();
+                app.InitializeComponent();
 
-                var execute = new DelegateCommand(() => { wascalled = true; });
+                PasswordBox box = new PasswordBox();
 
                 PasswordBoxAssistant.SetBoundPassword(box, "a");
-                
-                PasswordBoxAssistant.SetBindPassword(box, true);
                 PasswordBoxAssistant.GetBindPassword(box);
                 PasswordBoxAssistant.GetBoundPassword(box);
                 box.Password = "test";
-                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) {};
+
+                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
+                PasswordBoxAssistant.SetBindPassword(box, true);
+                box.Password = "test";
+                PasswordBoxAssistant.SetBindPassword(box, true);
+                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
+                PasswordBoxAssistant.SetBindPassword(box, true);
+                PasswordBoxAssistant.SetBindPassword(box, true);
+
+                box.Password += "e";
+                PasswordBoxAssistant.SetBindPassword(box, false);
+                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
+
+                box.Password = null;
                 PasswordBoxAssistant.SetBoundPassword(null, "a");
+                //PasswordBoxAssistant.SetBindPassword(box, false);
+                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
             });
 
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
             t.Join();
-            
-
-            //AssertIsTrue(wascalled);
         }
     }
 }

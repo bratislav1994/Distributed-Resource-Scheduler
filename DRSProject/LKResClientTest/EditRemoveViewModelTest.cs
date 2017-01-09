@@ -409,7 +409,7 @@ namespace LKResClientTest
             this.viewModel.RemoveCommand.Execute();
 
 
-            
+
             this.viewModel.Client.Generators.Clear();
             this.viewModel.Client.Groups.Clear();
             this.viewModel.Client.Sites.Clear();
