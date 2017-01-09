@@ -47,6 +47,14 @@ namespace KSRes
             }
         }
 
+        public List<ProductionHistroy> MultiThreadBuffer
+        {
+            get
+            {
+                return multiThreadBuffer;
+            }
+        }
+
         public DynamicDataBase()
         {
             registrationService = new Dictionary<string, string>();
@@ -56,7 +64,7 @@ namespace KSRes
             multiThreadBuffer = new List<ProductionHistroy>();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
-            //CheckIfLKServiceIsAliveThread.Start();
+            CheckIfLKServiceIsAliveThread.Start();
 
             Thread ProcessingDataThread = new Thread(() => ProcessingData());
             ProcessingDataThread.Start();
@@ -189,10 +197,10 @@ namespace KSRes
 
                 lock (lockObj1)
                 {
-                    multiThreadBuffer.Add(productionHistory);
+                    MultiThreadBuffer.Add(productionHistory);
                 }
 
-                Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).First();
+                Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).FirstOrDefault();
                 generator.ActivePower = measurments[mrid];
 
                 update.Generators.Add(generator);
@@ -208,14 +216,14 @@ namespace KSRes
         {
             Thread.Sleep(10000);
 
-            foreach(ProductionHistroy productionHistory in multiThreadBuffer)
+            foreach(ProductionHistroy productionHistory in MultiThreadBuffer)
             {
                 LocalDB.Instance.AddProductions(productionHistory);
             }
 
             lock (lockObj1)
             {
-                multiThreadBuffer.Clear();
+                MultiThreadBuffer.Clear();
             }
         }
 
@@ -416,7 +424,6 @@ namespace KSRes
                 lock (lockObj)
                 {
                     clients.Remove(client);
-                    //obavestiti luku
                 }
             }
         }

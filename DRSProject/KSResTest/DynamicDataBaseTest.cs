@@ -333,5 +333,41 @@ namespace KSResTest
 
             Assert.DoesNotThrow(() => database.Update("sessionId", update));
         }
+
+        [Test]
+        public void SendMeasurementTest()
+        {
+            database.Registration("user", "111");
+            database.Login("user", "111", mockService, "sessionId");
+            database.GetService("user").Generators.Add(new Generator() { MRID = "1", ActivePower = 6 });
+            database.GetService("user").Generators.Add(new Generator() { MRID = "3", ActivePower = 5 });
+            database.GetService("user").Generators.Add(new Generator() { MRID = "2", ActivePower = 8 });
+            database.GetService("user").Generators.Add(new Generator() { MRID = "9", ActivePower = 1 });
+            database.Clients.Add(mockClient);
+
+            Dictionary<string, double> measurement = new Dictionary<string, double>();
+            measurement.Add("1", 3);
+            measurement.Add("3", 33);
+            measurement.Add("2", 333);
+            measurement.Add("9", 3333);
+
+            Assert.DoesNotThrow(() => database.SendMeasurement("user", measurement));
+
+            Assert.AreEqual("1", database.MultiThreadBuffer[0].MRID);
+            Assert.AreEqual(3, database.MultiThreadBuffer[0].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[0].Username);
+
+            Assert.AreEqual("3", database.MultiThreadBuffer[1].MRID);
+            Assert.AreEqual(33, database.MultiThreadBuffer[1].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[1].Username);
+
+            Assert.AreEqual("2", database.MultiThreadBuffer[2].MRID);
+            Assert.AreEqual(333, database.MultiThreadBuffer[2].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[2].Username);
+
+            Assert.AreEqual("9", database.MultiThreadBuffer[3].MRID);
+            Assert.AreEqual(3333, database.MultiThreadBuffer[3].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[3].Username);
+        }
     }
 }

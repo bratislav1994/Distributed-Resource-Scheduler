@@ -105,20 +105,19 @@ namespace KSRes.Services
 
             if (setPoints.Count != 0)
             {
-                List<SetPoint> temp = new List<SetPoint>();
-
-                foreach (LKResService client in dynamicDataBase.Clients)
+                foreach (LKResService service in dynamicDataBase.ActiveService)
                 {
-                    foreach (Generator generator in client.Generators)
+                    List<SetPoint> temp = new List<SetPoint>();
+                    foreach (Generator generator in service.Generators)
                     {
-                        SetPoint setPoint = setPoints.Where(x => x.GeneratorID.Equals(generator.MRID)).First();
+                        SetPoint setPoint = setPoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
 
                         if (setPoint != null)
                         {
                             temp.Add(setPoint);
                         }
                     }
-                    client.Client.SendSetPoint(temp);
+                    service.Client.SendSetPoint(temp);
                 }
             }
         }
@@ -131,7 +130,7 @@ namespace KSRes.Services
             List<SetPoint> setPoints = new List<SetPoint>();
             List<Generator> generators = new List<Generator>();
 
-            foreach(LKResService client in dynamicDataBase.Clients)
+            foreach(LKResService client in dynamicDataBase.ActiveService)
             {
                 generators.AddRange(client.Generators);
             }

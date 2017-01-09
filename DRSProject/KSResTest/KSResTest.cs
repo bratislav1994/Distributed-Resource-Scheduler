@@ -40,7 +40,7 @@ namespace KSResTest
             mockService = Substitute.For<ILKRes>();
             mockService.Ping().Returns("OK");
             mockService.SendSetPoint(new List<SetPoint>());
-
+           
             generator1.MRID = "1";
             generator2.MRID = "2";
             generator3.MRID = "3";
@@ -86,45 +86,48 @@ namespace KSResTest
 
             update.Generators.Add(generator1);
             update.Generators.Add(generator2);
-            update.Generators.Add(generator3);
-            update.Generators.Add(generator4);
-            update.Generators.Add(generator5);
-            update.Generators.Add(generator6);
-
             service.Registration("user1", "111");
             KSRes.Services.KSRes.DynamicDataBase.Login("user1", "111", mockService, "sessionID");
             KSRes.Services.KSRes.DynamicDataBase.Update("sessionID", update);
-        }
 
-        [TearDown]
-        public void SetDataForTest()
-        {
-           
+            update.Generators.Clear();
+            update.Generators.Add(generator3);
+            update.Generators.Add(generator4);
+            service.Registration("user2", "111");
+            KSRes.Services.KSRes.DynamicDataBase.Login("user2", "111", mockService, "sessionID2");
+            KSRes.Services.KSRes.DynamicDataBase.Update("sessionID2", update);
+
+            update.Generators.Clear();
+            update.Generators.Add(generator5);
+            update.Generators.Add(generator6);
+            service.Registration("user3", "111");
+            KSRes.Services.KSRes.DynamicDataBase.Login("user3", "111", mockService, "sessionID3");
+            KSRes.Services.KSRes.DynamicDataBase.Update("sessionID3", update);
         }
 
         [Test]
-        [TestCase("user1", 50)]
-        public void IssueCommand_01(string username, double requiredAP)
+        [TestCase(50)]
+        public void IssueCommand_01(double requiredAP)
         {
             List<SetPoint> setPoints = new List<SetPoint>();
 
             
             PrivateObject obj = new PrivateObject(service);
-            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", username, requiredAP);
+            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "2");
             NUnit.Framework.Assert.AreEqual(retVal[0].Setpoint, 15);
         }
 
         [Test]
-        [TestCase("user1", 60)]
-        public void IssueCommand_02(string username, double requiredAP)
+        [TestCase(60)]
+        public void IssueCommand_02(double requiredAP)
         {
             List<SetPoint> setPoints = new List<SetPoint>();
 
 
             PrivateObject obj = new PrivateObject(service);
-            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", username, requiredAP);
+            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "2");
             NUnit.Framework.Assert.AreEqual(retVal[0].Setpoint, 20);
@@ -134,14 +137,14 @@ namespace KSResTest
         }
 
         [Test]
-        [TestCase("user1", 130)]
-        public void IssueCommand_03(string username, double requiredAP)
+        [TestCase(130)]
+        public void IssueCommand_03(double requiredAP)
         {
             List<SetPoint> setPoints = new List<SetPoint>();
 
 
             PrivateObject obj = new PrivateObject(service);
-            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", username, requiredAP);
+            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "2");
             NUnit.Framework.Assert.AreEqual(retVal[0].Setpoint, 20);
@@ -163,8 +166,8 @@ namespace KSResTest
         }
 
         [Test]
-        [TestCase("user1", 50)]
-        public void IssueCommand_04(string username, double requiredAP)
+        [TestCase(50)]
+        public void IssueCommand_04(double requiredAP)
         {
             List<SetPoint> setPoints = new List<SetPoint>();
             UpdateInfo update1 = new UpdateInfo();
@@ -177,21 +180,21 @@ namespace KSResTest
             KSRes.Services.KSRes.DynamicDataBase.Update("sessionID", update1);
 
             PrivateObject obj = new PrivateObject(service);
-            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", username, requiredAP);
+            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "6");
             NUnit.Framework.Assert.AreEqual(retVal[0].Setpoint, 16);
         }
 
         [Test]
-        [TestCase("user1", 60)]
-        public void IssueCommand_05(string username, double requiredAP)
+        [TestCase(60)]
+        public void IssueCommand_05(double requiredAP)
         {
             List<SetPoint> setPoints = new List<SetPoint>();
 
 
             PrivateObject obj = new PrivateObject(service);
-            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", username, requiredAP);
+            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "6");
             NUnit.Framework.Assert.AreEqual(retVal[0].Setpoint, 20);
@@ -201,14 +204,14 @@ namespace KSResTest
         }
 
         [Test]
-        [TestCase("user1", 20)]
-        public void IssueCommand_06(string username, double requiredAP)
+        [TestCase(20)]
+        public void IssueCommand_06(double requiredAP)
         {
             List<SetPoint> setPoints = new List<SetPoint>();
 
 
             PrivateObject obj = new PrivateObject(service);
-            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", username, requiredAP);
+            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "4");
             NUnit.Framework.Assert.AreEqual(retVal[0].Setpoint, 0);
@@ -224,8 +227,8 @@ namespace KSResTest
         }
 
         [Test]
-        [TestCase("user1", 20)]
-        public void IssueCommand_07(string username, double requiredAP)
+        [TestCase(20)]
+        public void IssueCommand_07(double requiredAP)
         {
             List<SetPoint> setPoints = new List<SetPoint>();
             //UpdateInfo update1 = new UpdateInfo();
@@ -240,7 +243,7 @@ namespace KSResTest
             //KSRes.Services.KSRes.DynamicDataBase.Update("sessionID", update1);
 
             PrivateObject obj = new PrivateObject(service);
-            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", username, requiredAP);
+            List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "4");
             NUnit.Framework.Assert.AreEqual(retVal[0].Setpoint, 0);
