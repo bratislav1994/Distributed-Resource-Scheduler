@@ -801,7 +801,7 @@ namespace KLRESClient
             bool canExecute = true;
 
             if (this.Client.CheckStringInputField(this.EditName) && this.Client.CheckDoubleInputField(this.EditActivePower) &&
-                this.Client.CheckDoubleInputField(this.EditBasePoint) && this.Client.CheckDoubleInputField(this.EditSetPoint) &&
+                
                 this.Client.CheckDoubleInputField(this.EditPMin) && this.Client.CheckDoubleInputField(this.EditPMax) &&
                 this.Client.CheckDoubleInputField(this.EditPrice))
             {
@@ -901,7 +901,8 @@ namespace KLRESClient
                 Pmin = double.Parse(this.EditPMin),
                 Price = double.Parse(this.EditPrice),
                 SetPoint = double.Parse(this.EditSetPoint),
-                WorkingMode = this.EditCmbWorkingModeSelectedItem
+                WorkingMode = this.EditCmbWorkingModeSelectedItem,
+                MRID = this.SelectedItem.MRID
             };
         }
 

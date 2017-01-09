@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using LKRes.Services;
+using CommonLibrary;
 
 namespace LKResTest.ServicesTest
 {
@@ -13,16 +14,5 @@ namespace LKResTest.ServicesTest
     {
         private LKResService service = null;
 
-        [OneTimeSetUp]
-        public void SetupTest()
-        {
-            service = new LKResService();
-        }
-
-        [Test]
-        public void PingTest()
-        {
-            service.Ping();
-        }
     }
 }

@@ -109,13 +109,13 @@ namespace KLRESClient
 
         public void Registration(string username, string password)
         {
-            this.proxy.Registration(username, password);
+            this.Proxy.Registration(username, password);
             Initialize();
         }
 
         public void LogIn(string username, string password)
         {
-            this.proxy.Login(username, password);
+            this.Proxy.Login(username, password);
             Initialize();
         }
 
@@ -436,21 +436,26 @@ namespace KLRESClient
                 case UpdateType.UPDATE:
                     if (update.Generators != null)
                     {
-                        Generator gen = this.Generators.SingleOrDefault(p => p.MRID.Equals(update.Generators[0].MRID));
+                        //Generator gen = this.Generators.SingleOrDefault(p => p.MRID.Equals(update.Generators[0].MRID));
 
-                        if (gen != null)
+                        foreach (Generator gen in update.Generators)
                         {
-                            gen.ActivePower = update.Generators[0].ActivePower;
-                            gen.GroupID = update.Generators[0].GroupID;
-                            gen.BasePoint = update.Generators[0].BasePoint;
-                            gen.GeneratorType = update.Generators[0].GeneratorType;
-                            gen.HasMeasurment = update.Generators[0].HasMeasurment;
-                            gen.Pmax = update.Generators[0].Pmax;
-                            gen.Pmin = update.Generators[0].Pmin;
-                            gen.Price = update.Generators[0].Price;
-                            gen.SetPoint = update.Generators[0].SetPoint;
-                            gen.WorkingMode = update.Generators[0].WorkingMode;
-                            gen.Name = update.Generators[0].Name;
+                            Generator gen1 = this.Generators.SingleOrDefault(p => p.MRID.Equals(update.Generators[0].MRID));
+
+                            if (gen1 != null)
+                            {
+                                gen1.ActivePower = gen.ActivePower;
+                                gen1.GroupID = gen.GroupID;
+                                gen1.BasePoint = gen.BasePoint;
+                                gen1.GeneratorType = gen.GeneratorType;
+                                gen1.HasMeasurment = gen.HasMeasurment;
+                                gen1.Pmax = gen.Pmax;
+                                gen1.Pmin = gen.Pmin;
+                                gen1.Price = gen.Price;
+                                gen1.SetPoint = gen.SetPoint;
+                                gen1.WorkingMode = gen.WorkingMode;
+                                gen1.Name = gen.Name;
+                            }
                         }
                     }
 
@@ -539,7 +544,7 @@ namespace KLRESClient
                 catch
                 {
                     isOk = false;
-                    throw new Exception();
+                    //throw new Exception();
                 }
             }
 

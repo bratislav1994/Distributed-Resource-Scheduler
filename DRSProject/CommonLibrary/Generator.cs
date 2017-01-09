@@ -30,11 +30,11 @@ namespace CommonLibrary
         private GeneratorType generatorType;
         private WorkingMode workingMode;
         private string groupID;
-        private static object objLock = new object();
 
         public Generator()
         {
-
+            setPoint = -1;
+            basePoint = -1;
         }
 
         [DataMember]
@@ -46,10 +46,8 @@ namespace CommonLibrary
             }
             set
             {
-                lock (objLock)
-                {
-                    activePower = value;
-                }
+                activePower = value;
+
                 RaisePropertyChanged("activePower");
             }
         }
@@ -196,10 +194,10 @@ namespace CommonLibrary
 
         private void SetActivePower()
         {
-            while (true)
+            Thread.Sleep(2000);
+            if (workingMode == WorkingMode.REMOTE && setPoint != -1)
             {
-                Thread.Sleep(2000);
-                this.activePower = this.setPoint;
+                this.ActivePower = this.setPoint;
             }
         }
     }//end Generator

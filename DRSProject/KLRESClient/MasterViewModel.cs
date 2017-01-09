@@ -56,6 +56,7 @@ namespace KLRESClient
             this.mainWindow = win;
             this.homeVM = new HomeWindowViewModel();
             this.Client = homeVM.Client;
+            this.Client.DataContext = this;
             this.addWindowVM = new AddWindowViewModel(this.Client);
             this.editRemoveWindowVM = new EditRemoveViewModel(this.Client);
         }

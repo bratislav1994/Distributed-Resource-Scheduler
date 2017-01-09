@@ -233,8 +233,8 @@ namespace KLRESClient
 
         private void RegistrateCommandAction()
         {
-            this.Client.Registration(this.Username, this.Password);
-            this.homeWin.Close();
+            this.Client.Registration(this.Username2, this.Password2);
+            //this.homeWin.Close();
         }
 
         #region RaisePropertyChanged

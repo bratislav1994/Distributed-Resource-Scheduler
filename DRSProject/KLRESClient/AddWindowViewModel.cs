@@ -869,7 +869,10 @@ namespace KLRESClient
 
                 if (this.RadioButton1)
                 {
-                    this.generator.GroupID = this.Cmb2GroupNameSelectedItem.MRID;
+                    if (this.Cmb2GroupNameSelectedItem != null)
+                    {
+                        this.generator.GroupID = this.Cmb2GroupNameSelectedItem.MRID;
+                    }
                 }
             }
 
@@ -884,14 +887,14 @@ namespace KLRESClient
             this.generator = new Generator()
             {
                 ActivePower = double.Parse(this.ActivePower),
-                BasePoint = double.Parse(this.BasePoint),
+                //BasePoint = double.Parse(this.BasePoint),
                 GeneratorType = this.CmbGeneratorTypeSelectedItem,
                 HasMeasurment = this.CmbHasMeasSelectedItem,
                 Name = this.Name,
                 Pmax = double.Parse(this.PMax),
                 Pmin = double.Parse(this.PMin),
                 Price = double.Parse(this.Price),
-                SetPoint = double.Parse(this.SetPoint),
+                //SetPoint = double.Parse(this.SetPoint),
                 WorkingMode = this.CmbWorkingModeSelectedItem
             };
         }
