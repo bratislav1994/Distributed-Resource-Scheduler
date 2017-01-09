@@ -73,22 +73,6 @@ namespace LKResClientTest
         }
 
         [Test]
-        public void BasePointTest()
-        {
-            string basePoint = "10";
-            this.viewModel.EditBasePoint = basePoint;
-            Assert.AreEqual(basePoint, this.viewModel.EditBasePoint);
-        }
-
-        [Test]
-        public void SetPointTest()
-        {
-            string setPoint = "10";
-            this.viewModel.EditSetPoint = setPoint;
-            Assert.AreEqual(setPoint, this.viewModel.EditSetPoint);
-        }
-
-        [Test]
         public void PMinTest()
         {
             string powerMin = "10";
@@ -425,19 +409,19 @@ namespace LKResClientTest
             this.viewModel.RemoveCommand.Execute();
 
 
-
-
+            
             this.viewModel.Client.Generators.Clear();
             this.viewModel.Client.Groups.Clear();
             this.viewModel.Client.Sites.Clear();
 
-            this.viewModel.Client.Generators.Add(new Generator() { MRID = "b" });
+            //this.viewModel.Client.Generators.Add(new Generator() { MRID = "b" });
             Generator gen = new Generator() { MRID = "a", GroupID = "2" };
             this.viewModel.Client.Generators.Add(gen);
             this.viewModel.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
-            this.viewModel.Client.Groups.Add(new Group() { MRID = "5", SiteID = "3" });
+            this.viewModel.Client.Groups.Add(new Group() { MRID = "5", SiteID = "4" });
 
             this.viewModel.Client.Sites.Add(new Site() { MRID = "3" });
+            this.viewModel.Client.Sites.Add(new Site() { MRID = "4" });
             this.viewModel.SelectedItem = gen;
 
             Assert.IsTrue(this.viewModel.RemoveCommand.CanExecute());
@@ -449,8 +433,6 @@ namespace LKResClientTest
         {
             this.viewModel.EditName = string.Empty;
             this.viewModel.EditActivePower = "20";
-            this.viewModel.EditBasePoint = "20";
-            this.viewModel.EditSetPoint = "20";
             this.viewModel.EditPMin = "20";
             this.viewModel.EditPMax = "10";
             this.viewModel.EditPrice = "20";
@@ -481,6 +463,10 @@ namespace LKResClientTest
             this.viewModel.EditSiteName = "test";
             this.viewModel.EditPMin = "10";
             this.viewModel.EditPMax = "20";
+            this.viewModel.EditActivePower = "25";
+            Assert.IsFalse(this.viewModel.EditCommand.CanExecute());
+
+            this.viewModel.EditActivePower = "15";
             Assert.IsTrue(this.viewModel.EditCommand.CanExecute());
             this.viewModel.EditCommand.Execute();
             FillInputFields();
@@ -538,8 +524,6 @@ namespace LKResClientTest
         public void FillInputFields()
         {
             this.viewModel.EditActivePower = "20";
-            this.viewModel.EditBasePoint = "20";
-            this.viewModel.EditSetPoint = "20";
             this.viewModel.EditPrice = "20";
             this.viewModel.EditPrice = "20";
             this.viewModel.EditSiteName = "test";

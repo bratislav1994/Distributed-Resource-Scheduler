@@ -11,6 +11,7 @@ using KSRes.Access;
 
 namespace KSRes.Services
 {
+    [CallbackBehavior(UseSynchronizationContext = false)]
     public class KSRes : IKSRes, IKSForClient
     {
         private static DynamicDataBase dynamicDataBase = new DynamicDataBase();
@@ -108,11 +109,13 @@ namespace KSRes.Services
 
             List<SetPoint> setPoints = P(username, requiredAP);
 
-            DynamicDataBase.GetService(username).Client.SendSetPoint(setPoints);
-
-
-            #endregion IKSForClient
+            if (setPoints.Count != 0)
+            {
+                dynamicDataBase.GetService(username).Client.SendSetPoint(setPoints);
+            }
         }
+        #endregion IKSForClient
+        
 
         private List<SetPoint> P(string username, double requiredAP)
         {

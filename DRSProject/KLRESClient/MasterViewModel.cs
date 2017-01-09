@@ -6,12 +6,12 @@
 
 namespace KLRESClient
 {
-    using CommonLibrary.Interfaces;
     using Prism.Commands;
-    using System;
-    using System.ServiceModel;    /// <summary>
-                                  /// Contains sub view models
-                                  /// </summary>
+    using System; 
+    
+    /// <summary>
+    /// Contains sub view models
+    /// </summary>
     public class MasterViewModel
     {
         #region fields
@@ -56,6 +56,7 @@ namespace KLRESClient
             this.mainWindow = win;
             this.homeVM = new HomeWindowViewModel();
             this.Client = homeVM.Client;
+            this.Client.DataContext = this;
             this.addWindowVM = new AddWindowViewModel(this.Client);
             this.editRemoveWindowVM = new EditRemoveViewModel(this.Client);
         }

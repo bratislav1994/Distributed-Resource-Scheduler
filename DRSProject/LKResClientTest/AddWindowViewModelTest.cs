@@ -57,22 +57,6 @@ namespace LKResClientTest
         }
 
         [Test]
-        public void BasePointTest()
-        {
-            string basePoint = "10";
-            this.addWindowVM.BasePoint = basePoint;
-            Assert.AreEqual(basePoint, this.addWindowVM.BasePoint);
-        }
-
-        [Test]
-        public void SetPointTest()
-        {
-            string setPoint = "10";
-            this.addWindowVM.SetPoint = setPoint;
-            Assert.AreEqual(setPoint, this.addWindowVM.SetPoint);
-        }
-
-        [Test]
         public void PMinTest()
         {
             string powerMin = "10";
@@ -315,8 +299,6 @@ namespace LKResClientTest
         {
             this.addWindowVM.Name = string.Empty;
             this.addWindowVM.ActivePower = "20";
-            this.addWindowVM.BasePoint = "20";
-            this.addWindowVM.SetPoint = "20";
             this.addWindowVM.PMin = "20";
             this.addWindowVM.PMax = "10";
             this.addWindowVM.Price = "20";
@@ -339,9 +321,12 @@ namespace LKResClientTest
             this.addWindowVM.SiteName = "test";
             this.addWindowVM.PMin = "10";
             this.addWindowVM.PMax = "20";
+            this.addWindowVM.ActivePower = "25";
+            Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
+
+            this.addWindowVM.ActivePower = "15";
             Assert.IsTrue(this.addWindowVM.CreateCommand.CanExecute());
             this.addWindowVM.CreateCommand.Execute();
-
 
             this.addWindowVM.RadioButton = false;
             this.addWindowVM.RadioButton1 = true;

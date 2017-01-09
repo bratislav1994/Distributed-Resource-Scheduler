@@ -65,16 +65,6 @@ namespace KLRESClient
         private string editActivePower;
 
         /// <summary>
-        /// base point of generator
-        /// </summary>
-        private string editBasePoint;
-
-        /// <summary>
-        /// set point of generator
-        /// </summary>
-        private string editSetPoint;
-
-        /// <summary>
         /// min of active power
         /// </summary>
         private string editPMin;
@@ -304,40 +294,6 @@ namespace KLRESClient
             {
                 this.editActivePower = value;
                 this.RaisePropertyChanged("EditActivePower");
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets base point of generator
-        /// </summary>
-        public string EditBasePoint
-        {
-            get
-            {
-                return this.editBasePoint;
-            }
-
-            set
-            {
-                this.editBasePoint = value;
-                this.RaisePropertyChanged("EditBasePoint");
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets set point of generator
-        /// </summary>
-        public string EditSetPoint
-        {
-            get
-            {
-                return this.editSetPoint;
-            }
-
-            set
-            {
-                this.editSetPoint = value;
-                this.RaisePropertyChanged("EditSetPoint");
             }
         }
 
@@ -801,13 +757,20 @@ namespace KLRESClient
             bool canExecute = true;
 
             if (this.Client.CheckStringInputField(this.EditName) && this.Client.CheckDoubleInputField(this.EditActivePower) &&
-                this.Client.CheckDoubleInputField(this.EditBasePoint) && this.Client.CheckDoubleInputField(this.EditSetPoint) &&
                 this.Client.CheckDoubleInputField(this.EditPMin) && this.Client.CheckDoubleInputField(this.EditPMax) &&
                 this.Client.CheckDoubleInputField(this.EditPrice))
             {
                 if (double.Parse(this.EditPMin) > double.Parse(this.EditPMax))
                 {
                     canExecute = false;
+                }
+                else
+                {
+                    if (double.Parse(this.EditActivePower) > double.Parse(this.EditPMax) || 
+                        double.Parse(this.EditActivePower) < double.Parse(this.EditPMin))
+                    {
+                        canExecute = false;
+                    }
                 }
             }
             else
@@ -878,7 +841,10 @@ namespace KLRESClient
 
                 if (this.EditRadioButton1)
                 {
-                    this.generator.GroupID = this.EditCmb2GroupNameSelectedItem.MRID;
+                    if (this.EditCmb2GroupNameSelectedItem != null)
+                    {
+                        this.generator.GroupID = this.EditCmb2GroupNameSelectedItem.MRID;
+                    }
                 }
             }
 
@@ -893,15 +859,14 @@ namespace KLRESClient
             this.generator = new Generator()
             {
                 ActivePower = double.Parse(this.EditActivePower),
-                BasePoint = double.Parse(this.EditBasePoint),
                 GeneratorType = this.EditCmbGeneratorTypeSelectedItem,
                 HasMeasurment = this.EditCmbHasMeasSelectedItem,
                 Name = this.EditName,
                 Pmax = double.Parse(this.EditPMax),
                 Pmin = double.Parse(this.EditPMin),
                 Price = double.Parse(this.EditPrice),
-                SetPoint = double.Parse(this.EditSetPoint),
-                WorkingMode = this.EditCmbWorkingModeSelectedItem
+                WorkingMode = this.EditCmbWorkingModeSelectedItem,
+                MRID = this.SelectedItem.MRID
             };
         }
 
@@ -910,45 +875,45 @@ namespace KLRESClient
         /// </summary>
         private void EditCommandAction()
         {
+            List<Generator> generators = new List<Generator>(1)
+            {
+                this.generator
+            };
+
+            List<Site> sites = null;
+            if (this.site != null)
+            {
+                sites = new List<Site>(1)
+                {
+                    this.site
+                };
+            }
+
+            List<Group> groups = null;
+            if (this.group != null)
+            {
+                groups = new List<Group>(1)
+                {
+                    this.group
+                };
+            }
+
+            this.updateInfo = new UpdateInfo()
+            {
+                Generators = generators,
+                Groups = groups,
+                Sites = sites,
+                UpdateType = UpdateType.UPDATE
+            };
+            
             try
             {
-                List<Generator> generators = new List<Generator>(1)
-                {
-                    this.generator
-                };
-
-                List<Site> sites = null;
-                if (this.site != null)
-                {
-                    sites = new List<Site>(1)
-                    {
-                        this.site
-                    };
-                }
-
-                List<Group> groups = null;
-                if (this.group != null)
-                {
-                    groups = new List<Group>(1)
-                    {
-                        this.group
-                    };
-                }
-
-                this.updateInfo = new UpdateInfo()
-                {
-                    Generators = generators,
-                    Groups = groups,
-                    Sites = sites,
-                    UpdateType = UpdateType.UPDATE
-                };
-
-                this.ClearInputFieldsEditWindow();
                 this.Client.Command(this.updateInfo);
+                this.ClearInputFieldsEditWindow();
             }
             catch
             {
-                // MessageBox.Show("Error during execution Edit command.");
+                MessageBox.Show("Error during execution Edit command.");
             }
         }
 
@@ -963,8 +928,6 @@ namespace KLRESClient
         {
             this.EditName = string.Empty;
             this.EditActivePower = string.Empty;
-            this.EditBasePoint = string.Empty;
-            this.EditSetPoint = string.Empty;
             this.EditPMin = string.Empty;
             this.EditPMax = string.Empty;
             this.EditPrice = string.Empty;
@@ -1007,73 +970,67 @@ namespace KLRESClient
         /// </summary>
         private void RemoveCommandAction()
         {
-            try
+            List<Generator> generators = new List<Generator>(1)
             {
-                List<Generator> generators = new List<Generator>(1)
+                this.generator
+            };
+
+            bool deleteGroup = true;
+            foreach (Generator clientGenerator in this.Client.Generators)
+            {
+                if (!clientGenerator.MRID.Equals(this.generator.MRID))
                 {
-                    this.generator
+                    if (clientGenerator.GroupID.Equals(this.group.MRID))
+                    {
+                        deleteGroup = false;
+                        break;
+                    }
+                }
+            }
+
+            bool deleteSite = true;
+            List<Group> groups = null;
+            List<Site> sites = null;
+
+            if (deleteGroup)
+            {
+                groups = new List<Group>(1)
+                {
+                    this.group
                 };
 
-                bool deleteGroup = true;
-                foreach (Generator clientGenerator in this.Client.Generators)
+                foreach (Group clientGroup in this.Client.Groups)
                 {
-                    if (!clientGenerator.MRID.Equals(this.generator.MRID))
+                    if (!clientGroup.MRID.Equals(this.group.MRID))
                     {
-                        if (clientGenerator.GroupID.Equals(this.group.MRID))
+                        if (clientGroup.SiteID.Equals(this.group.SiteID))
                         {
-                            deleteGroup = false;
+                            deleteSite = false;
                             break;
                         }
                     }
                 }
 
-                bool deleteSite = true;
-                List<Group> groups = null;
-                List<Site> sites = null;
-
-                if (deleteGroup)
+                if (deleteSite)
                 {
-                    groups = new List<Group>(1)
+                    sites = new List<Site>(1)
                     {
-                        this.group
+                        this.site
                     };
-
-                    foreach (Group clientGroup in this.Client.Groups)
-                    {
-                        if (!clientGroup.MRID.Equals(this.group.MRID))
-                        {
-                            if (clientGroup.SiteID.Equals(this.group.SiteID))
-                            {
-                                deleteSite = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (deleteSite)
-                    {
-                        sites = new List<Site>(1)
-                        {
-                            this.site
-                        };
-                    }
                 }
-
-                this.updateInfo = new UpdateInfo()
-                {
-                    Generators = generators,
-                    Groups = groups,
-                    Sites = sites,
-                    UpdateType = UpdateType.REMOVE
-                };
-
-                this.SelectedItem = null;
-                this.Client.Command(this.updateInfo);
             }
-            catch
+
+            this.updateInfo = new UpdateInfo()
             {
-                // MessageBox.Show("Error during execution Remove command.");
-            }
+                Generators = generators,
+                Groups = groups,
+                Sites = sites,
+                UpdateType = UpdateType.REMOVE
+            };
+
+            this.SelectedItem = null;
+
+            this.Client.Command(this.updateInfo);
         }
 
         #endregion
@@ -1103,8 +1060,6 @@ namespace KLRESClient
 
             this.EditName = this.generator.Name;
             this.EditActivePower = this.generator.ActivePower.ToString();
-            this.EditBasePoint = this.generator.BasePoint.ToString();
-            this.EditSetPoint = this.generator.SetPoint.ToString();
             this.EditPMin = this.generator.Pmin.ToString();
             this.EditPMax = this.generator.Pmax.ToString();
             this.EditPrice = this.generator.Price.ToString();
@@ -1138,9 +1093,8 @@ namespace KLRESClient
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
 
-                if (propName.Equals("EditName") || propName.Equals("EditActivePower") || propName.Equals("EditBasePoint") ||
-                    propName.Equals("EditSetPoint") || propName.Equals("EditPMin") || propName.Equals("EditPMax") ||
-                    propName.Equals("EditPrice") || propName.Equals("EditCmbHasMeasSelectedItem") ||
+                if (propName.Equals("EditName") || propName.Equals("EditActivePower") || propName.Equals("EditPMin") || 
+                    propName.Equals("EditPMax") || propName.Equals("EditPrice") || propName.Equals("EditCmbHasMeasSelectedItem") ||
                     propName.Equals("EditCmbGeneratorTypeSelectedItem") || propName.Equals("EditCmbWorkingModeSelectedItem") ||
                     propName.Equals("EditSiteName") || propName.Equals("EditGroupName") || propName.Equals("EditTxbGroupName") ||
                     propName.Equals("EditCmb2GroupNameSelectedItem") || propName.Equals("EditCmb3SiteNameSelectedItem"))

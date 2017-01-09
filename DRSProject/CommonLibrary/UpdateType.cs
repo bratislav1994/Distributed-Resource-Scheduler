@@ -17,7 +17,7 @@ namespace CommonLibrary
     public enum UpdateType : int
     {
 
-        UPDATE,
+        UPDATE = 1,
         ADD,
         REMOVE
 
