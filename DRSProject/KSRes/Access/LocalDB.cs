@@ -57,7 +57,7 @@ namespace KSRes.Access
         {
             using (var access = new AccessDB())
             {
-                List<ConsuptionHistory> consuptions = access.ConsuptionHistory.Where(x => x.Username.Equals(username)).ToList();
+                List<ConsuptionHistory> consuptions = access.ConsuptionHistory.ToList();
                 return consuptions;
             }
         }

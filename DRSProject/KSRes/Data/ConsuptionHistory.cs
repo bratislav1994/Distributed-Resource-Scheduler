@@ -11,7 +11,6 @@ namespace KSRes.Data
     public class ConsuptionHistory
     {
         private int id;
-        private String username;
         private double consuption;
 
         [Key]
@@ -26,19 +25,6 @@ namespace KSRes.Data
             set
             {
                 id = value;
-            }
-        }
-
-        public String Username
-        {
-            get
-            {
-                return username;
-            }
-
-            set
-            {
-                username = value;
             }
         }
 

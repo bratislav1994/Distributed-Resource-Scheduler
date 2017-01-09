@@ -89,13 +89,8 @@ namespace KSRes.Services
             return DynamicDataBase.ActiveService;
         }
 
-        public void IssueCommand(string username, double requiredAP)
+        public void IssueCommand(double requiredAP)
         {
-            if (DynamicDataBase.GetService(username) == null)
-            {
-                throw new ArgumentException();
-            }
-
             if (requiredAP < 0)
             {
                 throw new ArgumentException();
@@ -103,29 +98,48 @@ namespace KSRes.Services
 
             LocalDB.Instance.AddConsuption(new Data.ConsuptionHistory()
             {
-                Username = username,
                 Consuption = requiredAP
             });
 
-            List<SetPoint> setPoints = P(username, requiredAP);
+            List<SetPoint> setPoints = P(requiredAP);
 
             if (setPoints.Count != 0)
             {
-                dynamicDataBase.GetService(username).Client.SendSetPoint(setPoints);
+                List<SetPoint> temp = new List<SetPoint>();
+
+                foreach (LKResService client in dynamicDataBase.Clients)
+                {
+                    foreach (Generator generator in client.Generators)
+                    {
+                        SetPoint setPoint = setPoints.Where(x => x.GeneratorID.Equals(generator.MRID)).First();
+
+                        if (setPoint != null)
+                        {
+                            temp.Add(setPoint);
+                        }
+                    }
+                    client.Client.SendSetPoint(temp);
+                }
             }
         }
         #endregion IKSForClient
         
 
-        private List<SetPoint> P(string username, double requiredAP)
+        private List<SetPoint> P(double requiredAP)
         {
             List<Generator> remoteGenerators = new List<Generator>();
             List<SetPoint> setPoints = new List<SetPoint>();
-            LKResService user = DynamicDataBase.GetService(username);
+            List<Generator> generators = new List<Generator>();
+
+            foreach(LKResService client in dynamicDataBase.Clients)
+            {
+                generators.AddRange(client.Generators);
+            }
+
             double activePower = 0;
             double diff = 0;
 
-            foreach (Generator generator in user.Generators)
+            foreach (Generator generator in generators)
             {
                 activePower += generator.ActivePower;
 
