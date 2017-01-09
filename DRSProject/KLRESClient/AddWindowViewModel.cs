@@ -62,16 +62,6 @@ namespace KLRESClient
         private string activePower;
 
         /// <summary>
-        /// base point of generator
-        /// </summary>
-        private string basePoint;
-
-        /// <summary>
-        /// set point of generator
-        /// </summary>
-        private string setPoint;
-
-        /// <summary>
         /// min of active power
         /// </summary>
         private string powerMin;
@@ -279,40 +269,6 @@ namespace KLRESClient
             {
                 this.activePower = value;
                 this.RaisePropertyChanged("ActivePower");
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets base point of generator
-        /// </summary>
-        public string BasePoint
-        {
-            get
-            {
-                return this.basePoint;
-            }
-
-            set
-            {
-                this.basePoint = value;
-                this.RaisePropertyChanged("BasePoint");
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets set point of generator
-        /// </summary>
-        public string SetPoint
-        {
-            get
-            {
-                return this.setPoint;
-            }
-
-            set
-            {
-                this.setPoint = value;
-                this.RaisePropertyChanged("SetPoint");
             }
         }
 
@@ -753,8 +709,6 @@ namespace KLRESClient
         {
             this.Name = string.Empty;
             this.ActivePower = string.Empty;
-            this.BasePoint = string.Empty;
-            this.SetPoint = string.Empty;
             this.PMin = string.Empty;
             this.PMax = string.Empty;
             this.Price = string.Empty;
@@ -792,13 +746,19 @@ namespace KLRESClient
             bool canExecute = true;
 
             if (this.Client.CheckStringInputField(this.Name) && this.Client.CheckDoubleInputField(this.ActivePower) &&
-                this.Client.CheckDoubleInputField(this.BasePoint) && this.Client.CheckDoubleInputField(this.SetPoint) &&
                 this.Client.CheckDoubleInputField(this.PMin) && this.Client.CheckDoubleInputField(this.PMax) &&
                 this.Client.CheckDoubleInputField(this.Price))
             {
                 if (double.Parse(this.PMin) > double.Parse(this.PMax))
                 {
                     canExecute = false;
+                }
+                else
+                {
+                    if (double.Parse(this.ActivePower) > double.Parse(this.PMax) || double.Parse(this.ActivePower) < double.Parse(this.PMin))
+                    {
+                        canExecute = false;
+                    }
                 }
             }
             else
@@ -887,14 +847,12 @@ namespace KLRESClient
             this.generator = new Generator()
             {
                 ActivePower = double.Parse(this.ActivePower),
-                //BasePoint = double.Parse(this.BasePoint),
                 GeneratorType = this.CmbGeneratorTypeSelectedItem,
                 HasMeasurment = this.CmbHasMeasSelectedItem,
                 Name = this.Name,
                 Pmax = double.Parse(this.PMax),
                 Pmin = double.Parse(this.PMin),
                 Price = double.Parse(this.Price),
-                //SetPoint = double.Parse(this.SetPoint),
                 WorkingMode = this.CmbWorkingModeSelectedItem
             };
         }
@@ -904,45 +862,45 @@ namespace KLRESClient
         /// </summary>
         private void CreateCommandAction()
         {
-            try
-            {
-                List<Generator> generators = new List<Generator>(1)
+            List<Generator> generators = new List<Generator>(1)
                 {
                     this.generator
                 };
 
-                List<Site> sites = null;
-                if (this.site != null)
-                {
-                    sites = new List<Site>(1)
+            List<Site> sites = null;
+            if (this.site != null)
+            {
+                sites = new List<Site>(1)
                     {
                         this.site
                     };
-                }
+            }
 
-                List<Group> groups = null;
-                if (this.group != null)
-                {
-                    groups = new List<Group>(1)
+            List<Group> groups = null;
+            if (this.group != null)
+            {
+                groups = new List<Group>(1)
                     {
                         this.group
                     };
-                }
+            }
 
-                this.updateInfo = new UpdateInfo()
-                {
-                    Generators = generators,
-                    Groups = groups,
-                    Sites = sites,
-                    UpdateType = UpdateType.ADD
-                };
+            this.updateInfo = new UpdateInfo()
+            {
+                Generators = generators,
+                Groups = groups,
+                Sites = sites,
+                UpdateType = UpdateType.ADD
+            };
 
+            try
+            {
                 this.Client.Command(this.updateInfo);
                 this.ClearInputFields();
             }
             catch
             {
-                // MessageBox.Show("Error during execution Create command.");
+                 MessageBox.Show("Error during execution Create command.");
             }
         }
 
@@ -973,8 +931,7 @@ namespace KLRESClient
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
 
-                if (propName.Equals("Name") || propName.Equals("ActivePower") || propName.Equals("BasePoint") ||
-                    propName.Equals("SetPoint") || propName.Equals("PMin") || propName.Equals("PMax") ||
+                if (propName.Equals("Name") || propName.Equals("ActivePower") || propName.Equals("PMin") || propName.Equals("PMax") ||
                     propName.Equals("Price") || propName.Equals("CmbHasMeasSelectedItem") ||
                     propName.Equals("CmbGeneratorTypeSelectedItem") || propName.Equals("CmbWorkingModeSelectedItem") ||
                     propName.Equals("SiteName") || propName.Equals("GroupName") || propName.Equals("TxbGroupName") ||

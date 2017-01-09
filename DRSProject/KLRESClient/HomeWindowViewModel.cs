@@ -1,14 +1,9 @@
-﻿using CommonLibrary.Interfaces;
+﻿using System;
+using CommonLibrary.Interfaces;
 using Prism.Commands;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace KLRESClient
 {
@@ -191,8 +186,15 @@ namespace KLRESClient
 
         private void LoginCommandAction()
         {
-            this.Client.LogIn(this.Username, this.Password);
-            this.homeWin.Close();
+            try
+            {
+                this.Client.LogIn(this.Username, this.Password);
+                this.homeWin.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Error during login.");
+            }
         }
 
         /// <summary>
@@ -233,8 +235,15 @@ namespace KLRESClient
 
         private void RegistrateCommandAction()
         {
-            this.Client.Registration(this.Username2, this.Password2);
-            //this.homeWin.Close();
+            try
+            {
+                this.Client.Registration(this.Username2, this.Password2);
+                this.homeWin.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Error during registration.");
+            }
         }
 
         #region RaisePropertyChanged
