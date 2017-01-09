@@ -179,17 +179,17 @@ namespace LKRes.Services
 
         public void Add(UpdateInfo update)
         {
-            if(update.Generators[0] != null)
+            if(update.Generators != null)
                 update.Generators[0].MRID = Guid.NewGuid().ToString();
 
-            if(update.Groups[0] != null)
+            if(update.Groups != null)
                 update.Groups[0].MRID = Guid.NewGuid().ToString();
 
-            if(update.Sites[0] != null)
+            if(update.Sites != null)
                 update.Sites[0].MRID = Guid.NewGuid().ToString();
 
             //dodavanje novog generatora, grupe i sajta
-            if (update.Generators[0] != null && update.Groups[0] != null && update.Sites[0] != null)
+            if (update.Generators != null && update.Groups != null && update.Sites != null)
             {
                 update.Generators[0].GroupID = update.Groups[0].MRID;
                 update.Groups[0].SiteID = update.Sites[0].MRID;
@@ -199,7 +199,7 @@ namespace LKRes.Services
                 updateInfo.Groups.Add(update.Groups[0]);
             }
             //dodavanje novog generatora i grupe. Sajt vec postoji.
-            else if (update.Generators[0] != null && update.Groups[0] != null && update.Sites[0] == null)
+            else if (update.Generators != null && update.Groups != null && update.Sites == null)
             {
                 update.Generators[0].GroupID = update.Groups[0].MRID;
 
