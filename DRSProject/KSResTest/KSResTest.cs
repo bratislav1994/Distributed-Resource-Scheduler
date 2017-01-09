@@ -85,24 +85,24 @@ namespace KSResTest
             generator6.WorkingMode = WorkingMode.REMOTE;
 
             update.Generators.Add(generator1);
-            update.Generators.Add(generator2);
-            service.Registration("user1", "111");
-            KSRes.Services.KSRes.DynamicDataBase.Login("user1", "111", mockService, "sessionID");
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionID", update);
+            update.Generators.Add(generator2);         
+            LKResService temp = new LKResService("user1", mockService, "sessionId");
+            KSRes.Services.KSRes.DynamicDataBase.ActiveService.Add(temp);
+            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId", update);
 
             update.Generators.Clear();
             update.Generators.Add(generator3);
             update.Generators.Add(generator4);
-            service.Registration("user2", "111");
-            KSRes.Services.KSRes.DynamicDataBase.Login("user2", "111", mockService, "sessionID2");
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionID2", update);
+            LKResService temp1 = new LKResService("user12", mockService, "sessionId2");
+            KSRes.Services.KSRes.DynamicDataBase.ActiveService.Add(temp1);
+            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId2", update);
 
             update.Generators.Clear();
             update.Generators.Add(generator5);
             update.Generators.Add(generator6);
-            service.Registration("user3", "111");
-            KSRes.Services.KSRes.DynamicDataBase.Login("user3", "111", mockService, "sessionID3");
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionID3", update);
+            LKResService temp2 = new LKResService("user3", mockService, "sessionId3");
+            KSRes.Services.KSRes.DynamicDataBase.ActiveService.Add(temp2); ;
+            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId3", update);
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace KSResTest
 
             update1.Generators.Add(generator2);
 
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionID", update1);
+            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId", update1);
 
             PrivateObject obj = new PrivateObject(service);
             List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);

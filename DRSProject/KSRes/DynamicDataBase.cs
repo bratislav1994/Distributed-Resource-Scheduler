@@ -11,7 +11,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Security.Cryptography;
 namespace KSRes
 {
     public class DynamicDataBase
@@ -22,14 +22,6 @@ namespace KSRes
         private List<ProductionHistroy> multiThreadBuffer = null;
         private object lockObj = null;
         private object lockObj1 = new object();
-
-        public Dictionary<string, string> RegistrationService
-        {
-            get
-            {
-                return registrationService;
-            }
-        }
 
         public List<LKResService> ActiveService
         {
@@ -101,31 +93,38 @@ namespace KSRes
 
         public void Registration(string username, string password)
         {
-            if (registrationService.ContainsKey(username))
+            if (LocalDB.Instance.GetService(username) != null)
             {
-                IdentificationExeption ex = new IdentificationExeption("Service is exist.");
+                IdentificationExeption ex = new IdentificationExeption("Service already exists.");
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
             lock (lockObj)
             {
-                RegistrationService.Add(username, password);
+                byte[] hash = HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes(password));
+                LocalDB.Instance.Registration(new Data.RegisteredService()
+                {
+                    Username = username,
+                    Password = hash
+                });
             }
         }
 
         public void Login(string username, string password, ILKRes channel, string sessionID)
         {
-            if(registrationService.ContainsKey(username))
+            RegisteredService service = null;
+
+            if((service = LocalDB.Instance.GetService(username)) != null)
             {
-                if( !registrationService[username].Equals(password))
+                if (!service.Password.SequenceEqual(HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes(password))))
                 {
                     IdentificationExeption ex = new IdentificationExeption("Authentication error.");
                     throw new FaultException<IdentificationExeption>(ex);
                 }
 
-                foreach(LKResService service in activeService)
+                foreach(LKResService service1 in activeService)
                 {
-                    if(service.Username.Equals(username))
+                    if(service1.Username.Equals(username))
                     {
                         IdentificationExeption ex = new IdentificationExeption("Service is already logged in.");
                         throw new FaultException<IdentificationExeption>(ex);

@@ -14,5 +14,6 @@ namespace KSRes.Access
 
         public DbSet<ConsuptionHistory> ConsuptionHistory { get; set; }
         public DbSet<ProductionHistroy> ProductionHistory { get; set; }
+        public DbSet<RegisteredService> RegisteredServices { get; set; }
     }
 }

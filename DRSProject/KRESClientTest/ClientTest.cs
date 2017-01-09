@@ -392,7 +392,7 @@ namespace KRESClientTest
         {
             client.Proxy = mockService;
 
-            Assert.DoesNotThrow(() => client.IssueCommand("user1", 7));
+            Assert.DoesNotThrow(() => client.IssueCommand(7));
         }
     }
 }
