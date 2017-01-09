@@ -52,7 +52,6 @@ namespace KSResTest
         {
             database.ActiveService.Clear();
             database.Clients.Clear();
-            database.RegistrationService.Clear();
 
             update = new UpdateInfo();
             update.Generators.Add(generator);
@@ -68,14 +67,7 @@ namespace KSResTest
                 } );
 
             Assert.AreNotEqual(null, database.ActiveService);
-            Assert.AreNotEqual(null, database.RegistrationService);
             Assert.AreNotEqual(null, database.Clients);
-        }
-
-        [Test]
-        public void RegistrationServiceTest1()
-        {
-            Assert.AreNotEqual(null, database.RegistrationService);
         }
 
         [Test]
@@ -95,11 +87,11 @@ namespace KSResTest
         [TestCase("user2")]
         public void GetServiceTest1(string username)
         {
-            database.Registration("temp", "111");
-            database.Login("temp", "111", mockService, "tempsessionId" + username);
+            LKResService temp = new LKResService("temp", mockService, "sessionId" + "temp");
+            LKResService service = new LKResService(username, mockService, "sessionId" + username);
 
-            database.Registration(username, "111");
-            database.Login(username, "111", mockService, "sessionId" + username);
+            database.ActiveService.Add(temp);
+            database.ActiveService.Add(service);
 
             Assert.AreEqual(username, database.GetService(username).Username);
             Assert.AreEqual("sessionId" + username, database.GetService(username).SessionID);
@@ -117,6 +109,7 @@ namespace KSResTest
             Assert.AreEqual(null, database.GetService(username));
         }
 
+        /*
         [Test]
         [TestCase("user1", "123")]
         [TestCase("user2", "456")]
@@ -127,6 +120,7 @@ namespace KSResTest
             Assert.AreEqual(true, database.RegistrationService.ContainsKey(username));
             Assert.AreEqual(password, database.RegistrationService[username]);
         }
+        
 
         [Test]
         [TestCase("user1", "123")]
@@ -185,13 +179,15 @@ namespace KSResTest
                 database.Login(username, password, mockService, sessionID);
             });
         }
+        */
 
         [Test]
         [TestCase("user1", "123")]
         public void UpdateTest1_Add(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
+
             database.GetService(username).Generators.Add(new Generator());
 
             database.Update("sessionId", update);
@@ -206,8 +202,8 @@ namespace KSResTest
         [TestCase("user1", "123")]
         public void UpdateTest2_Add_InvalideSessionId(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
 
             Assert.Throws<FaultException<IdentificationExeption>>(() =>
             {
@@ -219,8 +215,8 @@ namespace KSResTest
         [TestCase("user1", "123")]
         public void UpdateTest3_Add_UpdateInvalid(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
 
             Assert.Throws<InvalidDataException>(() =>
             {
@@ -232,8 +228,8 @@ namespace KSResTest
         [TestCase("user1", "123")]
         public void UpdateTest4_Add_GeneratorNull(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
 
             update.Generators = null;
 
@@ -247,8 +243,8 @@ namespace KSResTest
         [TestCase("user1", "123")]
         public void UpdateTest5_Update(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
             database.Update("sessionId", update);
 
             generator.ActivePower = 10;
@@ -264,8 +260,8 @@ namespace KSResTest
         [TestCase("user1", "123")]
         public void UpdateTest6_Remove(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
             database.Update("sessionId", update);
 
             update.UpdateType = UpdateType.REMOVE;
@@ -282,8 +278,8 @@ namespace KSResTest
         {
             ILKRes mockServiceTemp = Substitute.For<ILKRes>();
             mockServiceTemp.When(x => x.Ping()).Throw(new CommunicationException());
-            database.Registration(username, password);
-            database.Login(username, password, mockServiceTemp, "sessionId");
+            LKResService service = new LKResService(username, mockServiceTemp, "sessionId");
+            database.ActiveService.Add(service);
 
             Thread.Sleep(1000);
 
@@ -294,8 +290,8 @@ namespace KSResTest
         [TestCase("user1", "123")]
         public void CheckIfLKServiceIsAliveTest2(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
 
             Thread.Sleep(1000);
 
@@ -314,8 +310,8 @@ namespace KSResTest
         [TestCase("user1", "123")]
         public void NotifyClientsTest1(string username, string password)
         {
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
             database.AddClient(mockClient);
 
             Assert.DoesNotThrow(() =>database.Update("sessionId", update));
@@ -327,11 +323,47 @@ namespace KSResTest
         {
             IKSClient mockClientTemp = Substitute.For<IKSClient>();
             mockClientTemp.When(x => x.Update(update, username)).Throw(new CommunicationException());
-            database.Registration(username, password);
-            database.Login(username, password, mockService, "sessionId");
+            LKResService service = new LKResService(username, mockService, "sessionId");
+            database.ActiveService.Add(service);
             database.AddClient(mockClientTemp);
 
             Assert.DoesNotThrow(() => database.Update("sessionId", update));
+        }
+
+        [Test]
+        public void SendMeasurementTest()
+        {
+            LKResService service = new LKResService("user", mockService, "sessionId");
+            database.ActiveService.Add(service);
+            database.GetService("user").Generators.Add(new Generator() { MRID = "1", ActivePower = 6 });
+            database.GetService("user").Generators.Add(new Generator() { MRID = "3", ActivePower = 5 });
+            database.GetService("user").Generators.Add(new Generator() { MRID = "2", ActivePower = 8 });
+            database.GetService("user").Generators.Add(new Generator() { MRID = "9", ActivePower = 1 });
+            database.Clients.Add(mockClient);
+
+            Dictionary<string, double> measurement = new Dictionary<string, double>();
+            measurement.Add("1", 3);
+            measurement.Add("3", 33);
+            measurement.Add("2", 333);
+            measurement.Add("9", 3333);
+
+            Assert.DoesNotThrow(() => database.SendMeasurement("user", measurement));
+
+            Assert.AreEqual("1", database.MultiThreadBuffer[0].MRID);
+            Assert.AreEqual(3, database.MultiThreadBuffer[0].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[0].Username);
+
+            Assert.AreEqual("3", database.MultiThreadBuffer[1].MRID);
+            Assert.AreEqual(33, database.MultiThreadBuffer[1].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[1].Username);
+
+            Assert.AreEqual("2", database.MultiThreadBuffer[2].MRID);
+            Assert.AreEqual(333, database.MultiThreadBuffer[2].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[2].Username);
+
+            Assert.AreEqual("9", database.MultiThreadBuffer[3].MRID);
+            Assert.AreEqual(3333, database.MultiThreadBuffer[3].ActivePower);
+            Assert.AreEqual("user", database.MultiThreadBuffer[3].Username);
         }
     }
 }

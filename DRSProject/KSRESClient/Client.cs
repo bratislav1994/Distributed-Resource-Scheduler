@@ -25,11 +25,6 @@ namespace KSRESClient
             UserNames = new List<string>();
             userNames.Add("All");
             currentUser = null;
-
-            LKResService service = new LKResService("temp", null, null);
-            allUsers.Add(service);
-            userNames.Add(service.Username);
-
         }
 
         public IKSForClient Proxy
@@ -199,24 +194,24 @@ namespace KSRESClient
                 case UpdateType.UPDATE:
                     Dictionary<int, Generator> tempListGen = new Dictionary<int, Generator>();
 
-                    LKResService updataUser = GetUser(username);
+                    LKResService updateUser = GetUser(username);
 
-                    if (updataUser != null)
+                    if (updateUser != null)
                     {
                         foreach (Generator g in update.Generators)
                         {
-                            foreach (Generator g1 in updataUser.Generators)
+                            foreach (Generator g1 in updateUser.Generators)
                             {
                                 if (g.MRID.Equals(g1.MRID))
                                 {
-                                    tempListGen.Add(updataUser.Generators.IndexOf(g1), g);
+                                    tempListGen.Add(updateUser.Generators.IndexOf(g1), g);
                                 }
                             }
                         }
 
                         foreach (KeyValuePair<int, Generator> kp in tempListGen)
                         {
-                            updataUser.Generators[kp.Key] = kp.Value;
+                            updateUser.Generators[kp.Key] = kp.Value;
                         }
 
 
@@ -224,7 +219,7 @@ namespace KSRESClient
                         {
                             foreach (Group group in update.Groups)
                             {
-                                updataUser.Gropus.Add(group);
+                                updateUser.Gropus.Add(group);
                             }
                         }
 
@@ -232,7 +227,7 @@ namespace KSRESClient
                         {
                             foreach (Site s in update.Sites)
                             {
-                                updataUser.Sites.Add(s);
+                                updateUser.Sites.Add(s);
                             }
                         }
 
@@ -299,9 +294,9 @@ namespace KSRESClient
             return user;
         }
 
-        public void IssueCommand(string userName, double neededPower)
+        public void IssueCommand(double neededPower)
         {
-            Proxy.IssueCommand(userName, neededPower);
+            Proxy.IssueCommand(neededPower);
         }
 
         public Generator GetGeneratorFromId(string mrId)

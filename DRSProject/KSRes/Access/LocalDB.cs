@@ -57,7 +57,7 @@ namespace KSRes.Access
         {
             using (var access = new AccessDB())
             {
-                List<ConsuptionHistory> consuptions = access.ConsuptionHistory.Where(x => x.Username.Equals(username)).ToList();
+                List<ConsuptionHistory> consuptions = access.ConsuptionHistory.ToList();
                 return consuptions;
             }
         }
@@ -68,6 +68,28 @@ namespace KSRes.Access
             {
                 List<ProductionHistroy> productions = access.ProductionHistory.Where(x => x.Username.Equals(username)).ToList();
                 return productions;
+            }
+        }
+
+        public bool Registration(RegisteredService service)
+        {
+            using (var access = new AccessDB())
+            {
+                access.RegisteredServices.Add(service);
+                int i = access.SaveChanges();
+
+                if (i > 0)
+                    return true;
+                return false;
+            }
+        }
+
+        public RegisteredService GetService(string username)
+        {
+            using (var access = new AccessDB())
+            {
+                RegisteredService service = access.RegisteredServices.Where(x => x.Username.Equals(username)).FirstOrDefault();
+                return service;
             }
         }
     }

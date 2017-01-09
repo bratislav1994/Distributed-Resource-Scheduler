@@ -20,6 +20,6 @@ namespace CommonLibrary.Interfaces
         [OperationContract]
         List<LKResService> GetAllSystem();
         [OperationContract]
-        void IssueCommand(string username, double requiredAP);
+        void IssueCommand(double requiredAP);
     }
 }
