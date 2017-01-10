@@ -14,6 +14,7 @@ namespace LKRes.Services
     using CommonLibrary;
     using CommonLibrary.Exceptions;
     using CommonLibrary.Interfaces;
+    using LKRes.Access;
 
     /// <summary>
     /// Class represent a LKRes server who communicating with LKResClient and KSRes module
@@ -68,7 +69,6 @@ namespace LKRes.Services
 
             kSResProxy = ksResFactory.CreateChannel();
 
-
             Thread ChangePowerThread = new Thread(ChangeActivePower);
             ChangePowerThread.Start();
         }
@@ -106,15 +106,24 @@ namespace LKRes.Services
                         //samo radi ako je na lokalu
                         if (generatorIterator.SetPoint == -1 && generatorIterator.HasMeasurment)
                         {
+                            double newPower = 0;
                             //povecaj za 10%
                             if (randGenerator.Next(0, 2) == 0)
                             {
-                                generatorIterator.ActivePower += (generatorIterator.ActivePower / 10);
+                                newPower = generatorIterator.ActivePower + (generatorIterator.ActivePower / 10);
+                                if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
+                                {
+                                    generatorIterator.ActivePower = newPower;
+                                }
                             }
                             //smanji za 10%
                             else
                             {
-                                generatorIterator.ActivePower -= (generatorIterator.ActivePower / 10);
+                                newPower = generatorIterator.ActivePower - (generatorIterator.ActivePower / 10);
+                                if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
+                                {
+                                    generatorIterator.ActivePower = newPower;
+                                }
                             }
                         }
                     }
@@ -171,6 +180,7 @@ namespace LKRes.Services
 
         public UpdateInfo GetMySystem()
         {
+            updateInfo = DataBase.Instance.ReadData();
             OperationContext context = OperationContext.Current;
             client = context.GetCallbackChannel<ILKClient>();
             return updateInfo;
@@ -241,22 +251,48 @@ namespace LKRes.Services
                 update.Generators[0].GroupID = update.Groups[0].MRID;
                 update.Groups[0].SiteID = update.Sites[0].MRID;
 
-                updateInfo.Generators.Add(update.Generators[0]);
-                updateInfo.Sites.Add(update.Sites[0]);
-                updateInfo.Groups.Add(update.Groups[0]);
+                //updateInfo.Generators.Add(update.Generators[0]);
+                //updateInfo.Sites.Add(update.Sites[0]);
+                //updateInfo.Groups.Add(update.Groups[0]);
+
+                DataBase.Instance.AddGenerator(new Data.GeneratorEntity()
+                {
+                    Gen = update.Generators[0]
+                } );
+                DataBase.Instance.AddGroup(new Data.GroupEntity()
+                {
+                    GEntity = update.Groups[0]
+                });
+                DataBase.Instance.AddSite(new Data.SiteEntity()
+                {
+                    SEntity = update.Sites[0]
+                });
             }
             //dodavanje novog generatora i grupe. Sajt vec postoji.
             else if (update.Generators != null && update.Groups != null && update.Sites == null)
             {
                 update.Generators[0].GroupID = update.Groups[0].MRID;
 
-                updateInfo.Generators.Add(update.Generators[0]);
-                updateInfo.Groups.Add(update.Groups[0]);
+                //updateInfo.Generators.Add(update.Generators[0]);
+                //updateInfo.Groups.Add(update.Groups[0]);
+
+                DataBase.Instance.AddGenerator(new Data.GeneratorEntity()
+                {
+                    Gen = update.Generators[0]
+                });
+                DataBase.Instance.AddGroup(new Data.GroupEntity()
+                {
+                    GEntity = update.Groups[0]
+                });
             }
             //else if(update.Generators != null && update.Groups == null && update.Sites == null)
             else
             {
-                updateInfo.Generators.Add(update.Generators[0]);
+                //updateInfo.Generators.Add(update.Generators[0]);
+                DataBase.Instance.AddGenerator(new Data.GeneratorEntity()
+                {
+                    Gen = update.Generators[0]
+                });
             }
         }
 
@@ -298,8 +334,12 @@ namespace LKRes.Services
                 gen.Pmax = update.Generators[0].Pmax;
                 gen.Pmin = update.Generators[0].Pmin;
                 gen.Price = update.Generators[0].Price;
-                gen.WorkingMode = update.Generators[0].WorkingMode;
                 gen.Name = update.Generators[0].Name;
+                if (gen.WorkingMode == WorkingMode.REMOTE && update.Generators[0].WorkingMode == WorkingMode.LOCAL)
+                {
+                    gen.WorkingMode = update.Generators[0].WorkingMode;
+                    gen.SetPoint = -1;
+                }
             }
 
             //nova grupa
@@ -321,11 +361,11 @@ namespace LKRes.Services
             client.Update(update);
         }
 
-        private void NotifyService(UpdateInfo update)
+       /* private void NotifyService(UpdateInfo update)
         {
             Thread.Sleep(50);
             kSResProxy.Update(update);
-        }
+        }*/
     }
 }
 
