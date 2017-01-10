@@ -458,10 +458,10 @@ namespace KSRes
         }
 
         #region DeployActivePower
-        public List<SetPoint> P(double requiredAP)
+        public List<Point> P(double requiredAP, bool isBasePoint)
         {
             List<Generator> remoteGenerators = new List<Generator>();
-            List<SetPoint> setPoints = new List<SetPoint>();
+            List<Point> points = new List<Point>();
             List<Generator> generators = new List<Generator>();
 
             foreach (LKResService client in ActiveService)
@@ -472,16 +472,21 @@ namespace KSRes
             double activePower = 0;
             double diff = 0;
 
+
             foreach (Generator generator in generators)
             {
                 activePower += generator.ActivePower;
 
-                if (generator.WorkingMode == WorkingMode.REMOTE)
+                if (generator.WorkingMode == WorkingMode.REMOTE && !isBasePoint)
+                {
+                    remoteGenerators.Add(generator);
+                }
+                else if(isBasePoint)
                 {
                     remoteGenerators.Add(generator);
                 }
             }
-
+            
             diff = requiredAP - activePower;
 
             if (diff > 0)
@@ -492,21 +497,21 @@ namespace KSRes
                     double diff1 = 0;
                     if ((diff1 = remoteGenerator.Pmax - remoteGenerator.ActivePower) > 0)
                     {
-                        SetPoint setPoint = new SetPoint();
+                        Point point = new Point();
 
                         if (diff > diff1)
                         {
                             diff -= diff1;
-                            setPoint.GeneratorID = remoteGenerator.MRID;
-                            setPoint.Setpoint = remoteGenerator.Pmax;
-                            setPoints.Add(setPoint);
+                            point.GeneratorID = remoteGenerator.MRID;
+                            point.Power = remoteGenerator.Pmax;
+                            points.Add(point);
                         }
                         else if (diff <= diff1)
                         {
-                            setPoint.GeneratorID = remoteGenerator.MRID;
-                            setPoint.Setpoint = remoteGenerator.ActivePower + diff;
+                            point.GeneratorID = remoteGenerator.MRID;
+                            point.Power = remoteGenerator.ActivePower + diff;
                             diff = 0;
-                            setPoints.Add(setPoint);
+                            points.Add(point);
                             break;
                         }
                     }
@@ -520,55 +525,55 @@ namespace KSRes
                 {
                     if (remoteGenerator.ActivePower > 0)
                     {
-                        SetPoint setPoint = new SetPoint();
+                        Point point = new Point();
                         if (diff != 0)
                         {
                             if (remoteGenerator.ActivePower <= diff)
                             {
-                                setPoint.GeneratorID = remoteGenerator.MRID;
-                                setPoint.Setpoint = 0;
+                                point.GeneratorID = remoteGenerator.MRID;
+                                point.Power = 0;
                                 diff -= remoteGenerator.ActivePower;
-                                setPoints.Add(setPoint);
+                                points.Add(point);
                             }
                             else
                             {
                                 if ((remoteGenerator.ActivePower - remoteGenerator.Pmin) >= diff)
                                 {
-                                    setPoint.GeneratorID = remoteGenerator.MRID;
-                                    setPoint.Setpoint = remoteGenerator.ActivePower - diff;
+                                    point.GeneratorID = remoteGenerator.MRID;
+                                    point.Power = remoteGenerator.ActivePower - diff;
                                     diff = 0;
-                                    setPoints.Add(setPoint);
+                                    points.Add(point);
                                     break;
                                 }
                                 else
                                 {
-                                    setPoint.GeneratorID = remoteGenerator.MRID;
-                                    setPoint.Setpoint = remoteGenerator.Pmin;
+                                    point.GeneratorID = remoteGenerator.MRID;
+                                    point.Power = remoteGenerator.Pmin;
                                     diff -= remoteGenerator.ActivePower - remoteGenerator.Pmin;
-                                    setPoints.Add(setPoint);
+                                    points.Add(point);
                                 }
                             }
                         }
                     }
                 }
             }
-            return setPoints;
+            return points;
         }
 
-        public void DeploySetPoint(List<SetPoint> setPoints)
+        public void DeploySetPoint(List<Point> points)
         {
-            if (setPoints.Count != 0)
+            if (points.Count != 0)
             {
                 foreach (LKResService service in ActiveService)
                 {
-                    List<SetPoint> temp = new List<SetPoint>();
+                    List<Point> temp = new List<Point>();
                     foreach (Generator generator in service.Generators)
                     {
-                        SetPoint setPoint = setPoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
+                        Point point = points.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
 
-                        if (setPoint != null)
+                        if (point != null)
                         {
-                            temp.Add(setPoint);
+                            temp.Add(point);
                         }
                     }
                     service.Client.SendSetPoint(temp);
@@ -593,8 +598,56 @@ namespace KSRes
                     }
 
                     LastValuesLC = proxy.LoadForecast(parameter);
+
+                    Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
+                    int minute = 0;
+
+                    foreach(double value in LastValuesLC.Values)
+                    {
+                        List<Point> basePoints = P(value, true);
+
+                        foreach(LKResService service in ActiveService)
+                        {
+                            List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
+                            
+                            if(!deployment.ContainsKey(service.Username))
+                            {
+                                deployment.Add(service.Username, new Dictionary<int, List<Point>>());
+                            }
+                            deployment[service.Username].Add(minute, temp);
+                        }
+                        minute++;
+                    }
+
+                    foreach(LKResService service in ActiveService)
+                    {
+                        service.Client.SendBasePoint(deployment[service.Username]);
+                    }
                 }
             }
+        }
+
+        private List<Point> GetAllBasePointsForUser(string username, List<Point> basePoints)
+        {
+            List<Point> temp = new List<Point>();
+            foreach (Generator generator in GetService(username).Generators)
+            {
+                Point point = basePoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
+
+                if (point != null)
+                {
+                    temp.Add(point);
+                }
+                else
+                {
+                    Point newPoint = new Point();
+                    newPoint.GeneratorID = generator.MRID;
+                    newPoint.Power = generator.ActivePower;
+                    temp.Add(newPoint);
+                }
+            }
+
+            return temp;
         }
         #endregion LoadForecast
     }

@@ -56,7 +56,7 @@
     <Compile Include="Interfaces\ILoadForecast.cs" />
     <Compile Include="LKResService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetPoint.cs" />
+    <Compile Include="Point.cs" />
     <Compile Include="Site.cs" />
     <Compile Include="UpdateInfo.cs" />
     <Compile Include="UpdateType.cs" />

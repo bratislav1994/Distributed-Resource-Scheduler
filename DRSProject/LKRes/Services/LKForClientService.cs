@@ -78,14 +78,14 @@ namespace LKRes.Services
             return "OK";
         }
 
-        public void SendSetPoint(List<SetPoint> setPoints)
+        public void SendSetPoint(List<Point> setPoints)
         {
             lock (LockObj)
             {
-                foreach (SetPoint setpoint in setPoints)
+                foreach (Point setpoint in setPoints)
                 {
                     Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
-                    generator.SetPoint = setpoint.Setpoint;
+                    generator.SetPoint = setpoint.Power;
                 }
             }
         }

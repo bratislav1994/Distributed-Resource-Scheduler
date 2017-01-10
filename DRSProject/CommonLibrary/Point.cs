@@ -14,21 +14,21 @@ using System.IO;
 
 namespace CommonLibrary
 {
-    public class SetPoint
+    public class Point
     {
 
         private string generatorID;
-        private double setpoint;
+        private double power;
 
-        public double Setpoint
+        public double Power
         {
             get
             {
-                return setpoint;
+                return power;
             }
             set
             {
-                setpoint = value;
+                power = value;
             }
         }
 
