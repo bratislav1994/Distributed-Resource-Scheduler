@@ -71,11 +71,12 @@ namespace KSRes.Access
             }
         }
 
-        public List<ProductionHistory> ReadProductions(string username)
+        public List<ProductionHistory> ReadProductions(DateTime condition)
         {
             using (var access = new AccessDB())
             {
-                List<ProductionHistory> productions = access.ProductionHistory.Where(x => x.Username.Equals(username)).ToList();
+                List<ProductionHistory> productions = access.ProductionHistory.Where(x => x.TimeStamp.ToOADate() > condition.ToOADate()).ToList();
+                
                 return productions;
             }
         }

@@ -23,5 +23,8 @@ namespace CommonLibrary.Interfaces
         void IssueCommand(double requiredAP);
         [OperationContract]
         SortedDictionary<DateTime, double> GetLoadForecast();
+
+        [OperationContract]
+        SortedDictionary<DateTime, double> GetProductionHistory(double days);
     }
 }

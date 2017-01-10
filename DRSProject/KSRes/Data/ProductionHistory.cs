@@ -14,6 +14,7 @@ namespace KSRes.Data
         private String username;
         private String mrid;
         private double activePower;
+        private DateTime timeStamp;
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -66,6 +67,18 @@ namespace KSRes.Data
             set
             {
                 mrid = value;
+            }
+        }
+
+        public DateTime TimeStamp
+        {
+            get
+            {
+                return timeStamp;
+            }
+            set
+            {
+                timeStamp = value;
             }
         }
     }

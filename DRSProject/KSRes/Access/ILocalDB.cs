@@ -12,7 +12,7 @@ namespace KSRes.Access
         bool AddConsuption(ConsuptionHistory history);
         List<ConsuptionHistory> ReadConsuptions();
         bool AddProductions(ProductionHistory history);
-        List<ProductionHistory> ReadProductions(string username);
+        List<ProductionHistory> ReadProductions(DateTime condition);
         bool Registration(RegisteredService service);
         RegisteredService GetService(string username);
     }
