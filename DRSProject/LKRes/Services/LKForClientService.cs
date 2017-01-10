@@ -181,6 +181,7 @@ namespace LKRes.Services
         public UpdateInfo GetMySystem()
         {
             updateInfo = DataBase.Instance.ReadData();
+            KSResProxy.Update(updateInfo);
             OperationContext context = OperationContext.Current;
             client = context.GetCallbackChannel<ILKClient>();
             return updateInfo;
@@ -235,6 +236,7 @@ namespace LKRes.Services
             notifyThread.Start();
         }
 
+        #region Add
         private void Add(UpdateInfo update)
         {
             update.Generators[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
@@ -295,7 +297,9 @@ namespace LKRes.Services
                 });
             }
         }
+        #endregion
 
+        #region Remove
         private void Remove(UpdateInfo update)
         {
             Generator gen = null;
@@ -303,24 +307,29 @@ namespace LKRes.Services
 
             if (gen != null)
             {
-                updateInfo.Generators.Remove(gen);
+                //updateInfo.Generators.Remove(gen);
+                DataBase.Instance.RemoveGenerator(gen);
             }
 
             if(update.Groups != null)
             {
                 Group group = null;
                 group = updateInfo.Groups.Where(g => g.MRID.Equals(update.Groups[0].MRID)).FirstOrDefault();
-                updateInfo.Groups.Remove(group);
+                // updateInfo.Groups.Remove(group);
+                DataBase.Instance.RemoveGroup(group);
             }
 
             if (update.Sites != null)
             {
                 Site site = null;
                 site = updateInfo.Sites.Where(s => s.MRID.Equals(update.Sites[0].MRID)).FirstOrDefault();
-                updateInfo.Sites.Remove(site);
+                //updateInfo.Sites.Remove(site);
+                DataBase.Instance.RemoveSite(site);
             }
         }
+        #endregion
 
+        #region Update
         private void UpdateData(UpdateInfo update)
         {
             Generator gen = updateInfo.Generators.Where(g => g.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
@@ -354,18 +363,13 @@ namespace LKRes.Services
                 updateInfo.Sites.Add(update.Sites[0]);
             }
         }
+        #endregion
 
         private void NotifyClient(UpdateInfo update)
         {
             Thread.Sleep(50);
             client.Update(update);
         }
-
-       /* private void NotifyService(UpdateInfo update)
-        {
-            Thread.Sleep(50);
-            kSResProxy.Update(update);
-        }*/
     }
 }
 

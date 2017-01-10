@@ -27,6 +27,8 @@ namespace LKRes.Access
                     myDB = value;
             }
         }
+
+        #region Add
         public bool AddGenerator(GeneratorEntity newGenerator)
         {
             using (var access = new AccessDB())
@@ -65,10 +67,70 @@ namespace LKRes.Access
                 return false;
             }
         }
+        #endregion
+
+        #region Delete
+        public void RemoveGenerator(Generator existingGenerator)
+        {
+            using (var access = new AccessDB())
+            {
+                GeneratorEntity entity = access.GeneratorHistory.Where(e => e.Gen.MRID.Equals(existingGenerator.MRID)).FirstOrDefault();
+                if (entity != null)
+                {
+                    access.GeneratorHistory.Remove(entity);
+                }
+            }        
+        }
+
+        public void RemoveGroup(Group existingGroup)
+        {
+            using (var access = new AccessDB())
+            {
+                GroupEntity entity = access.GroupHistory.Where(e => e.GEntity.MRID.Equals(existingGroup.MRID)).FirstOrDefault();
+                if (entity != null)
+                {
+                    access.GroupHistory.Remove(entity);
+                }
+            }
+        }
+
+        public void RemoveSite(Site existingSite)
+        {
+            using (var access = new AccessDB())
+            {
+                SiteEntity entity = access.SiteHistory.Where(e => e.SEntity.MRID.Equals(existingSite.MRID)).FirstOrDefault();
+                if (entity != null)
+                {
+                    access.SiteHistory.Remove(entity);
+                }
+            }
+        }
+        #endregion
+
+        #region Update
+        public void UpdateGenerator(Generator updateGenerator)
+        {
+            using (var access = new AccessDB())
+            {
+
+            }
+        }
+
+        public void UpdateGroup(Group updateGroup)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateSite(Site updateSite)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public UpdateInfo ReadData()
         {
             UpdateInfo data = new UpdateInfo();
+
             using (var access = new AccessDB())
             {
                 Console.WriteLine("Broj generatora je " + access.GeneratorHistory.Count());
@@ -91,7 +153,37 @@ namespace LKRes.Access
             }
             
             return data;
-
         }
+
+        public bool AddMeasurement(Measurement newMeasurement)
+        {
+            using (var access = new AccessDB())
+            {
+                access.MeasurementHistory.Add(newMeasurement);
+                int i = access.SaveChanges();
+
+                if (i > 0)
+                    return true;
+                return false;
+            }
+        }
+
+        public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
+        {
+            SortedDictionary<DateTime, double> returnMeasurements = new SortedDictionary<DateTime, double>();
+
+            using (var access = new AccessDB())
+            {
+                List<Measurement> mesurements = access.MeasurementHistory.Where(m => m.MRID.Equals(mRID)).ToList();
+                foreach (Measurement m in mesurements)
+                {
+                    returnMeasurements.Add(m.TimeStamp, m.ActivePower);
+                }
+            }
+
+            return returnMeasurements;
+        }
+
+       
     }
 }

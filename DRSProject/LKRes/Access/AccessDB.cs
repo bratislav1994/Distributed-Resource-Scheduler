@@ -15,5 +15,6 @@ namespace LKRes.Access
         public DbSet<GeneratorEntity> GeneratorHistory { get; set; }
         public DbSet<GroupEntity> GroupHistory { get; set; }
         public DbSet<SiteEntity> SiteHistory { get; set; }
+        public DbSet<Measurement> MeasurementHistory { get; set; }
     }
 }
