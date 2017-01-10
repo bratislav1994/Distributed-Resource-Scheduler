@@ -108,25 +108,45 @@ namespace LKRes.Access
         #endregion
 
         #region Update
-        public void UpdateGenerator(Generator updateGenerator)
+        public bool UpdateGenerator(Generator updateGenerator)
         {
             using (var access = new AccessDB())
             {
+                GeneratorEntity entity = access.GeneratorHistory.Where(g => g.Gen.MRID.Equals(updateGenerator.MRID)).FirstOrDefault();
 
+                if (entity != null)
+                {
+                    entity.Gen.ActivePower = updateGenerator.ActivePower;
+                    entity.Gen.GroupID = updateGenerator.GroupID;
+                    entity.Gen.GeneratorType = updateGenerator.GeneratorType;
+                    entity.Gen.HasMeasurment = updateGenerator.HasMeasurment;
+                    entity.Gen.Pmax = updateGenerator.Pmax;
+                    entity.Gen.Pmin = updateGenerator.Pmin;
+                    entity.Gen.Price = updateGenerator.Price;
+                    entity.Gen.Name = updateGenerator.Name;
+                    if (entity.Gen.WorkingMode == WorkingMode.REMOTE && updateGenerator.WorkingMode == WorkingMode.LOCAL)
+                    {
+                        entity.Gen.WorkingMode = updateGenerator.WorkingMode;
+                        entity.Gen.SetPoint = -1;
+                    }
+                }
+
+                access.MeasurementHistory.Add(new Measurement()
+                {
+                    MRID = entity.Gen.MRID,
+                    ActivePower = entity.Gen.ActivePower,
+                    TimeStamp = DateTime.Now
+                });
+
+                int i = access.SaveChanges();
+                if (i > 0)
+                    return true;
+                return false;
             }
-        }
-
-        public void UpdateGroup(Group updateGroup)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateSite(Site updateSite)
-        {
-            throw new NotImplementedException();
         }
         #endregion
 
+        #region Read
         public UpdateInfo ReadData()
         {
             UpdateInfo data = new UpdateInfo();
@@ -154,7 +174,9 @@ namespace LKRes.Access
             
             return data;
         }
+        #endregion
 
+        #region Measurement
         public bool AddMeasurement(Measurement newMeasurement)
         {
             using (var access = new AccessDB())
@@ -183,7 +205,6 @@ namespace LKRes.Access
 
             return returnMeasurements;
         }
-
-       
+        #endregion
     }
 }

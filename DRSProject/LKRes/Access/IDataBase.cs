@@ -18,10 +18,8 @@ namespace LKRes.Access
         void RemoveGroup(Group existingGroup);
         void RemoveSite(Site existingSite);
 
-        void UpdateGenerator(Generator updateGenerator);
-        void UpdateGroup(Group updateGroup);
-        void UpdateSite(Site updateSite);
-
+        bool UpdateGenerator(Generator updateGenerator);
+   
         UpdateInfo ReadData();
         bool AddMeasurement(Measurement newMeasurement);
         SortedDictionary<DateTime, double> GetMeasurements(string mRID);
