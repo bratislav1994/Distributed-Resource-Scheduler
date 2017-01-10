@@ -73,6 +73,7 @@
     <Compile Include="Access\IDataBase.cs" />
     <Compile Include="Data\GeneratorEntity.cs" />
     <Compile Include="Data\GroupEntity.cs" />
+    <Compile Include="Data\Measurement.cs" />
     <Compile Include="Data\SiteEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
