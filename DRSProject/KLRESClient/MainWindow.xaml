@@ -69,7 +69,7 @@
 
     </Window.Resources>
 
-    <Grid Background="#FF526B87">
+    <Grid Background="#FF5B6570">
 
         <DataGrid x:Name="dataGridGenerators" SelectedItem="{Binding EditRemoveWindowVM.SelectedItem}" ItemsSource="{Binding Client.Generators,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="false" AutoGenerateColumns="False" Margin="5,60,5,20">
 
@@ -129,6 +129,19 @@
             </Button.Style>
         </Button>
 
+        <Button x:Name="button4" Command="{Binding EditRemoveWindowVM.ShowDataCommand}" Content="Show data" HorizontalAlignment="Left" Margin="428,5,0,0" VerticalAlignment="Top" Height="50" Width="60" >
+            <Button.Style>
+                <Style  TargetType="{x:Type Button}">
+                    <Setter Property="Foreground" Value="Blue"/>
+                    <Setter Property="IsEnabled" Value="True"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#FFADADAD"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
 
         <TextBlock x:Name="textBlock" Style="{StaticResource TitleText}" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Generators" VerticalAlignment="Top">
 

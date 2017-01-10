@@ -11,10 +11,10 @@ namespace KLRESClient
     using System.Windows;
     using CommonLibrary;
     using Prism.Commands;
-
-    /// <summary>
-    /// View model for edit and remove actions
-    /// </summary>
+    using System.Windows.Controls.DataVisualization.Charting;
+    using System;    /// <summary>
+                     /// View model for edit and remove actions
+                     /// </summary>
     public class EditRemoveViewModel : INotifyPropertyChanged
     {
         #region fields
@@ -48,6 +48,11 @@ namespace KLRESClient
         /// Use for showing or closing EditWindow
         /// </summary>
         private EditWindow win1 = null;
+
+        /// <summary>
+        /// Use for showing or closing EditWindow
+        /// </summary>
+        private ShowDataWindow showWin = null;
 
         /// <summary>
         /// generator selected in the table
@@ -188,6 +193,11 @@ namespace KLRESClient
         /// remove command
         /// </summary>
         private DelegateCommand removeCommand;
+
+        /// <summary>
+        /// show command
+        /// </summary>
+        private DelegateCommand showDataCommand;
 
         #endregion
 
@@ -719,6 +729,52 @@ namespace KLRESClient
         }
 
         #endregion
+
+        #region ShowCommandProperty
+
+        /// <summary>
+        /// Gets information if show command can be executed
+        /// </summary>
+        public DelegateCommand ShowDataCommand
+        {
+            get
+            {
+                if (this.showDataCommand == null)
+                {
+                    this.showDataCommand = new DelegateCommand(this.ShowCommandAction, this.CanShowDataExecute);
+                }
+
+                return this.showDataCommand;
+            }
+        }
+
+        #endregion
+
+        private bool CanShowDataExecute()
+        {
+            if (this.SelectedItem == null)
+            {
+                return false;
+            }
+
+            Generator gen = (Generator)this.SelectedItem;
+
+            return gen.HasMeasurment;
+        }
+
+        private void ShowCommandAction()
+        {
+            this.showWin = new ShowDataWindow(this.Client.DataContext);
+            this.showWin.ShowDialog();
+
+            // ((LineSeries)this.showWin.mcChart.Series[0]).ItemsSource =
+            //    new KeyValuePair<DateTime, int>[]{
+            //    new KeyValuePair<DateTime,int>(DateTime.Now, 100),
+            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(1), 130),
+            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(2), 150),
+            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(3), 125),
+            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(4),155) };
+        }
 
         #region EditCommand
 
