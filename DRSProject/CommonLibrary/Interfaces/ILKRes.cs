@@ -24,5 +24,8 @@ namespace CommonLibrary.Interfaces
         /// 
         /// <param name="setPoints"></param>
         void SendSetPoint(List<Point> setPoints);
+
+        [OperationContract]
+        void SendBasePoint(List<Point> basePoints);
     }//end ILKRes
 }
