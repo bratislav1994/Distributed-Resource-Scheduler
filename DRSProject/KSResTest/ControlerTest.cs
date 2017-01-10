@@ -16,9 +16,9 @@ using System.Threading;
 namespace KSResTest
 {
     [TestFixture]
-    public class DynamicDataBaseTest
+    public class ControlerTest
     {
-        DynamicDataBase database = null;
+        Controler database = null;
         ILKRes mockService = null;
         IKSClient mockClient = null;
         Generator generator = null;
@@ -31,7 +31,7 @@ namespace KSResTest
         {
             mockService = Substitute.For<ILKRes>();
             mockService.Ping().Returns("OK");
-            database = new DynamicDataBase();
+            database = new Controler();
 
             mockClient = Substitute.For<IKSClient>();
             
@@ -63,7 +63,7 @@ namespace KSResTest
         public void ConstructorTest()
         {
             Assert.DoesNotThrow(() => {
-                database = new DynamicDataBase();
+                database = new Controler();
                 } );
 
             Assert.AreNotEqual(null, database.ActiveService);
@@ -301,7 +301,7 @@ namespace KSResTest
         [Test]
         public void AddClientTest()
         {
-            database.AddClient(mockClient);
+            database.Clients.Add(mockClient);
 
             Assert.AreEqual(mockClient, database.Clients[0]);
         }
@@ -312,7 +312,7 @@ namespace KSResTest
         {
             LKResService service = new LKResService(username, mockService, "sessionId");
             database.ActiveService.Add(service);
-            database.AddClient(mockClient);
+            database.Clients.Add(mockClient);
 
             Assert.DoesNotThrow(() =>database.Update("sessionId", update));
         }
@@ -325,7 +325,7 @@ namespace KSResTest
             mockClientTemp.When(x => x.Update(update, username)).Throw(new CommunicationException());
             LKResService service = new LKResService(username, mockService, "sessionId");
             database.ActiveService.Add(service);
-            database.AddClient(mockClientTemp);
+            database.Clients.Add(mockClientTemp);
 
             Assert.DoesNotThrow(() => database.Update("sessionId", update));
         }

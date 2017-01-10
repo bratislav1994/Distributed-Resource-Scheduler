@@ -1,4 +1,10 @@
-﻿using System.Reflection;
+﻿// <copyright file="AssemblyInfo.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
