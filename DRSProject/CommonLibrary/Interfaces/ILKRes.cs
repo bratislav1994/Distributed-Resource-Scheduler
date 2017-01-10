@@ -26,6 +26,6 @@ namespace CommonLibrary.Interfaces
         void SendSetPoint(List<Point> setPoints);
 
         [OperationContract]
-        void SendBasePoint(List<Point> basePoints);
+        void SendBasePoint(Dictionary<int, List<Point>> basePoints);
     }//end ILKRes
 }
