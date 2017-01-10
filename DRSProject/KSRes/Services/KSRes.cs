@@ -14,13 +14,13 @@ namespace KSRes.Services
     //[CallbackBehavior(UseSynchronizationContext = false)]
     public class KSRes : IKSRes, IKSForClient
     {
-        private static DynamicDataBase dynamicDataBase = new DynamicDataBase();
+        private static Controler controler;
        
-        public static DynamicDataBase DynamicDataBase
+        public static Controler Controler
         {
             get
             {
-                return dynamicDataBase;
+                return controler;
             }
         }
 
@@ -33,7 +33,7 @@ namespace KSRes.Services
 
             try
             {
-                DynamicDataBase.Login(username, password, service, sessionID);
+                Controler.Login(username, password, service, sessionID);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -45,7 +45,7 @@ namespace KSRes.Services
         {
             try
             {
-                DynamicDataBase.Registration(username, password);
+                Controler.Registration(username, password);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -58,9 +58,9 @@ namespace KSRes.Services
             OperationContext context = OperationContext.Current;
             string sessionID = context.Channel.SessionId;
 
-            string username = dynamicDataBase.GetServiceSID(sessionID).Username;
+            string username = Controler.GetServiceSID(sessionID).Username;
 
-            dynamicDataBase.SendMeasurement(username, measurments);
+            Controler.SendMeasurement(username, measurments);
         }
 
         public void Update(UpdateInfo update)
@@ -70,7 +70,7 @@ namespace KSRes.Services
 
             try
             {
-                DynamicDataBase.Update(sessionID, update);
+                Controler.Update(sessionID, update);
             }
             catch (Exception ex)
             {
@@ -84,9 +84,9 @@ namespace KSRes.Services
         {
             OperationContext context = OperationContext.Current;
             IKSClient client = context.GetCallbackChannel<IKSClient>();
-            DynamicDataBase.AddClient(client);
+            Controler.Clients.Add(client);
 
-            return DynamicDataBase.ActiveService;
+            return Controler.ActiveService;
         }
 
         public void IssueCommand(double requiredAP)
@@ -98,127 +98,22 @@ namespace KSRes.Services
 
             LocalDB.Instance.AddConsuption(new Data.ConsuptionHistory()
             {
-                Consuption = requiredAP
+                Consuption = requiredAP,
+                TimeStamp = DateTime.Now
             });
 
-            List<SetPoint> setPoints = P(requiredAP);
+            List<SetPoint> setPoints = Controler.P(requiredAP);
+            Controler.DeploySetPoint(setPoints);
+        }
 
-            if (setPoints.Count != 0)
+        public SortedDictionary<DateTime, double> GetLoadForecast()
+        {
+            if(Controler.LastValuesLC.Count != 0)
             {
-                foreach (LKResService service in dynamicDataBase.ActiveService)
-                {
-                    List<SetPoint> temp = new List<SetPoint>();
-                    foreach (Generator generator in service.Generators)
-                    {
-                        SetPoint setPoint = setPoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
-
-                        if (setPoint != null)
-                        {
-                            temp.Add(setPoint);
-                        }
-                    }
-                    service.Client.SendSetPoint(temp);
-                }
+                return Controler.LastValuesLC;
             }
+            return null;
         }
         #endregion IKSForClient
-        
-
-        private List<SetPoint> P(double requiredAP)
-        {
-            List<Generator> remoteGenerators = new List<Generator>();
-            List<SetPoint> setPoints = new List<SetPoint>();
-            List<Generator> generators = new List<Generator>();
-
-            foreach(LKResService client in dynamicDataBase.ActiveService)
-            {
-                generators.AddRange(client.Generators);
-            }
-
-            double activePower = 0;
-            double diff = 0;
-
-            foreach (Generator generator in generators)
-            {
-                activePower += generator.ActivePower;
-
-                if (generator.WorkingMode == WorkingMode.REMOTE)
-                {
-                    remoteGenerators.Add(generator);
-                }
-            }
-
-            diff = requiredAP - activePower;
-
-            if (diff > 0)
-            {
-                List<Generator> sortedList = remoteGenerators.OrderBy(o => o.Price).ToList();
-                foreach (Generator remoteGenerator in sortedList)
-                {
-                    double diff1 = 0;
-                    if ((diff1 = remoteGenerator.Pmax - remoteGenerator.ActivePower) > 0)
-                    {
-                        SetPoint setPoint = new SetPoint();
-
-                        if (diff > diff1)
-                        {
-                            diff -= diff1;
-                            setPoint.GeneratorID = remoteGenerator.MRID;
-                            setPoint.Setpoint = remoteGenerator.Pmax;
-                            setPoints.Add(setPoint);
-                        }
-                        else if (diff <= diff1)
-                        {
-                            setPoint.GeneratorID = remoteGenerator.MRID;
-                            setPoint.Setpoint = remoteGenerator.ActivePower + diff;
-                            diff = 0;
-                            setPoints.Add(setPoint);
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                diff = Math.Abs(diff);
-                List<Generator> sortedList = remoteGenerators.OrderByDescending(o => o.Price).ToList();
-                foreach (Generator remoteGenerator in sortedList)
-                {
-                    if (remoteGenerator.ActivePower > 0)
-                    {
-                        SetPoint setPoint = new SetPoint();
-                        if (diff != 0)
-                        {
-                            if (remoteGenerator.ActivePower <= diff)
-                            {
-                                setPoint.GeneratorID = remoteGenerator.MRID;
-                                setPoint.Setpoint = 0;
-                                diff -= remoteGenerator.ActivePower;
-                                setPoints.Add(setPoint);
-                            }
-                            else
-                            {
-                                if ((remoteGenerator.ActivePower - remoteGenerator.Pmin) >= diff)
-                                {
-                                    setPoint.GeneratorID = remoteGenerator.MRID;
-                                    setPoint.Setpoint = remoteGenerator.ActivePower - diff;
-                                    diff = 0;
-                                    setPoints.Add(setPoint);
-                                    break;
-                                }
-                                else
-                                {
-                                    setPoint.GeneratorID = remoteGenerator.MRID;
-                                    setPoint.Setpoint = remoteGenerator.Pmin;
-                                    diff -= remoteGenerator.ActivePower - remoteGenerator.Pmin;
-                                    setPoints.Add(setPoint);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return setPoints;
-        }
     }
 }

@@ -14,15 +14,18 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 namespace KSRes
 {
-    public class DynamicDataBase
+    public class Controler
     {
         private Dictionary<string, string> registrationService = null;
         private List<LKResService> activeService = null;
         private List<IKSClient> clients = null;
-        private List<ProductionHistroy> multiThreadBuffer = null;
+        private List<ProductionHistory> multiThreadBuffer = null;
         private object lockObj = null;
         private object lockObj1 = new object();
+        private ILoadForecast proxy;
+        private SortedDictionary<DateTime, double> lastValuesLC = null;
 
+        #region Property
         public List<LKResService> ActiveService
         {
             get
@@ -39,7 +42,7 @@ namespace KSRes
             }
         }
 
-        public List<ProductionHistroy> MultiThreadBuffer
+        public List<ProductionHistory> MultiThreadBuffer
         {
             get
             {
@@ -47,21 +50,48 @@ namespace KSRes
             }
         }
 
-        public DynamicDataBase()
+        public SortedDictionary<DateTime, double> LastValuesLC
+        {
+            get
+            {
+                return lastValuesLC;
+            }
+
+            set
+            {
+                lastValuesLC = value;
+            }
+        }
+        #endregion Property
+
+        #region Constructor
+        public Controler()
         {
             registrationService = new Dictionary<string, string>();
             activeService = new List<LKResService>();
             clients = new List<IKSClient>();
             lockObj = new object();
-            multiThreadBuffer = new List<ProductionHistroy>();
+            multiThreadBuffer = new List<ProductionHistory>();
+
+            ChannelFactory<ILoadForecast> factory = new ChannelFactory<ILoadForecast>(
+                new NetTcpBinding(),
+                 new EndpointAddress("net.tcp://localhost:10040/ILoadForecast"));
+            proxy = factory.CreateChannel();
+
+            LastValuesLC = new SortedDictionary<DateTime, double>();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
             //CheckIfLKServiceIsAliveThread.Start();
 
             Thread ProcessingDataThread = new Thread(() => ProcessingData());
             ProcessingDataThread.Start();
-        }
 
+            Thread LoadForecastThread = new Thread(() => LoadForecast());
+            LoadForecastThread.Start();
+        }
+        #endregion Constructor
+
+        #region GetService
         public LKResService GetServiceSID(string sessionID)
         {
             foreach (LKResService service in ActiveService)
@@ -90,7 +120,9 @@ namespace KSRes
 
             return retVal;
         }
+        #endregion GetService
 
+        #region Registration/Login
         public void Registration(string username, string password)
         {
             if (LocalDB.Instance.GetService(username) != null)
@@ -144,7 +176,9 @@ namespace KSRes
                 throw new FaultException<IdentificationExeption>(ex);
             }
         }
+        #endregion Registration/Login
 
+        #region Update
         public void Update(string sessionID, UpdateInfo update)
         {
             LKResService serviceUp = GetServiceSID(sessionID);
@@ -178,60 +212,12 @@ namespace KSRes
             NotifyClients(update, serviceUp.Username);
         }
 
-        public void SendMeasurement(string username, Dictionary<string, double> measurments)
-        {
-            UpdateInfo update = new UpdateInfo();
-            update.UpdateType = UpdateType.UPDATE;
-            update.Groups = null;
-            update.Sites = null;
-
-            LKResService service = GetService(username);
-
-            foreach (string mrid in measurments.Keys)
-            {
-                ProductionHistroy productionHistory = new ProductionHistroy();
-                productionHistory.Username = username;
-                productionHistory.MRID = mrid;
-                productionHistory.ActivePower = measurments[mrid];
-
-                lock (lockObj1)
-                {
-                    MultiThreadBuffer.Add(productionHistory);
-                }
-
-                Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).FirstOrDefault();
-                generator.ActivePower = measurments[mrid];
-
-                update.Generators.Add(generator);
-            }  
-
-            foreach(IKSClient client in clients)
-            {
-                client.Update(update, username);
-            }
-        }
-
-        public void ProcessingData()
-        {
-            Thread.Sleep(10000);
-
-            foreach(ProductionHistroy productionHistory in MultiThreadBuffer)
-            {
-                LocalDB.Instance.AddProductions(productionHistory);
-            }
-
-            lock (lockObj1)
-            {
-                MultiThreadBuffer.Clear();
-            }
-        }
-
         #region private add/update/remove
         private void AddOrUpdateSite(List<Site> sites, LKResService service)
         {
             if (sites != null)
             {
-                foreach(Site site in sites)
+                foreach (Site site in sites)
                 {
                     service.Sites.Add(site);
                 }
@@ -251,7 +237,7 @@ namespace KSRes
 
         private void AddOrUpdateGenerator(List<Generator> generators, LKResService service)
         {
-            if(generators == null)
+            if (generators == null)
             {
                 throw new InvalidDataException();
             }
@@ -259,11 +245,11 @@ namespace KSRes
             bool edit = false;
             List<Generator> addGenerator = new List<Generator>();
 
-            foreach(Generator newGenerator in generators)
+            foreach (Generator newGenerator in generators)
             {
-                foreach(Generator generator in service.Generators)
+                foreach (Generator generator in service.Generators)
                 {
-                    if(newGenerator.MRID.Equals(generator.MRID))
+                    if (newGenerator.MRID.Equals(generator.MRID))
                     {
                         generator.HasMeasurment = newGenerator.HasMeasurment;
                         generator.Name = newGenerator.Name;
@@ -280,14 +266,14 @@ namespace KSRes
                         //break;
                     }
                 }
-                if(!edit)
+                if (!edit)
                 {
                     addGenerator.Add(newGenerator);
                 }
             }
 
             //service.Generators.AddRange(addGenerator);
-            foreach(Generator generator in addGenerator)
+            foreach (Generator generator in addGenerator)
             {
                 service.Generators.Add(generator);
             }
@@ -300,16 +286,16 @@ namespace KSRes
             {
                 foreach (Site removesite in sites)
                 {
-                    foreach(Site site in service.Sites)
+                    foreach (Site site in service.Sites)
                     {
-                        if(removesite.MRID.Equals(site.MRID))
+                        if (removesite.MRID.Equals(site.MRID))
                         {
                             removeList.Add(site);
                         }
                     }
                 }
 
-                foreach(Site site in removeList)
+                foreach (Site site in removeList)
                 {
                     service.Sites.Remove(site);
                 }
@@ -362,6 +348,58 @@ namespace KSRes
             }
         }
         #endregion add/update/remove
+        #endregion Update
+
+        public void SendMeasurement(string username, Dictionary<string, double> measurments)
+        {
+            UpdateInfo update = new UpdateInfo();
+            update.UpdateType = UpdateType.UPDATE;
+            update.Groups = null;
+            update.Sites = null;
+
+            LKResService service = GetService(username);
+
+            foreach (string mrid in measurments.Keys)
+            {
+                ProductionHistory productionHistory = new ProductionHistory();
+                productionHistory.Username = username;
+                productionHistory.MRID = mrid;
+                productionHistory.ActivePower = measurments[mrid];
+
+                lock (lockObj1)
+                {
+                    MultiThreadBuffer.Add(productionHistory);
+                }
+
+                Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).FirstOrDefault();
+                generator.ActivePower = measurments[mrid];
+
+                update.Generators.Add(generator);
+            }  
+
+            foreach(IKSClient client in clients)
+            {
+                client.Update(update, username);
+            }
+        }
+
+        public void ProcessingData()
+        {
+            while (true)
+            {
+                Thread.Sleep(10000);
+
+                foreach (ProductionHistory productionHistory in MultiThreadBuffer)
+                {
+                    LocalDB.Instance.AddProductions(productionHistory);
+                }
+
+                lock (lockObj1)
+                {
+                    MultiThreadBuffer.Clear();
+                }
+            }
+        }
 
         private void CheckIfLKServiceIsAlive()
         {
@@ -395,14 +433,6 @@ namespace KSRes
             }
         }
 
-        public void AddClient(IKSClient client)
-        {
-            lock (lockObj)
-            {
-                Clients.Add(client);
-            }
-        }
-
         private void NotifyClients(UpdateInfo update, string username)
         {
             List<IKSClient> notActiveClient = new List<IKSClient>();
@@ -426,5 +456,143 @@ namespace KSRes
                 }
             }
         }
+
+        #region DeployActivePower
+        public List<SetPoint> P(double requiredAP)
+        {
+            List<Generator> remoteGenerators = new List<Generator>();
+            List<SetPoint> setPoints = new List<SetPoint>();
+            List<Generator> generators = new List<Generator>();
+
+            foreach (LKResService client in ActiveService)
+            {
+                generators.AddRange(client.Generators);
+            }
+
+            double activePower = 0;
+            double diff = 0;
+
+            foreach (Generator generator in generators)
+            {
+                activePower += generator.ActivePower;
+
+                if (generator.WorkingMode == WorkingMode.REMOTE)
+                {
+                    remoteGenerators.Add(generator);
+                }
+            }
+
+            diff = requiredAP - activePower;
+
+            if (diff > 0)
+            {
+                List<Generator> sortedList = remoteGenerators.OrderBy(o => o.Price).ToList();
+                foreach (Generator remoteGenerator in sortedList)
+                {
+                    double diff1 = 0;
+                    if ((diff1 = remoteGenerator.Pmax - remoteGenerator.ActivePower) > 0)
+                    {
+                        SetPoint setPoint = new SetPoint();
+
+                        if (diff > diff1)
+                        {
+                            diff -= diff1;
+                            setPoint.GeneratorID = remoteGenerator.MRID;
+                            setPoint.Setpoint = remoteGenerator.Pmax;
+                            setPoints.Add(setPoint);
+                        }
+                        else if (diff <= diff1)
+                        {
+                            setPoint.GeneratorID = remoteGenerator.MRID;
+                            setPoint.Setpoint = remoteGenerator.ActivePower + diff;
+                            diff = 0;
+                            setPoints.Add(setPoint);
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                diff = Math.Abs(diff);
+                List<Generator> sortedList = remoteGenerators.OrderByDescending(o => o.Price).ToList();
+                foreach (Generator remoteGenerator in sortedList)
+                {
+                    if (remoteGenerator.ActivePower > 0)
+                    {
+                        SetPoint setPoint = new SetPoint();
+                        if (diff != 0)
+                        {
+                            if (remoteGenerator.ActivePower <= diff)
+                            {
+                                setPoint.GeneratorID = remoteGenerator.MRID;
+                                setPoint.Setpoint = 0;
+                                diff -= remoteGenerator.ActivePower;
+                                setPoints.Add(setPoint);
+                            }
+                            else
+                            {
+                                if ((remoteGenerator.ActivePower - remoteGenerator.Pmin) >= diff)
+                                {
+                                    setPoint.GeneratorID = remoteGenerator.MRID;
+                                    setPoint.Setpoint = remoteGenerator.ActivePower - diff;
+                                    diff = 0;
+                                    setPoints.Add(setPoint);
+                                    break;
+                                }
+                                else
+                                {
+                                    setPoint.GeneratorID = remoteGenerator.MRID;
+                                    setPoint.Setpoint = remoteGenerator.Pmin;
+                                    diff -= remoteGenerator.ActivePower - remoteGenerator.Pmin;
+                                    setPoints.Add(setPoint);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return setPoints;
+        }
+
+        public void DeploySetPoint(List<SetPoint> setPoints)
+        {
+            if (setPoints.Count != 0)
+            {
+                foreach (LKResService service in ActiveService)
+                {
+                    List<SetPoint> temp = new List<SetPoint>();
+                    foreach (Generator generator in service.Generators)
+                    {
+                        SetPoint setPoint = setPoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
+
+                        if (setPoint != null)
+                        {
+                            temp.Add(setPoint);
+                        }
+                    }
+                    service.Client.SendSetPoint(temp);
+                }
+            }
+        }
+        #endregion DeployActivePower
+
+        #region LoadForecast
+        private void LoadForecast()
+        {
+            while (true)
+            {
+                Thread.Sleep(60000);
+                List<ConsuptionHistory> consuptions = LocalDB.Instance.ReadConsuptions();
+                List<KeyValuePair<DateTime, double>> parameter = new List<KeyValuePair<DateTime, double>>();
+                foreach (ConsuptionHistory consuption in consuptions)
+                {
+                    parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
+                }
+
+                LastValuesLC = proxy.LoadForecast(parameter);
+            }
+        }
+        #endregion LoadForecast
     }
 }

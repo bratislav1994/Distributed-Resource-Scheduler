@@ -87,22 +87,22 @@ namespace KSResTest
             update.Generators.Add(generator1);
             update.Generators.Add(generator2);         
             LKResService temp = new LKResService("user1", mockService, "sessionId");
-            KSRes.Services.KSRes.DynamicDataBase.ActiveService.Add(temp);
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId", update);
+            KSRes.Services.KSRes.Controler.ActiveService.Add(temp);
+            KSRes.Services.KSRes.Controler.Update("sessionId", update);
 
             update.Generators.Clear();
             update.Generators.Add(generator3);
             update.Generators.Add(generator4);
             LKResService temp1 = new LKResService("user12", mockService, "sessionId2");
-            KSRes.Services.KSRes.DynamicDataBase.ActiveService.Add(temp1);
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId2", update);
+            KSRes.Services.KSRes.Controler.ActiveService.Add(temp1);
+            KSRes.Services.KSRes.Controler.Update("sessionId2", update);
 
             update.Generators.Clear();
             update.Generators.Add(generator5);
             update.Generators.Add(generator6);
             LKResService temp2 = new LKResService("user3", mockService, "sessionId3");
-            KSRes.Services.KSRes.DynamicDataBase.ActiveService.Add(temp2); ;
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId3", update);
+            KSRes.Services.KSRes.Controler.ActiveService.Add(temp2); ;
+            KSRes.Services.KSRes.Controler.Update("sessionId3", update);
         }
 
         [Test]
@@ -177,7 +177,7 @@ namespace KSResTest
 
             update1.Generators.Add(generator2);
 
-            KSRes.Services.KSRes.DynamicDataBase.Update("sessionId", update1);
+            KSRes.Services.KSRes.Controler.Update("sessionId", update1);
 
             PrivateObject obj = new PrivateObject(service);
             List<SetPoint> retVal = (List<SetPoint>)obj.Invoke("P", requiredAP);
