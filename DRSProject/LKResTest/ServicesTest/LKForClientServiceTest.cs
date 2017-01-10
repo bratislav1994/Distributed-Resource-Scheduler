@@ -43,7 +43,7 @@ namespace LKResTest.ServicesTest
         [Test]
         public void SetpointTest()
         {
-            List<SetPoint> setpoints = new List<SetPoint>();
+            List<Point> setpoints = new List<Point>();
             Generator generator = new Generator()
             {
                 MRID = "1"
@@ -51,9 +51,9 @@ namespace LKResTest.ServicesTest
 
             lkResTest.updateInfo.Generators.Add(generator);
 
-            SetPoint setpoint = new SetPoint();
+            Point setpoint = new Point();
             setpoint.GeneratorID = generator.MRID;
-            setpoint.Setpoint = 10;
+            setpoint.Power = 10;
             setpoints.Add(setpoint);
 
             lkResTest.SendSetPoint(setpoints);

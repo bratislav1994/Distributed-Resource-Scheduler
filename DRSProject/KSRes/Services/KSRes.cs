@@ -102,8 +102,8 @@ namespace KSRes.Services
                 TimeStamp = DateTime.Now
             });
 
-            List<SetPoint> setPoints = Controler.P(requiredAP);
-            Controler.DeploySetPoint(setPoints);
+            List<Point> setPoints = Controler.P(requiredAP);
+            Controler.DeployPoint(setPoints);
         }
 
         public SortedDictionary<DateTime, double> GetLoadForecast()
