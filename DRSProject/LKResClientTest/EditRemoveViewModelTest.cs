@@ -1,23 +1,38 @@
-﻿using CommonLibrary;
-using CommonLibrary.Interfaces;
-using KLRESClient;
-using NSubstitute;
-using NUnit.Framework;
-using Prism.Commands;
-using System;
-using System.ComponentModel;
-using System.ServiceModel;
-using System.Windows;
-using System.Collections.Generic;
-using System.Threading;
+﻿// <copyright file="EditRemoveViewModelTest.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace LKResClientTest
 {
+    using System.ComponentModel;
+    using System.Threading;
+    using System.Windows;
+    using CommonLibrary;
+    using CommonLibrary.Interfaces;
+    using KLRESClient;
+    using NSubstitute;
+    using NUnit.Framework;
+
+    /// <summary>
+    /// Used for testing EditRemoveViewModel
+    /// </summary>
     public class EditRemoveViewModelTest
     {
+        /// <summary>
+        /// instance of edit remove view model
+        /// </summary>
         private EditRemoveViewModel viewModel = null;
+
+        /// <summary>
+        /// instance of client
+        /// </summary>
         private LKClientService client = null;
 
+        /// <summary>
+        /// initialize fields
+        /// </summary>
         [OneTimeSetUp]
         public void SetupTest()
         {
@@ -25,6 +40,9 @@ namespace LKResClientTest
             this.viewModel = new EditRemoveViewModel(this.client);
         }
 
+        /// <summary>
+        /// testing constructor of edit remove view model
+        /// </summary>
         [Test]
         public void ConstructorTest()
         {
@@ -32,6 +50,9 @@ namespace LKResClientTest
             Assert.AreNotEqual(null, this.viewModel.Client);
         }
 
+        /// <summary>
+        /// test for get and set client
+        /// </summary>
         [Test]
         public void ClientTest()
         {
@@ -40,10 +61,12 @@ namespace LKResClientTest
             Assert.AreEqual(client2, this.viewModel.Client);
         }
 
+        /// <summary>
+        /// test for selected generator
+        /// </summary>
         [Test]
         public void SelectedItemTest()
         {
-            //Assert.AreEqual(null, this.viewModel.SelectedItem);
             Generator g = new Generator() { MRID = "1", GroupID = "2" };
             this.viewModel.Client.Generators.Clear();
             this.viewModel.Client.Groups.Clear();
@@ -56,6 +79,9 @@ namespace LKResClientTest
             Assert.AreEqual(g, this.viewModel.SelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set name
+        /// </summary>
         [Test]
         public void NameTest()
         {
@@ -64,6 +90,9 @@ namespace LKResClientTest
             Assert.AreEqual(name, this.viewModel.EditName);
         }
 
+        /// <summary>
+        /// test for get and set active power
+        /// </summary>
         [Test]
         public void ActivePowerTest()
         {
@@ -72,6 +101,9 @@ namespace LKResClientTest
             Assert.AreEqual(active, this.viewModel.EditActivePower);
         }
 
+        /// <summary>
+        /// test for get and set power min
+        /// </summary>
         [Test]
         public void PMinTest()
         {
@@ -80,6 +112,9 @@ namespace LKResClientTest
             Assert.AreEqual(powerMin, this.viewModel.EditPMin);
         }
 
+        /// <summary>
+        /// test for get and set power max
+        /// </summary>
         [Test]
         public void PMaxTest()
         {
@@ -88,6 +123,9 @@ namespace LKResClientTest
             Assert.AreEqual(powerMax, this.viewModel.EditPMax);
         }
 
+        /// <summary>
+        /// test for get and set price
+        /// </summary>
         [Test]
         public void PriceTest()
         {
@@ -96,6 +134,9 @@ namespace LKResClientTest
             Assert.AreEqual(price, this.viewModel.EditPrice);
         }
 
+        /// <summary>
+        /// test for get and set combo box
+        /// </summary>
         [Test]
         public void CmbHasMeasSelectedItemTest()
         {
@@ -104,6 +145,9 @@ namespace LKResClientTest
             Assert.AreEqual(hasMeasure, this.viewModel.EditCmbHasMeasSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box
+        /// </summary>
         [Test]
         public void CmbGeneratorTypeSelectedItemTest()
         {
@@ -112,6 +156,9 @@ namespace LKResClientTest
             Assert.AreEqual(genType, this.viewModel.EditCmbGeneratorTypeSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box
+        /// </summary>
         [Test]
         public void CmbWorkingModeSelectedItemTest()
         {
@@ -120,6 +167,9 @@ namespace LKResClientTest
             Assert.AreEqual(workMode, this.viewModel.EditCmbWorkingModeSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set radio button
+        /// </summary>
         [Test]
         public void RadioButtonTest()
         {
@@ -128,6 +178,9 @@ namespace LKResClientTest
             Assert.AreEqual(radioButton, this.viewModel.EditRadioButton);
         }
 
+        /// <summary>
+        /// test for get and set radio button
+        /// </summary>
         [Test]
         public void RadioButton1Test()
         {
@@ -136,6 +189,9 @@ namespace LKResClientTest
             Assert.AreEqual(radioButton, this.viewModel.EditRadioButton1);
         }
 
+        /// <summary>
+        /// test for get and set radio button
+        /// </summary>
         [Test]
         public void RadioButton2Test()
         {
@@ -144,6 +200,9 @@ namespace LKResClientTest
             Assert.AreEqual(radioButton, this.viewModel.EditRadioButton2);
         }
 
+        /// <summary>
+        /// test for get and set site name
+        /// </summary>
         [Test]
         public void SiteNameTest()
         {
@@ -152,6 +211,9 @@ namespace LKResClientTest
             Assert.AreEqual(site, this.viewModel.EditSiteName);
         }
 
+        /// <summary>
+        /// test for get and set group name
+        /// </summary>
         [Test]
         public void GroupNameTest()
         {
@@ -160,6 +222,9 @@ namespace LKResClientTest
             Assert.AreEqual(group, this.viewModel.EditGroupName);
         }
 
+        /// <summary>
+        /// test for get and set group name
+        /// </summary>
         [Test]
         public void TxbGroupNameTest()
         {
@@ -168,6 +233,9 @@ namespace LKResClientTest
             Assert.AreEqual(txb, this.viewModel.EditTxbGroupName);
         }
 
+        /// <summary>
+        /// test for get and set combo box items
+        /// </summary>
         [Test]
         public void CmbSiteNameSelectedItemTest()
         {
@@ -176,6 +244,9 @@ namespace LKResClientTest
             Assert.AreEqual(site, this.viewModel.EditCmbSiteNameSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box selected item
+        /// </summary>
         [Test]
         public void Cmb2GroupNameSelectedItemTest()
         {
@@ -184,6 +255,9 @@ namespace LKResClientTest
             Assert.AreEqual(group, this.viewModel.EditCmb2GroupNameSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box selected item
+        /// </summary>
         [Test]
         public void Cmb3SiteNameSelectedItemTest()
         {
@@ -192,6 +266,9 @@ namespace LKResClientTest
             Assert.AreEqual(site, this.viewModel.EditCmb3SiteNameSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Txb8VisibilityTest()
         {
@@ -200,6 +277,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.viewModel.EditTxb8Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Txb9VisibilityTest()
         {
@@ -208,6 +288,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.viewModel.EditTxb9Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void CmbVisibilityTest()
         {
@@ -216,6 +299,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.viewModel.EditCmbVisibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Cmb2VisibilityTest()
         {
@@ -224,6 +310,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.viewModel.EditCmb2Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Cmb3VisibilityTest()
         {
@@ -232,6 +321,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.viewModel.EditCmb3Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void TxbVisibilityTest()
         {
@@ -240,6 +332,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.viewModel.EditTxbVisibility);
         }
 
+        /// <summary>
+        /// test remove command
+        /// </summary>
         [Test]
         public void RemoveCommandTest()
         {
@@ -256,34 +351,42 @@ namespace LKResClientTest
             Assert.AreNotEqual(null, this.viewModel.RemoveCommand);
         }
 
+        /// <summary>
+        /// test cancel command
+        /// </summary>
         [Test]
         public void CancelCommandTest()
         {
             Assert.AreNotEqual(null, this.viewModel.EditCancelCommand);
         }
 
+        /// <summary>
+        /// test edit command
+        /// </summary>
         [Test]
         public void EditCommandTest()
         {
             Assert.AreNotEqual(null, this.viewModel.EditCommand);
         }
 
+        /// <summary>
+        /// test for click on edit button
+        /// </summary>
         [Test]
         public void ClickEditCommandTest()
         {
-            //EditRemoveViewModel target = new EditRemoveViewModel();
-            //PrivateObject obj = new PrivateObject(target);
-            //var retVal = obj.Invoke("PrivateMethod");
-            //Assert.AreEqual(retVal);
             Assert.AreNotEqual(null, this.viewModel.ClickEditCommand);
         }
 
+        /// <summary>
+        /// test for property changed
+        /// </summary>
         [Test]
         public void PropertyChanged()
         {
             string receivedEvents = null;
 
-            this.viewModel.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            this.viewModel.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents = e.PropertyName;
             };
@@ -299,6 +402,9 @@ namespace LKResClientTest
             this.viewModel.EditCmbSiteNameSelectedItem = new Site() { MRID = "1" };
         }
 
+        /// <summary>
+        /// test for edit click command action
+        /// </summary>
         [Test]
         public void EditClickCommandActionTest()
         {
@@ -306,7 +412,7 @@ namespace LKResClientTest
             this.viewModel.Client.Groups.Clear();
             this.viewModel.Client.Sites.Clear();
 
-            EditRemoveViewModel temp = new EditRemoveViewModel(client);
+            EditRemoveViewModel temp = new EditRemoveViewModel(this.client);
 
             temp.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
             temp.Client.Sites.Add(new Site() { MRID = "3" });
@@ -334,7 +440,6 @@ namespace LKResClientTest
             temp.EditName = string.Empty;
             temp.EditActivePower = string.Empty;
 
-
             // The dispatcher thread
             var t = new Thread(() =>
             {
@@ -350,6 +455,9 @@ namespace LKResClientTest
             t.Join();
         }
 
+        /// <summary>
+        /// test for remove command action
+        /// </summary>
         [Test]
         public void RemoveCommandActionTest()
         {
@@ -371,12 +479,10 @@ namespace LKResClientTest
             this.viewModel.Client.Groups.Clear();
             this.viewModel.Client.Sites.Clear();
 
-
             this.viewModel.Client.Generators.Add(new Generator() { MRID = "5", GroupID = "2" });
             this.viewModel.Client.Generators.Add(g);
             this.viewModel.Client.Generators.Add(new Generator() { MRID = "6", GroupID = "4" });
             this.viewModel.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
-            //this.viewModel.Client.Groups.Add(new Group() { MRID = "4", SiteID = "3" });
             this.viewModel.Client.Sites.Add(new Site() { MRID = "3" });
             this.viewModel.SelectedItem = g;
             Assert.IsTrue(this.viewModel.RemoveCommand.CanExecute());
@@ -408,13 +514,10 @@ namespace LKResClientTest
             Assert.IsTrue(this.viewModel.RemoveCommand.CanExecute());
             this.viewModel.RemoveCommand.Execute();
 
-
-
             this.viewModel.Client.Generators.Clear();
             this.viewModel.Client.Groups.Clear();
             this.viewModel.Client.Sites.Clear();
 
-            //this.viewModel.Client.Generators.Add(new Generator() { MRID = "b" });
             Generator gen = new Generator() { MRID = "a", GroupID = "2" };
             this.viewModel.Client.Generators.Add(gen);
             this.viewModel.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
@@ -428,6 +531,9 @@ namespace LKResClientTest
             this.viewModel.RemoveCommand.Execute();
         }
 
+        /// <summary>
+        /// test for edit command action
+        /// </summary>
         [Test]
         public void EditCommandActionTest()
         {
@@ -442,10 +548,8 @@ namespace LKResClientTest
             this.viewModel.EditRadioButton1 = false;
             this.viewModel.EditRadioButton = true;
 
-
             this.viewModel.SelectedItem = null;
             Assert.IsFalse(this.viewModel.EditCommand.CanExecute());
-
 
             this.viewModel.SelectedItem = new Generator();
 
@@ -455,10 +559,8 @@ namespace LKResClientTest
 
             Assert.IsFalse(this.viewModel.EditCommand.CanExecute());
 
-
             this.viewModel.EditSiteName = string.Empty;
             Assert.IsFalse(this.viewModel.EditCommand.CanExecute());
-
 
             this.viewModel.EditSiteName = "test";
             this.viewModel.EditPMin = "10";
@@ -469,10 +571,9 @@ namespace LKResClientTest
             this.viewModel.EditActivePower = "15";
             Assert.IsTrue(this.viewModel.EditCommand.CanExecute());
             this.viewModel.EditCommand.Execute();
-            FillInputFields();
+            this.FillInputFields();
             this.viewModel.EditRadioButton = false;
             this.viewModel.EditRadioButton1 = true;
-
 
             this.viewModel.EditCmbSiteNameSelectedItem = null;
             this.viewModel.EditCmb2GroupNameSelectedItem = new Group() { MRID = "1" };
@@ -482,7 +583,7 @@ namespace LKResClientTest
             this.viewModel.EditCmbSiteNameSelectedItem = new Site();
             Assert.IsTrue(this.viewModel.EditCommand.CanExecute());
             this.viewModel.EditCommand.Execute();
-            FillInputFields();
+            this.FillInputFields();
 
             this.viewModel.EditRadioButton1 = false;
             this.viewModel.EditRadioButton2 = true;
@@ -505,9 +606,9 @@ namespace LKResClientTest
             mockService2.GetMySystem().Returns(update);
             mockService2.Update(update);
 
-            client.Proxy = mockService2;
-            client.LogIn("proba", "proba");
-            client.Command(update);
+            this.client.Proxy = mockService2;
+            this.client.LogIn("proba", "proba");
+            this.client.Command(update);
 
             var t = new Thread(() =>
             {
@@ -521,6 +622,9 @@ namespace LKResClientTest
             t.Join();
         }
 
+        /// <summary>
+        /// help method
+        /// </summary>
         public void FillInputFields()
         {
             this.viewModel.EditActivePower = "20";

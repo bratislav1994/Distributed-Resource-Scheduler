@@ -1,26 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KLRESClient;
-using NUnit.Framework;
-using System.ComponentModel;
-using CommonLibrary;
-using CommonLibrary.Interfaces;
-using NSubstitute;
-using System.Threading;
-using Prism.Commands;
-using System.Windows;
-using System.Windows.Controls;
+﻿// <copyright file="HomeWindowViewModelTest.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace LKResClientTest
 {
+    using System.ComponentModel;
+    using System.Threading;
+    using System.Windows;
+    using System.Windows.Controls;
+    using CommonLibrary;
+    using CommonLibrary.Interfaces;
+    using KLRESClient;
+    using NSubstitute;
+    using NUnit.Framework;
+
+    /// <summary>
+    /// Used for testing HomeWindowViewModel
+    /// </summary>
     public class HomeWindowViewModelTest
     {
+        /// <summary>
+        /// instance of home window view model
+        /// </summary>
         private HomeWindowViewModel homeVM = null;
+
+        /// <summary>
+        /// instance of client
+        /// </summary>
         private LKClientService client = null;
 
+        /// <summary>
+        /// initialize fields
+        /// </summary>
         [OneTimeSetUp]
         public void SetupTest()
         {
@@ -29,6 +42,9 @@ namespace LKResClientTest
             this.homeVM.Client = this.client;
         }
 
+        /// <summary>
+        /// testing property
+        /// </summary>
         [Test]
         public void PropertySetTest()
         {
@@ -42,6 +58,9 @@ namespace LKResClientTest
             Assert.AreEqual("password", this.homeVM.Password2);
         }
 
+        /// <summary>
+        /// testing if login command can be executed
+        /// </summary>
         [Test]
         public void LoginCommandCanExecute()
         {
@@ -79,6 +98,9 @@ namespace LKResClientTest
             this.homeVM.LoginCommand.Execute();
         }
 
+        /// <summary>
+        /// testing if register command can be executed
+        /// </summary>
         [Test]
         public void RegistrateCommandCanExecute()
         {
@@ -115,12 +137,15 @@ namespace LKResClientTest
             this.homeVM.RegistrateCommand.Execute();
         }
 
+        /// <summary>
+        /// testing property changed
+        /// </summary>
         [Test]
         public void PropertyChanged()
         {
             string receivedEvents = null;
 
-            this.homeVM.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            this.homeVM.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents = e.PropertyName;
             };
@@ -130,6 +155,9 @@ namespace LKResClientTest
             Assert.AreEqual("Username", receivedEvents);
         }
 
+        /// <summary>
+        /// testing binding of password box
+        /// </summary>
         [Test]
         public void PasswordAsistant()
         {
@@ -146,22 +174,21 @@ namespace LKResClientTest
                 PasswordBoxAssistant.GetBoundPassword(box);
                 box.Password = "test";
 
-                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
+                box.PasswordChanged += delegate(object sender, RoutedEventArgs e) { };
                 PasswordBoxAssistant.SetBindPassword(box, true);
                 box.Password = "test";
                 PasswordBoxAssistant.SetBindPassword(box, true);
-                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
+                box.PasswordChanged += delegate(object sender, RoutedEventArgs e) { };
                 PasswordBoxAssistant.SetBindPassword(box, true);
                 PasswordBoxAssistant.SetBindPassword(box, true);
 
                 box.Password += "e";
                 PasswordBoxAssistant.SetBindPassword(box, false);
-                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
+                box.PasswordChanged += delegate(object sender, RoutedEventArgs e) { };
 
                 box.Password = null;
                 PasswordBoxAssistant.SetBoundPassword(null, "a");
-                //PasswordBoxAssistant.SetBindPassword(box, false);
-                box.PasswordChanged += delegate (object sender, RoutedEventArgs e) { };
+                box.PasswordChanged += delegate(object sender, RoutedEventArgs e) { };
             });
 
             t.SetApartmentState(ApartmentState.STA);

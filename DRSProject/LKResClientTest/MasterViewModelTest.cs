@@ -1,20 +1,27 @@
-﻿using CommonLibrary;
-using CommonLibrary.Interfaces;
-using KLRESClient;
-using NSubstitute;
-using NUnit.Framework;
-using Prism.Commands;
-using System;
-using System.ServiceModel;
-using System.Threading;
+﻿// <copyright file="MasterViewModelTest.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace LKResClientTest
 {
+    using System;
+    using System.Threading;
+    using KLRESClient;
+    using NUnit.Framework;
+
+    /// <summary>
+    /// Used for testing MasterViewModel
+    /// </summary>
     [TestFixture]
     public class MasterViewModelTest
     {
         #region Declarations
 
+        /// <summary>
+        /// instance of master view model
+        /// </summary>
         private MasterViewModel masterVM;
 
         /// <summary>
@@ -29,6 +36,9 @@ namespace LKResClientTest
 
         #endregion
 
+        /// <summary>
+        /// initialize attributes
+        /// </summary>
         [OneTimeSetUp]
         public void SetupTest()
         {
@@ -45,6 +55,9 @@ namespace LKResClientTest
             t.Join();
         }
 
+        /// <summary>
+        /// test for constructor
+        /// </summary>
         [Test]
         public void ConstructorTest()
         {
@@ -52,19 +65,23 @@ namespace LKResClientTest
             Assert.AreNotEqual(null, this.masterVM.AddWindowVM);
             Assert.AreNotEqual(null, this.masterVM.EditRemoveWindowVM);
             Assert.AreNotEqual(null, this.masterVM.Client);
-            //Assert.Throws<ArgumentNullException>(() => new MasterViewModel(null));
         }
 
+        /// <summary>
+        /// test for client
+        /// </summary>
         [Test]
         public void ClientTest()
         {
             Assert.AreNotEqual(null, this.masterVM.Client);
-            //Assert.Throws<ArgumentNullException>(() => this.masterVM.Client = null);
             LKClientService client2 = new LKClientService();
             this.masterVM.Client = client2;
             Assert.AreEqual(client2, this.masterVM.Client);
         }
 
+        /// <summary>
+        /// test for home window view model
+        /// </summary>
         [Test]
         public void HomeWindowVMTest()
         {
@@ -74,6 +91,9 @@ namespace LKResClientTest
             Assert.AreEqual(home, this.masterVM.HomeVM);
         }
 
+        /// <summary>
+        /// test for add window view model
+        /// </summary>
         [Test]
         public void AddWindowVMTest()
         {
@@ -84,6 +104,9 @@ namespace LKResClientTest
             Assert.AreEqual(add, this.masterVM.AddWindowVM);
         }
 
+        /// <summary>
+        /// test for edit remove view model
+        /// </summary>
         [Test]
         public void EditRemoveWindowVMTest()
         {
@@ -94,12 +117,18 @@ namespace LKResClientTest
             Assert.AreEqual(viewModel, this.masterVM.EditRemoveWindowVM);
         }
 
+        /// <summary>
+        /// test for exit command
+        /// </summary>
         [Test]
         public void ExitCommandTest()
         {
             Assert.AreNotEqual(null, this.masterVM.ExitCommand);
         }
 
+        /// <summary>
+        /// test for exit command action, when variable execute is true
+        /// </summary>
         [Test]
         public void ExitCommandAction()
         {
