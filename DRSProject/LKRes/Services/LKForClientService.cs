@@ -25,22 +25,22 @@ namespace LKRes.Services
         /// Property to lock a shared resource
         /// </summary>
         public static object LockObj = new object();
-        
+
         /// <summary>
         /// Temporary data base
         /// </summary>
         public UpdateInfo updateInfo = new UpdateInfo();
-        
+
         /// <summary>
         /// proxy for KSRes module
         /// </summary>
         private IKSRes kSResProxy = null;
-        
+
         /// <summary>
         /// proxy for LK client
         /// </summary>
         private ILKClient client = null;
-        
+
         /// <summary>
         /// The thread that informs the client about changes
         /// </summary>
@@ -80,12 +80,11 @@ namespace LKRes.Services
 
         public void SendSetPoint(List<SetPoint> setPoints)
         {
-            foreach (SetPoint setpoint in setPoints)
+            lock (LockObj)
             {
-                Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
-
-                lock (LockObj)
+                foreach (SetPoint setpoint in setPoints)
                 {
+                    Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
                     generator.SetPoint = setpoint.Setpoint;
                 }
             }
@@ -96,78 +95,79 @@ namespace LKRes.Services
             while (true)
             {
                 Thread.Sleep(4000);
-                lock (LockObj)
+                Random randGenerator = new Random();
+                Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
+
+                foreach (Group groupIterator in updateInfo.Groups)
                 {
-                    Random randGenerator = new Random();
-                    Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
-
-                    foreach (Group groupIterator in updateInfo.Groups)
+                    List<Generator> generetors = updateInfo.Generators.Where(gen => gen.GroupID.Equals(groupIterator.MRID)).ToList();
+                    foreach (Generator generatorIterator in generetors)
                     {
-                        List<Generator> generetors = updateInfo.Generators.Where(gen => gen.GroupID.Equals(groupIterator.MRID)).ToList();
-                        foreach (Generator generatorIterator in generetors)
+                        //samo radi ako je na lokalu
+                        if (generatorIterator.SetPoint == -1 && generatorIterator.HasMeasurment)
                         {
-                            //samo radi ako je na lokalu
-                            if (generatorIterator.SetPoint == -1 && generatorIterator.HasMeasurment)
+                            //povecaj za 10%
+                            if (randGenerator.Next(0, 2) == 0)
                             {
-                                //povecaj za 10%
-                                if (randGenerator.Next(0, 2) == 0)
-                                {
-                                    generatorIterator.ActivePower += (generatorIterator.ActivePower / 10);
-                                }
-                                //smanji za 10%
-                                else
-                                {
-                                    generatorIterator.ActivePower -= (generatorIterator.ActivePower / 10);
-                                }
+                                generatorIterator.ActivePower += (generatorIterator.ActivePower / 10);
                             }
-                        }
-
-                        //izracujan ukupnu snagu i broj reprezentativnih generatora 
-                        double totalPower = 0;
-                        int numberOfGeneratorsWithMeasurments = 0;
-                        foreach (Generator genIt in generetors)
-                        {
-                            if (genIt.HasMeasurment)
+                            //smanji za 10%
+                            else
                             {
-                                totalPower += genIt.ActivePower;
-                                numberOfGeneratorsWithMeasurments++;
+                                generatorIterator.ActivePower -= (generatorIterator.ActivePower / 10);
                             }
-                        }
-
-                        //postavi snagu ne reprezentativnih generatrora na prosecnu vrednost reprezentativnih generatoa
-                        double averagePower = totalPower / numberOfGeneratorsWithMeasurments;
-                        foreach (Generator genIt in generetors)
-                        {
-                            if (!genIt.HasMeasurment && genIt.SetPoint == -1)
-                            {
-                                genIt.ActivePower = averagePower;
-                            }
-                        }
-
-                        foreach (Generator genIt in generetors)
-                        {
-                            powerForProcessing.Add(genIt.MRID, genIt.ActivePower);
                         }
                     }
-                    //posalji snagu modulu 2
-                    if (powerForProcessing.Count != 0)
+
+                    //izracujan ukupnu snagu i broj reprezentativnih generatora 
+                    double totalPower = 0;
+                    int numberOfGeneratorsWithMeasurments = 0;
+                    foreach (Generator genIt in generetors)
+                    {
+                        if (genIt.HasMeasurment)
+                        {
+                            totalPower += genIt.ActivePower;
+                            numberOfGeneratorsWithMeasurments++;
+                        }
+                    }
+
+                    //postavi snagu ne reprezentativnih generatrora na prosecnu vrednost reprezentativnih generatoa
+                    double averagePower = totalPower / numberOfGeneratorsWithMeasurments;
+                    foreach (Generator genIt in generetors)
+                    {
+                        if (!genIt.HasMeasurment && genIt.SetPoint == -1)
+                        {
+                            genIt.ActivePower = averagePower;
+                        }
+                    }
+
+                    foreach (Generator genIt in generetors)
+                    {
+                        powerForProcessing.Add(genIt.MRID, genIt.ActivePower);
+                    }
+                }
+                //posalji snagu modulu 2
+                if (powerForProcessing.Count != 0)
+                {
+                    lock (LockObj)
                     {
                         kSResProxy.SendMeasurement(powerForProcessing);
                     }
+                }
 
-                    if (updateInfo.Generators.Count != 0)
-                    {
-                        UpdateInfo update = new UpdateInfo();
-                        update.UpdateType = UpdateType.UPDATE;
-                        update.Groups = null;
-                        update.Sites = null;
+                if (updateInfo.Generators.Count != 0)
+                {
+                    UpdateInfo update = new UpdateInfo();
+                    update.UpdateType = UpdateType.UPDATE;
+                    update.Groups = null;
+                    update.Sites = null;
 
-                        update.Generators = updateInfo.Generators;
-                        client.Update(update);
-                    }
+                    update.Generators = updateInfo.Generators;
+                    client.Update(update);
                 }
             }
         }
+    
 
         public UpdateInfo GetMySystem()
         {
