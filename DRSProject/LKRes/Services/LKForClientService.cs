@@ -245,6 +245,8 @@ namespace LKRes.Services
                     UpdateData(update);
                 break;
             }
+            updateInfo = DataBase.Instance.ReadData();
+
             kSResProxy.Update(update);
             notifyThread = new Thread(() => NotifyClient(update));
             notifyThread.Start();
@@ -352,35 +354,25 @@ namespace LKRes.Services
         #region Update
         private void UpdateData(UpdateInfo update)
         {
-            Generator gen = updateInfo.Generators.Where(g => g.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
 
-            if(gen != null)
-            { 
-                gen.ActivePower = update.Generators[0].ActivePower;
-                gen.GroupID = update.Generators[0].GroupID;
-                gen.GeneratorType = update.Generators[0].GeneratorType;
-                gen.HasMeasurment = update.Generators[0].HasMeasurment;
-                gen.Pmax = update.Generators[0].Pmax;
-                gen.Pmin = update.Generators[0].Pmin;
-                gen.Price = update.Generators[0].Price;
-                gen.Name = update.Generators[0].Name;
-                if (gen.WorkingMode == WorkingMode.REMOTE && update.Generators[0].WorkingMode == WorkingMode.LOCAL)
-                {
-                    gen.WorkingMode = update.Generators[0].WorkingMode;
-                    gen.SetPoint = -1;
-                }
-            }
+            DataBase.Instance.UpdateGenerator(update.Generators[0]);
 
             //nova grupa
             if (update.Groups != null)
             {
-                updateInfo.Groups.Add(update.Groups[0]);
+                DataBase.Instance.AddGroup(new Data.GroupEntity()
+                {
+                    GEntity = update.Groups[0]
+                });
             }
 
             //novi sajt
             if (update.Sites != null)
             {
-                updateInfo.Sites.Add(update.Sites[0]);
+                DataBase.Instance.AddSite(new Data.SiteEntity()
+                {
+                    SEntity = update.Sites[0]
+                });
             }
         }
         #endregion
