@@ -501,7 +501,31 @@ namespace KSRESClient
 
         private void ClearLoadForecastCommandAction()
         {
-            LoadForecast.Clear();
+            LoadForecast = new SortedDictionary<DateTime, double>();
+        }
+
+        private DelegateCommand clearHistorycast;
+        public DelegateCommand ClearHistorycast
+        {
+            get
+            {
+                if (clearHistorycast == null)
+                {
+                    clearHistorycast = new DelegateCommand(ClearHistoryCommandAction, CanExecuteClearHistoryCommand);
+                }
+
+                return clearHistorycast;
+            }
+        }
+
+        private bool CanExecuteClearHistoryCommand()
+        {
+            return true;
+        }
+
+        private void ClearHistoryCommandAction()
+        {
+            ProductionHistory = new SortedDictionary<DateTime, double>();
         }
         #endregion Presentaion
     }
