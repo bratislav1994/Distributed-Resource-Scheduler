@@ -11,7 +11,8 @@
     <Grid Background="#FFD4D7DB">
         <DVC:Chart Canvas.Top="80" Canvas.Left="10" Name="mcChart" Width="400" Height="250" Background="LightSteelBlue" Margin="10,50,32,269">
             <DVC:Chart.Series>
-                <DVC:LineSeries Title=" Monthly Count"
+                <DVC:LineSeries Title="Data history"
+                    ItemsSource="{Binding EditRemoveWindowVM.DataHistory}"
                     IndependentValueBinding="{Binding Path=EditRemoveWindowVM.Key}"
                     DependentValueBinding="{Binding Path=EditRemoveWindowVM.Value}">
                 </DVC:LineSeries>

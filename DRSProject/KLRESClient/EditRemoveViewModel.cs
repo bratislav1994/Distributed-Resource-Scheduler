@@ -764,16 +764,44 @@ namespace KLRESClient
 
         private void ShowCommandAction()
         {
-            this.showWin = new ShowDataWindow(this.Client.DataContext);
-            this.showWin.ShowDialog();
+            try
+            {
+                
 
-            // ((LineSeries)this.showWin.mcChart.Series[0]).ItemsSource =
-            //    new KeyValuePair<DateTime, int>[]{
-            //    new KeyValuePair<DateTime,int>(DateTime.Now, 100),
-            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(1), 130),
-            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(2), 150),
-            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(3), 125),
-            //    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(4),155) };
+                ((LineSeries)this.showWin.mcChart.Series[0]).ItemsSource =
+                    new KeyValuePair<DateTime, int>[]{
+                    new KeyValuePair<DateTime,int>(DateTime.Now, 100),
+                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(1), 130),
+                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(2), 150),
+                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(3), 125),
+                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(4),155) };
+
+                this.showWin = new ShowDataWindow(this.Client.DataContext);
+                this.showWin.ShowDialog();
+            }
+            catch
+            {
+                
+            }
+        }
+
+        private SortedDictionary<DateTime, double> dataHistory;
+        public SortedDictionary<DateTime, double> DataHistory
+        {
+            get
+            {
+                if (dataHistory == null)
+                {
+                    dataHistory = new SortedDictionary<DateTime, double>();
+                }
+                return dataHistory;
+            }
+
+            set
+            {
+                dataHistory = value;
+                RaisePropertyChanged("DataHistory");
+            }
         }
 
         #region EditCommand
