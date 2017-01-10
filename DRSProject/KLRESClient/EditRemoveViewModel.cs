@@ -5,6 +5,7 @@
 // </copyright>
 
 using System.Linq;
+using System.Text;
 
 namespace KLRESClient
 {
@@ -20,6 +21,11 @@ namespace KLRESClient
     public class EditRemoveViewModel : INotifyPropertyChanged
     {
         #region fields
+
+        /// <summary>
+        /// Represent text box for showing measurement
+        /// </summary>
+        private string allHistory;
 
         /// <summary>
         /// Represent instance of client
@@ -670,6 +676,41 @@ namespace KLRESClient
             }
         }
 
+        private SortedDictionary<DateTime, double> dataHistory;
+        public SortedDictionary<DateTime, double> DataHistory
+        {
+            get
+            {
+                if (dataHistory == null)
+                {
+                    dataHistory = new SortedDictionary<DateTime, double>();
+                }
+
+                return dataHistory;
+            }
+
+            set
+            {
+                dataHistory = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets text box, which indicate group name
+        /// </summary>
+        public string AllHistory
+        {
+            get
+            {
+                return this.allHistory;
+            }
+
+            set
+            {
+                this.allHistory = value;
+            }
+        }
+
         #endregion
 
         #region EditCancelCommandProperty
@@ -759,57 +800,48 @@ namespace KLRESClient
                 return false;
             }
 
-            Generator gen = (Generator)this.SelectedItem;
-
-            return gen.HasMeasurment;
+            return this.SelectedItem.HasMeasurment;
         }
 
         private void ShowCommandAction()
         {
             try
             {
-                this.DataHistory = this.Client.GetMeasurements(this.SelectedItem.MRID);
+                SortedDictionary<DateTime, double> temp = this.Client.GetMeasurements(this.SelectedItem.MRID);
+                StringBuilder allHist = new StringBuilder();
 
-                if (this.DataHistory.ToList().Count > 5)
+                if (temp.ToList().Count > 10)
                 {
-                    SortedDictionary<DateTime, double> temp = new SortedDictionary<DateTime, double>(this.DataHistory);
-                    this.DataHistory.Clear();
+                    List<KeyValuePair<DateTime, double>> lastFive = temp.ToList().GetRange(temp.Count - 10, 10);
 
-                    foreach (KeyValuePair<DateTime, double> kvp in temp)
+                    foreach (KeyValuePair<DateTime, double> kvp in lastFive)
                     {
                         this.DataHistory.Add(kvp.Key, kvp.Value);
                     }
                 }
+                else
+                {
+                    this.DataHistory = temp;
+                }
 
+                foreach (KeyValuePair<DateTime, double> kvp in temp)
+                {
+                    allHist.AppendLine(kvp.Key + ", " + kvp.Value + "W");
+                }
+
+                this.AllHistory = allHist.ToString();
                 this.showWin = new ShowDataWindow(this.Client.DataContext);
                 this.showWin.ShowDialog();
-                this.SelectedItem = null;
             }
             catch
             {
-                
+                MessageBox.Show("Error during getting measurement for selected generator.");
             }
+
+            this.SelectedItem = null;
+            this.DataHistory = null;
         }
-
-        private SortedDictionary<DateTime, double> dataHistory;
-        public SortedDictionary<DateTime, double> DataHistory
-        {
-            get
-            {
-                if (dataHistory == null)
-                {
-                    dataHistory = new SortedDictionary<DateTime, double>();
-                }
-                return dataHistory;
-            }
-
-            set
-            {
-                dataHistory = value;
-                RaisePropertyChanged("DataHistory");
-            }
-        }
-
+        
         #region EditCommand
 
         /// <summary>

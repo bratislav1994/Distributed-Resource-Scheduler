@@ -6,20 +6,106 @@
         xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KLRESClient"
+        
+        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" 
+    xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit" 
+    xmlns:Primitives="clr-namespace:System.Windows.Controls.DataVisualization.Charting.Primitives;assembly=System.Windows.Controls.DataVisualization.Toolkit" 
+    
+        
         mc:Ignorable="d"
-        Title="ShowDataWindow" Height="600" Width="450">
-    <Grid Background="#FFD4D7DB">
-        <DVC:Chart Canvas.Top="80" Canvas.Left="10" Name="mcChart" Width="400" Height="250" Background="LightSteelBlue" Margin="10,50,32,269">
+        Title="ShowDataWindow" Height="525" Width="450">
+    <Window.Resources>
+        <PointCollection x:Key="PCol1">1,10 2,30 3,20 4,40</PointCollection>
+        <PointCollection x:Key="PCol2">1,40 2,20 3,30 4,10</PointCollection>
+
+        <Style x:Key="DataPointStyle1" TargetType="{x:Type chartingToolkit:LineDataPoint}">
+            <Setter Property="Background" Value="LightBlue"/>
+            <Setter Property="Width" Value="32"></Setter>
+            <Setter Property="Height" Value="32"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="chartingToolkit:LineDataPoint">
+                        <Ellipse Fill="LightBlue" Stroke="DarkBlue" StrokeThickness="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DataPointStyle2" TargetType="{x:Type chartingToolkit:LineDataPoint}">
+            <Setter Property="Background" Value="LightGreen"/>
+            <Setter Property="Width" Value="16"></Setter>
+            <Setter Property="Height" Value="16"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="chartingToolkit:LineDataPoint">
+                        <Rectangle Fill="LightGreen" Stroke="DarkGreen" StrokeThickness="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PolylineStyle1" TargetType="{x:Type Polyline}">
+            <Setter Property="StrokeThickness" Value="1"/>
+            <Setter Property="Stroke" Value="Blue"></Setter>
+        </Style>
+        <Style x:Key="PolylineStyle2" TargetType="{x:Type Polyline}">
+            <Setter Property="StrokeThickness" Value="2"/>
+            <Setter Property="Stroke" Value="Green"></Setter>
+        </Style>
+
+        <Style x:Key="LineSeriesStyle1" TargetType="{x:Type chartingToolkit:LineSeries}" >
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type chartingToolkit:LineSeries}">
+                        <Canvas x:Name="PlotArea">
+                            <Polyline Points="{TemplateBinding Points}" Style="{DynamicResource PolylineStyle1}" />
+                        </Canvas>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LineSeriesStyle2" TargetType="{x:Type chartingToolkit:LineSeries}" >
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type chartingToolkit:LineSeries}">
+                        <Canvas x:Name="PlotArea">
+                            <Polyline Points="{TemplateBinding Points}" Style="{DynamicResource PolylineStyle2}" />
+                        </Canvas>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Background="#FF5B6570">
+
+        <DVC:Chart Name="mcChart" Title="Last 10 values of active power" Height="210" Width="400" Background="#FFD4D7DB" Margin="10,10,32,269">
+
+            <DVC:Chart.LegendStyle>
+                <Style TargetType="Control">
+                    <Setter Property="Width" Value="0"/>
+                    <Setter Property="Height" Value="0"/>
+                </Style>
+            </DVC:Chart.LegendStyle>
+
             <DVC:Chart.Series>
-                <DVC:LineSeries Title="Data history"
+                <DVC:LineSeries Canvas.Top="30" Canvas.Left="10" Background="Blue" Title="Data history"
+                    Style="{StaticResource LineSeriesStyle2}"
+                    DataPointStyle="{StaticResource DataPointStyle2}"
                     ItemsSource="{Binding EditRemoveWindowVM.DataHistory}"
                     IndependentValueBinding="{Binding Path=Key}"
-                    DependentValueBinding="{Binding Path=Value}">
-                </DVC:LineSeries>
+                    DependentValueBinding="{Binding Path=Value}" Margin="0,-15,0,1"/>
             </DVC:Chart.Series>
         </DVC:Chart>
 
-        <TextBox x:Name="text_box1" Text ="{Binding EditRemoveWindowVM.AllHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="200" Margin="5,350,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="400" />
+        <TextBox IsReadOnly="True" BorderThickness="1" BorderBrush="Black" x:Name="text_box1" Text ="{Binding EditRemoveWindowVM.AllHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 HorizontalAlignment="Left" Height="200" Margin="10,271,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="400"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 ScrollViewer.CanContentScroll="True"/>
+        <Label x:Name="label1" Background="#FFD4D7DB" Content="All data history from selected generator" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
