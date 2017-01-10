@@ -582,15 +582,18 @@ namespace KSRes
         {
             while (true)
             {
-                Thread.Sleep(60000);
+                Thread.Sleep(10000);
                 List<ConsuptionHistory> consuptions = LocalDB.Instance.ReadConsuptions();
-                List<KeyValuePair<DateTime, double>> parameter = new List<KeyValuePair<DateTime, double>>();
-                foreach (ConsuptionHistory consuption in consuptions)
+                if (consuptions.Count == 2)
                 {
-                    parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
-                }
+                    List<KeyValuePair<DateTime, double>> parameter = new List<KeyValuePair<DateTime, double>>();
+                    foreach (ConsuptionHistory consuption in consuptions)
+                    {
+                        parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
+                    }
 
-                LastValuesLC = proxy.LoadForecast(parameter);
+                    LastValuesLC = proxy.LoadForecast(parameter);
+                }
             }
         }
         #endregion LoadForecast

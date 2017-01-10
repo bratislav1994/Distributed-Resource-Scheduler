@@ -286,6 +286,54 @@ namespace LKResTest.ServicesTest
             lkResTest.Update(info);
         }
 
+        //[Test]
+        //public void UpdateTest04()
+        //{
+        //    IKSRes mockKSRes = Substitute.For<IKSRes>();
+
+        //    UpdateInfo info = new UpdateInfo();
+        //    info.UpdateType = UpdateType.UPDATE;
+
+        //    Generator generator1 = new Generator()
+        //    {
+        //        MRID = "1",
+        //        Name = "gen",
+        //        ActivePower = 10.25,
+        //        GeneratorType = GeneratorType.SOLAR,
+        //        WorkingMode = WorkingMode.REMOTE,
+        //        HasMeasurment = false
+        //    };
+        //    lkResTest.updateInfo.Generators.Add(generator1);
+
+        //    Generator generator2 = new Generator()
+        //    {
+        //        MRID = "1",
+        //        Name = "gen2",
+        //        ActivePower = 20,
+        //        GeneratorType = GeneratorType.SOLAR,
+        //        WorkingMode = WorkingMode.LOCAL,
+        //        HasMeasurment = true
+        //    };
+        //    info.Generators.Add(generator2);
+
+        //    Group group = new Group()
+        //    {
+        //        MRID = "gg1"
+        //    };
+        //    info.Groups.Add(group);
+
+        //    Site site = new Site()
+        //    {
+        //        MRID = "s1"
+        //    };
+        //    info.Sites.Add(site);
+
+        //    mockKSRes.Update(info);
+        //    lkResTest.KSResProxy = mockKSRes;
+
+        //    lkResTest.Update(info);
+        //}
+
         [Test]
         public void RegistrationTest01()
         {
@@ -297,25 +345,6 @@ namespace LKResTest.ServicesTest
 
             lkResTest.Registration("test", "test");
         }
-
-        //[Test]
-        //[TestCase("user1", "123")]
-        //public void RegistrationTest02(string username, string password)
-        //{
-        //    DynamicDataBase db = new DynamicDataBase();
-        //    IKSRes mockRes1 = Substitute.For<IKSRes>();
-
-        //    mockRes1.Registration(username, password);
-        //    mockRes1.Registration(username, "321");
-        //   // Assert.AreNotEqual(0, db.RegistrationService.Count);
-
-        //    lkResTest.KSResProxy = mockRes1;
-        //    Assert.AreEqual(mockRes1, lkResTest.KSResProxy);
-            
-        //    lkResTest.Registration(username, password);
-        //    Assert.AreNotEqual(0, db.RegistrationService.Count);
-        //    Assert.Throws<FaultException<IdentificationExeption>>(() => lkResTest.Registration(username, "321"));
-        //}
 
         [Test]
         public void LoginTest()

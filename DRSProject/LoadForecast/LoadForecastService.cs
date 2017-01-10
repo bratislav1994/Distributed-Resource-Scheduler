@@ -32,9 +32,10 @@ namespace LoadForecast
 
         private double LinearFunction(double x1, double x2, double y1, double y2, double x3)
         {
-            var k = (y2 - y1) / (x2 - x1);
-            var n = y1 - (k * x1);
-
+            Random rnd = new Random();
+            double k = (y2 - y1) / (x2 - x1);
+            double n = y1 - (k * x1);
+            
             return k * x3 + n;
         }
     }

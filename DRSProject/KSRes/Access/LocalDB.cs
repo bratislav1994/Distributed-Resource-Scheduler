@@ -57,8 +57,17 @@ namespace KSRes.Access
         {
             using (var access = new AccessDB())
             {
-                List<ConsuptionHistory> consuptions = access.ConsuptionHistory.ToList();
-                return consuptions.GetRange(consuptions.Count-1, 2);
+                List<ConsuptionHistory> consuptions = new List<ConsuptionHistory>();
+                consuptions = access.ConsuptionHistory.ToList();
+
+                if (consuptions.Count >= 2)
+                {
+                    return consuptions.GetRange(consuptions.Count - 2, 2);
+                }
+                else
+                {
+                    return consuptions;
+                }
             }
         }
 
