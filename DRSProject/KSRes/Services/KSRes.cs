@@ -11,7 +11,7 @@ using KSRes.Access;
 
 namespace KSRes.Services
 {
-    [CallbackBehavior(UseSynchronizationContext = false)]
+    //[CallbackBehavior(UseSynchronizationContext = false)]
     public class KSRes : IKSRes, IKSForClient
     {
         private static DynamicDataBase dynamicDataBase = new DynamicDataBase();

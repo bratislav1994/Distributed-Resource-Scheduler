@@ -56,7 +56,7 @@ namespace KSRes
             multiThreadBuffer = new List<ProductionHistroy>();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
-            CheckIfLKServiceIsAliveThread.Start();
+            //CheckIfLKServiceIsAliveThread.Start();
 
             Thread ProcessingDataThread = new Thread(() => ProcessingData());
             ProcessingDataThread.Start();

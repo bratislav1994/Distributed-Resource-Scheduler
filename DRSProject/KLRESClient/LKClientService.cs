@@ -440,7 +440,7 @@ namespace KLRESClient
 
                         foreach (Generator gen in update.Generators)
                         {
-                            Generator gen1 = this.Generators.SingleOrDefault(p => p.MRID.Equals(update.Generators[0].MRID));
+                            Generator gen1 = this.Generators.SingleOrDefault(p => p.MRID.Equals(gen.MRID));
 
                             if (gen1 != null)
                             {
