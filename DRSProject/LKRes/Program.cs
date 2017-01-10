@@ -6,9 +6,14 @@
 
 namespace LKRes
 {
-    using System;
-    using System.ServiceModel;
     using CommonLibrary.Interfaces;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.ServiceModel;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Data.Entity;
 
     /// <summary>
     /// Program.cs of LKRes server
@@ -32,6 +37,14 @@ namespace LKRes
             ServiceHost host1 = new ServiceHost(typeof(Services.LKForClientService));
             host1.AddServiceEndpoint(typeof(ILKForClient), binding1, address1);
             host1.Open();
+
+            string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string path = System.IO.Path.GetDirectoryName(executable);
+            path = path.Substring(0, path.LastIndexOf("bin"));
+            AppDomain.CurrentDomain.SetData("DataDirectory", path);
+
+            // update database
+           Database.SetInitializer(new MigrateDatabaseToLatestVersion<Access.AccessDB, Access.Configuration>());
 
             Console.WriteLine("Services are started...");
             Console.ReadKey();
