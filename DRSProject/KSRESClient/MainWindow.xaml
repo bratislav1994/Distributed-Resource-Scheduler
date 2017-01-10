@@ -46,10 +46,10 @@
                     </DVC:Chart>
                     <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="113,29,0,0" TextWrapping="Wrap" Text="{Binding NumberOfDays, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
                     <Button x:Name="button" Command="{Binding DrawHistoryCommand}" Content="Production History" HorizontalAlignment="Left" Margin="238,32,0,0" VerticalAlignment="Top" Width="118"/>
-                    <Button x:Name="button1" Command="{Binding DrawLoadForecastCommand}" Content="Load forecast" HorizontalAlignment="Left" Margin="722,32,0,0" VerticalAlignment="Top" Width="98"/>
+                    <Button x:Name="button1" IsEnabled="True" Command="{Binding DrawLoadForecastCommand}" Content="Load forecast" HorizontalAlignment="Left" Margin="722,32,0,0" VerticalAlignment="Top" Width="98"/>
                     <Label x:Name="label2" Content="Number of days:" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="button2" Command="{Binding DrawLoadForecastCommand}" Content="Clear history" HorizontalAlignment="Left" Margin="361,32,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button x:Name="button3" Content="Clear load forecast" HorizontalAlignment="Left" Margin="825,32,0,0" VerticalAlignment="Top" Width="123"/>
+                    <Button x:Name="button3" Content="Clear load forecast" Command="{Binding ClearLoadForecast}" HorizontalAlignment="Left" Margin="825,32,0,0" VerticalAlignment="Top" Width="123"/>
                 </Grid>
             </TabItem>
         </TabControl>

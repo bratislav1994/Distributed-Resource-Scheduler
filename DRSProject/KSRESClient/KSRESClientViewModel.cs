@@ -25,11 +25,11 @@ namespace KSRESClient
                 {
                     client = new Client();
 
-                    /*DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
+                    DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
                     new InstanceContext(client),
                         new NetTcpBinding(),
                         new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
-                    client.Proxy = factory.CreateChannel();*/
+                    client.Proxy = factory.CreateChannel();
                 }
                 return client;
             }
@@ -349,6 +349,10 @@ namespace KSRESClient
         {
             get
             {
+                if (productionHistory == null)
+                {
+                    productionHistory = new SortedDictionary<DateTime, double>();
+                }
                 return productionHistory;
             }
 
@@ -364,6 +368,10 @@ namespace KSRESClient
         {
             get
             {
+                if(loadForecast == null)
+                {
+                    loadForecast = new SortedDictionary<DateTime, double>();
+                }
                 return loadForecast;
             }
 
@@ -457,40 +465,43 @@ namespace KSRESClient
 
         private bool CanExecuteDrawLoadForecastCommand()
         {
-            Double nod;
-
-            return !string.IsNullOrEmpty(NumberOfDays) && (Double.TryParse(NumberOfDays, out nod));
+            return true;
         }
 
         private void DrawLoadForecastCommandAction()
         {
             try
             {
-                double np;
-                bool isNumber = double.TryParse(NumberOfDays, out np);
-                if (!isNumber)
-                {
-                    throw new Exception("Number of days must be number");
-                }
-                else if (np < 0)
-                {
-                    throw new Exception("Number of days must be positive.");
-                }
-
-                //ProductionHistory = Client.GetProductionHistory(np);
-                SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
-                test.Add(DateTime.Now, 100);
-                test.Add(DateTime.Now.AddMonths(1), 130);
-                test.Add(DateTime.Now.AddMonths(2), 150);
-                test.Add(DateTime.Now.AddMonths(3), 125);
-                test.Add(DateTime.Now.AddMonths(4), 140);
-                ProductionHistory = test;
-
+                LoadForecast = Client.GetLoadForecast();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private DelegateCommand clearLoadForecast;
+        public DelegateCommand ClearLoadForecast
+        {
+            get
+            {
+                if (clearLoadForecast == null)
+                {
+                    clearLoadForecast = new DelegateCommand(ClearLoadForecastCommandAction, CanExecuteClearLoadForecastCommand);
+                }
+
+                return clearLoadForecast;
+            }
+        }
+
+        private bool CanExecuteClearLoadForecastCommand()
+        {
+            return true;
+        }
+
+        private void ClearLoadForecastCommandAction()
+        {
+            LoadForecast.Clear();
         }
         #endregion Presentaion
     }

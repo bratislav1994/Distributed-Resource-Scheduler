@@ -14,7 +14,7 @@ namespace KSRes.Services
     //[CallbackBehavior(UseSynchronizationContext = false)]
     public class KSRes : IKSRes, IKSForClient
     {
-        private static Controler controler;
+        private static Controler controler = new Controler();
        
         public static Controler Controler
         {
