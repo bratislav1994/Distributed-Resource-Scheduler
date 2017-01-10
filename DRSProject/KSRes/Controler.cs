@@ -458,7 +458,7 @@ namespace KSRes
         }
 
         #region DeployActivePower
-        public List<Point> P(double requiredAP)
+        public List<Point> P(double requiredAP, bool isBasePoint)
         {
             List<Generator> remoteGenerators = new List<Generator>();
             List<Point> points = new List<Point>();
@@ -472,16 +472,21 @@ namespace KSRes
             double activePower = 0;
             double diff = 0;
 
+
             foreach (Generator generator in generators)
             {
                 activePower += generator.ActivePower;
 
-                if (generator.WorkingMode == WorkingMode.REMOTE)
+                if (generator.WorkingMode == WorkingMode.REMOTE && !isBasePoint)
+                {
+                    remoteGenerators.Add(generator);
+                }
+                else if(isBasePoint)
                 {
                     remoteGenerators.Add(generator);
                 }
             }
-
+            
             diff = requiredAP - activePower;
 
             if (diff > 0)
@@ -555,7 +560,7 @@ namespace KSRes
             return points;
         }
 
-        public void DeployPoint(List<Point> points)
+        public void DeploySetPoint(List<Point> points)
         {
             if (points.Count != 0)
             {
@@ -593,8 +598,56 @@ namespace KSRes
                     }
 
                     LastValuesLC = proxy.LoadForecast(parameter);
+
+                    Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
+                    int minute = 0;
+
+                    foreach(double value in LastValuesLC.Values)
+                    {
+                        List<Point> basePoints = P(value, true);
+
+                        foreach(LKResService service in ActiveService)
+                        {
+                            List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
+                            
+                            if(!deployment.ContainsKey(service.Username))
+                            {
+                                deployment.Add(service.Username, new Dictionary<int, List<Point>>());
+                            }
+                            deployment[service.Username].Add(minute, temp);
+                        }
+                        minute++;
+                    }
+
+                    foreach(LKResService service in ActiveService)
+                    {
+                        service.Client.SendBasePoint(deployment[service.Username]);
+                    }
                 }
             }
+        }
+
+        private List<Point> GetAllBasePointsForUser(string username, List<Point> basePoints)
+        {
+            List<Point> temp = new List<Point>();
+            foreach (Generator generator in GetService(username).Generators)
+            {
+                Point point = basePoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
+
+                if (point != null)
+                {
+                    temp.Add(point);
+                }
+                else
+                {
+                    Point newPoint = new Point();
+                    newPoint.GeneratorID = generator.MRID;
+                    newPoint.Power = generator.ActivePower;
+                    temp.Add(newPoint);
+                }
+            }
+
+            return temp;
         }
         #endregion LoadForecast
     }
