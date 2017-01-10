@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.DataVisualization.Charting;
 
 namespace KSRESClient
 {
@@ -52,6 +53,10 @@ namespace KSRESClient
                 else if(propName.Equals("NeededPower"))
                 {
                     IssueCommand.RaiseCanExecuteChanged();
+                }
+                else if(propName.Equals("NumberOfDays"))
+                {
+                    DrawHistoryCommand.RaiseCanExecuteChanged();
                 }
                 else if(propName.Equals("SelectedItem"))
                 {
@@ -131,16 +136,21 @@ namespace KSRESClient
         {
             try
             {
-                double np = double.Parse(NeededPower);
-                if(np < 0)
+                double np;
+                bool isNumber = double.TryParse(NeededPower, out np);
+                if(!isNumber)
                 {
-                    throw new Exception();
+                    throw new Exception("Needed power must be number");
+                }
+                else if(np < 0)
+                {
+                    throw new Exception("Needed power must be positive");
                 }
                 Client.IssueCommand(np);
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Needed power must be number.");
+                MessageBox.Show(ex.Message);
             }
         }
         #endregion MainWindow
@@ -330,8 +340,169 @@ namespace KSRESClient
                 genGroup = value;
             }
         }
-
-
+        
         #endregion DetailView
+
+        #region Presentation
+        private SortedDictionary<DateTime,double> productionHistory;
+        public SortedDictionary<DateTime, double> ProductionHistory
+        {
+            get
+            {
+                if (productionHistory == null)
+                {
+                    productionHistory = new SortedDictionary<DateTime, double>();
+                }
+                return productionHistory;
+            }
+
+            set
+            {
+                productionHistory = value;
+                RaisePropertyChanged("ProductionHistory");
+            }
+        }
+
+        private SortedDictionary<DateTime, double> loadForecast;
+        public SortedDictionary<DateTime, double> LoadForecast
+        {
+            get
+            {
+                if(loadForecast == null)
+                {
+                    loadForecast = new SortedDictionary<DateTime, double>();
+                }
+                return loadForecast;
+            }
+
+            set
+            {
+                loadForecast = value;
+                RaisePropertyChanged("LoadForecast");
+            }
+        }
+
+        private String numberOfDays;
+        public String NumberOfDays
+        {
+            get
+            {
+                return numberOfDays;
+            }
+
+            set
+            {
+                numberOfDays = value;
+                RaisePropertyChanged("NumberOfDays");
+            }
+        }
+
+        private DelegateCommand drawHistoryCommand;
+        public DelegateCommand DrawHistoryCommand
+        {
+            get
+            {
+                if (drawHistoryCommand == null)
+                {
+                    drawHistoryCommand = new DelegateCommand(DrawHistoryCommandAction, CanExecuteDrawHistoryCommand);
+                }
+
+                return drawHistoryCommand;
+            }
+        }
+
+        private bool CanExecuteDrawHistoryCommand()
+        {
+            Double nod;
+
+            return !string.IsNullOrEmpty(NumberOfDays) && (Double.TryParse(NumberOfDays, out nod));
+        }
+
+        private void DrawHistoryCommandAction()
+        {
+            try
+            {
+                double np;
+                bool isNumber = double.TryParse(NumberOfDays,out np);
+                if (!isNumber)
+                {
+                    throw new Exception("Number of days must be number");
+                }
+                else if(np < 0)
+                {
+                    throw new Exception("Number of days must be positive.");
+                }
+
+                //ProductionHistory = Client.GetProductionHistory(np);
+                SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
+                test.Add(DateTime.Now, 100);
+                test.Add(DateTime.Now.AddMonths(1), 130);
+                test.Add(DateTime.Now.AddMonths(2), 150);
+                test.Add(DateTime.Now.AddMonths(3), 125);
+                test.Add(DateTime.Now.AddMonths(4), 140);
+                ProductionHistory = test;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private DelegateCommand drawLoadForecastCommand;
+        public DelegateCommand DrawLoadForecastCommand
+        {
+            get
+            {
+                if (drawLoadForecastCommand == null)
+                {
+                    drawLoadForecastCommand = new DelegateCommand(DrawLoadForecastCommandAction, CanExecuteDrawLoadForecastCommand);
+                }
+
+                return drawLoadForecastCommand;
+            }
+        }
+
+        private bool CanExecuteDrawLoadForecastCommand()
+        {
+            return true;
+        }
+
+        private void DrawLoadForecastCommandAction()
+        {
+            try
+            {
+                LoadForecast = Client.GetLoadForecast();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private DelegateCommand clearLoadForecast;
+        public DelegateCommand ClearLoadForecast
+        {
+            get
+            {
+                if (clearLoadForecast == null)
+                {
+                    clearLoadForecast = new DelegateCommand(ClearLoadForecastCommandAction, CanExecuteClearLoadForecastCommand);
+                }
+
+                return clearLoadForecast;
+            }
+        }
+
+        private bool CanExecuteClearLoadForecastCommand()
+        {
+            return true;
+        }
+
+        private void ClearLoadForecastCommandAction()
+        {
+            LoadForecast.Clear();
+        }
+        #endregion Presentaion
     }
 }

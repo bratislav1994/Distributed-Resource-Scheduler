@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DynamicDataBaseTest.cs" />
+    <Compile Include="ControlerTest.cs" />
     <Compile Include="KSResTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

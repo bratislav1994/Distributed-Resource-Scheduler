@@ -13,7 +13,7 @@ namespace KSRes.Access
         public AccessDB() : base("localDB") { }
 
         public DbSet<ConsuptionHistory> ConsuptionHistory { get; set; }
-        public DbSet<ProductionHistroy> ProductionHistory { get; set; }
+        public DbSet<ProductionHistory> ProductionHistory { get; set; }
         public DbSet<RegisteredService> RegisteredServices { get; set; }
     }
 }

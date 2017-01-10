@@ -21,5 +21,7 @@ namespace CommonLibrary.Interfaces
         List<LKResService> GetAllSystem();
         [OperationContract]
         void IssueCommand(double requiredAP);
+        [OperationContract]
+        SortedDictionary<DateTime, double> GetLoadForecast();
     }
 }

@@ -40,7 +40,7 @@ namespace KSRes.Access
             }
         }
 
-        public bool AddProductions(ProductionHistroy history)
+        public bool AddProductions(ProductionHistory history)
         {
             using (var access = new AccessDB())
             {
@@ -53,20 +53,20 @@ namespace KSRes.Access
             }
         }
 
-        public List<ConsuptionHistory> ReadConsuptions(string username)
+        public List<ConsuptionHistory> ReadConsuptions()
         {
             using (var access = new AccessDB())
             {
                 List<ConsuptionHistory> consuptions = access.ConsuptionHistory.ToList();
-                return consuptions;
+                return consuptions.GetRange(consuptions.Count-1, 2);
             }
         }
 
-        public List<ProductionHistroy> ReadProductions(string username)
+        public List<ProductionHistory> ReadProductions(string username)
         {
             using (var access = new AccessDB())
             {
-                List<ProductionHistroy> productions = access.ProductionHistory.Where(x => x.Username.Equals(username)).ToList();
+                List<ProductionHistory> productions = access.ProductionHistory.Where(x => x.Username.Equals(username)).ToList();
                 return productions;
             }
         }
