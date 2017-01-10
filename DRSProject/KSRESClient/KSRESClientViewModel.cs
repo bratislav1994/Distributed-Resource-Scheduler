@@ -504,17 +504,17 @@ namespace KSRESClient
             LoadForecast = new SortedDictionary<DateTime, double>();
         }
 
-        private DelegateCommand clearHistorycast;
-        public DelegateCommand ClearHistorycast
+        private DelegateCommand clearHistoryCommand;
+        public DelegateCommand ClearHistoryCommand
         {
             get
             {
-                if (clearHistorycast == null)
+                if (clearHistoryCommand == null)
                 {
-                    clearHistorycast = new DelegateCommand(ClearHistoryCommandAction, CanExecuteClearHistoryCommand);
+                    clearHistoryCommand = new DelegateCommand(ClearHistoryCommandAction, CanExecuteClearHistoryCommand);
                 }
 
-                return clearHistorycast;
+                return clearHistoryCommand;
             }
         }
 
