@@ -4,6 +4,8 @@
 // by company ( http://www.example.com )
 // </copyright>
 
+using System.Linq;
+
 namespace KLRESClient
 {
     using System.Collections.Generic;
@@ -766,18 +768,22 @@ namespace KLRESClient
         {
             try
             {
-                
+                this.DataHistory = this.Client.GetMeasurements(this.SelectedItem.MRID);
 
-                ((LineSeries)this.showWin.mcChart.Series[0]).ItemsSource =
-                    new KeyValuePair<DateTime, int>[]{
-                    new KeyValuePair<DateTime,int>(DateTime.Now, 100),
-                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(1), 130),
-                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(2), 150),
-                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(3), 125),
-                    new KeyValuePair<DateTime,int>(DateTime.Now.AddMonths(4),155) };
+                if (this.DataHistory.ToList().Count > 5)
+                {
+                    SortedDictionary<DateTime, double> temp = new SortedDictionary<DateTime, double>(this.DataHistory);
+                    this.DataHistory.Clear();
+
+                    foreach (KeyValuePair<DateTime, double> kvp in temp)
+                    {
+                        this.DataHistory.Add(kvp.Key, kvp.Value);
+                    }
+                }
 
                 this.showWin = new ShowDataWindow(this.Client.DataContext);
                 this.showWin.ShowDialog();
+                this.SelectedItem = null;
             }
             catch
             {
@@ -1255,6 +1261,7 @@ namespace KLRESClient
                         this.site = this.Client.GetSiteFromId(this.group.SiteID);
                         this.ClickEditCommand.RaiseCanExecuteChanged();
                         this.RemoveCommand.RaiseCanExecuteChanged();
+                        this.ShowDataCommand.RaiseCanExecuteChanged();
                     }
                 }
             }

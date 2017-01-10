@@ -13,8 +13,8 @@
             <DVC:Chart.Series>
                 <DVC:LineSeries Title="Data history"
                     ItemsSource="{Binding EditRemoveWindowVM.DataHistory}"
-                    IndependentValueBinding="{Binding Path=EditRemoveWindowVM.Key}"
-                    DependentValueBinding="{Binding Path=EditRemoveWindowVM.Value}">
+                    IndependentValueBinding="{Binding Path=Key}"
+                    DependentValueBinding="{Binding Path=Value}">
                 </DVC:LineSeries>
             </DVC:Chart.Series>
         </DVC:Chart>

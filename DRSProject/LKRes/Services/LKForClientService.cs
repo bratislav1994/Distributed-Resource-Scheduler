@@ -4,6 +4,8 @@
 // by company ( http://www.example.com )
 // </copyright>
 
+using LKRes.Data;
+
 namespace LKRes.Services
 {
     using System;
@@ -114,6 +116,12 @@ namespace LKRes.Services
                                 if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
                                 {
                                     generatorIterator.ActivePower = newPower;
+                                    DataBase.Instance.AddMeasurement(new Measurement()
+                                    {
+                                        ActivePower = generatorIterator.ActivePower,
+                                        MRID = generatorIterator.MRID,
+                                        TimeStamp = DateTime.Now
+                                    });
                                 }
                             }
                             //smanji za 10%
@@ -123,6 +131,12 @@ namespace LKRes.Services
                                 if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
                                 {
                                     generatorIterator.ActivePower = newPower;
+                                    DataBase.Instance.AddMeasurement(new Measurement()
+                                    {
+                                        ActivePower = generatorIterator.ActivePower,
+                                        MRID = generatorIterator.MRID,
+                                        TimeStamp = DateTime.Now
+                                    });
                                 }
                             }
                         }
@@ -296,6 +310,12 @@ namespace LKRes.Services
                     Gen = update.Generators[0]
                 });
             }
+
+            Measurement m = new Measurement();
+            m.ActivePower = update.Generators[0].ActivePower;
+            m.MRID = update.Generators[0].MRID;
+            m.TimeStamp = DateTime.Now;
+            DataBase.Instance.AddMeasurement(m);
         }
         #endregion
 
@@ -363,6 +383,15 @@ namespace LKRes.Services
                 updateInfo.Sites.Add(update.Sites[0]);
             }
         }
+        #endregion
+
+        #region GetMeasurement
+
+        public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
+        {
+            return DataBase.Instance.GetMeasurements(mRID);
+        }
+
         #endregion
 
         private void NotifyClient(UpdateInfo update)

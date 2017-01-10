@@ -38,6 +38,8 @@ namespace CommonLibrary.Interfaces
 		/// <param name="password"></param>
 		void Registration(string username, string password);
 
+        [OperationContract]
+        SortedDictionary<DateTime, double> GetMeasurements(string mRID);
     }//end ILKForClient
 
 }//end namespace InterfaceForDuplex

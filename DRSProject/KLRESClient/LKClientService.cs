@@ -12,7 +12,7 @@ namespace KLRESClient
     using System.Linq;
     using CommonLibrary;
     using CommonLibrary.Interfaces;
-
+    using System.Collections.Generic;
     /// <summary>
     /// Implement interface ILKClient
     /// </summary>
@@ -487,6 +487,15 @@ namespace KLRESClient
             {
                 getAllFromService.Groups.ForEach(x => { Groups.Add(x); });
             }
+        }
+
+        #endregion
+
+        #region GetMeasurement
+
+        public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
+        {
+            return this.Proxy.GetMeasurements(mRID);
         }
 
         #endregion
