@@ -1,17 +1,25 @@
-﻿using CommonLibrary.Interfaces;
-using LKRes.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="Program.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace LKRes
 {
-    class Program
+    using System;
+    using System.ServiceModel;
+    using CommonLibrary.Interfaces;
+
+    /// <summary>
+    /// Program.cs of LKRes server
+    /// </summary>
+    public class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// Main method of class Program.cs
+        /// </summary>
+        /// <param name="args">Command-Line arguments</param>
+        public static void Main(string[] args)
         {
             NetTcpBinding binding = new NetTcpBinding();
             string address = "net.tcp://localhost:4000/ILKRes";

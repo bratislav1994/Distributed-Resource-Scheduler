@@ -8,11 +8,10 @@ namespace KLRESClient
 {
     using System;
     using System.ComponentModel;
+    using System.IO;
     using System.Linq;
-    using System.ServiceModel;
     using CommonLibrary;
     using CommonLibrary.Interfaces;
-    using System.IO;
 
     /// <summary>
     /// Implement interface ILKClient
@@ -78,7 +77,6 @@ namespace KLRESClient
 
         #endregion
 
-
         #region constructor
 
         /// <summary>
@@ -107,42 +105,18 @@ namespace KLRESClient
             }
         }
 
-        public void Registration(string username, string password)
-        {
-            this.Proxy.Registration(username, password);
-            Initialize();
-        }
-
-        public void LogIn(string username, string password)
-        {
-            this.Proxy.Login(username, password);
-            Initialize();
-        }
-
-        public void Initialize()
-        {
-            UpdateInfo getAllFromService = this.Proxy.GetMySystem();
-
-            if (getAllFromService.Generators.Count != 0)
-            {
-                getAllFromService.Generators.ForEach(x => { Generators.Add(x); });
-            }
-
-            if (getAllFromService.Sites.Count != 0)
-            {
-                getAllFromService.Sites.ForEach(x => { Sites.Add(x); });
-            }
-
-            if (getAllFromService.Groups.Count != 0)
-            {
-                getAllFromService.Groups.ForEach(x => { Groups.Add(x); });
-            }
-        }
-
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// The source of the event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets proxy 
+        /// </summary>
         public ILKForClient Proxy
         {
             get
@@ -155,11 +129,6 @@ namespace KLRESClient
                 this.proxy = value;
             }
         }
-
-        /// <summary>
-        /// The source of the event
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets combo box of measurements
@@ -436,8 +405,6 @@ namespace KLRESClient
                 case UpdateType.UPDATE:
                     if (update.Generators != null)
                     {
-                        //Generator gen = this.Generators.SingleOrDefault(p => p.MRID.Equals(update.Generators[0].MRID));
-
                         foreach (Generator gen in update.Generators)
                         {
                             Generator gen1 = this.Generators.SingleOrDefault(p => p.MRID.Equals(gen.MRID));
@@ -470,6 +437,55 @@ namespace KLRESClient
                     }
 
                     break;
+            }
+        }
+
+        #endregion
+
+        #region login and register
+
+        /// <summary>
+        /// register method
+        /// </summary>
+        /// <param name="username">username of user</param>
+        /// <param name="password">password box</param>
+        public void Registration(string username, string password)
+        {
+            this.Proxy.Registration(username, password);
+            this.Initialize();
+        }
+
+        /// <summary>
+        /// login method
+        /// </summary>
+        /// <param name="username">username of user</param>
+        /// <param name="password">password box</param>
+        public void LogIn(string username, string password)
+        {
+            this.Proxy.Login(username, password);
+            this.Initialize();
+        }
+
+        /// <summary>
+        /// only called in start, when user login
+        /// </summary>
+        public void Initialize()
+        {
+            UpdateInfo getAllFromService = this.Proxy.GetMySystem();
+
+            if (getAllFromService.Generators.Count != 0)
+            {
+                getAllFromService.Generators.ForEach(x => { Generators.Add(x); });
+            }
+
+            if (getAllFromService.Sites.Count != 0)
+            {
+                getAllFromService.Sites.ForEach(x => { Sites.Add(x); });
+            }
+
+            if (getAllFromService.Groups.Count != 0)
+            {
+                getAllFromService.Groups.ForEach(x => { Groups.Add(x); });
             }
         }
 

@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using CommonLibrary;
 using CommonLibrary.Interfaces;
+using CommonLibrary.Exceptions;
 using LKRes.Services;
 using System.ServiceModel;
 using NSubstitute;
+using KSRes;
+using System.Threading;
 
 namespace LKResTest.ServicesTest
 {
@@ -63,6 +66,8 @@ namespace LKResTest.ServicesTest
         [Test]
         public void UpdateAddTest01()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
+            
             Assert.Throws<ArgumentNullException>(() => lkResTest.Update(null));
 
             UpdateInfo info = new UpdateInfo();
@@ -77,12 +82,16 @@ namespace LKResTest.ServicesTest
             Site site = new Site();
             info.Sites.Add(site);
 
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
+
             lkResTest.Update(info);
         }
 
         [Test]
         public void UpdateAddTest02()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
             Assert.Throws<ArgumentNullException>(() => lkResTest.Update(null));
 
             UpdateInfo info = new UpdateInfo();
@@ -96,12 +105,16 @@ namespace LKResTest.ServicesTest
 
             info.Sites = null;
 
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
+
             lkResTest.Update(info);
         }
 
         [Test]
         public void UpdateAddTest03()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
             Assert.Throws<ArgumentNullException>(() => lkResTest.Update(null));
 
             UpdateInfo info = new UpdateInfo();
@@ -113,12 +126,17 @@ namespace LKResTest.ServicesTest
             info.Groups = null;
             info.Sites = null;
 
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
+
             lkResTest.Update(info);
         }
 
         [Test]
         public void UpdateRemoveTest01()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
+
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.REMOVE;
 
@@ -143,12 +161,17 @@ namespace LKResTest.ServicesTest
             lkResTest.updateInfo.Sites.Add(site);
             info.Sites.Add(site);
 
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
+
             lkResTest.Update(info);
         }
 
         [Test]
         public void UpdateRemoveTest02()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
+
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.REMOVE;
 
@@ -161,12 +184,17 @@ namespace LKResTest.ServicesTest
             info.Groups = null;
             info.Sites = null;
 
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
+
             lkResTest.Update(info);
         }
 
         [Test]
         public void UpdateTest01()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
+
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.UPDATE;
 
@@ -202,12 +230,17 @@ namespace LKResTest.ServicesTest
             };
             info.Sites.Add(site);
 
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
+
             lkResTest.Update(info);
         }
 
         [Test]
         public void UpdateTest02()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
+
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.UPDATE;
             Generator generator1 = new Generator()
@@ -233,26 +266,99 @@ namespace LKResTest.ServicesTest
             info.Groups = null;
             info.Sites = null;
 
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
+
             lkResTest.Update(info);
         }
 
         [Test]
         public void UpdateTest03()
         {
+            IKSRes mockKSRes = Substitute.For<IKSRes>();
+
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = 0;
+
+            mockKSRes.Update(info);
+            lkResTest.KSResProxy = mockKSRes;
 
             lkResTest.Update(info);
         }
 
         [Test]
-        public void RegistrationTest()
+        public void RegistrationTest01()
         {
             IKSRes mockRes = Substitute.For<IKSRes>();
             mockRes.Registration("test", "test");
 
             lkResTest.KSResProxy = mockRes;
+            Assert.AreEqual(mockRes, lkResTest.KSResProxy);
+
             lkResTest.Registration("test", "test");
         }
+
+        //[Test]
+        //[TestCase("user1", "123")]
+        //public void RegistrationTest02(string username, string password)
+        //{
+        //    DynamicDataBase db = new DynamicDataBase();
+        //    IKSRes mockRes1 = Substitute.For<IKSRes>();
+
+        //    mockRes1.Registration(username, password);
+        //    mockRes1.Registration(username, "321");
+        //   // Assert.AreNotEqual(0, db.RegistrationService.Count);
+
+        //    lkResTest.KSResProxy = mockRes1;
+        //    Assert.AreEqual(mockRes1, lkResTest.KSResProxy);
+            
+        //    lkResTest.Registration(username, password);
+        //    Assert.AreNotEqual(0, db.RegistrationService.Count);
+        //    Assert.Throws<FaultException<IdentificationExeption>>(() => lkResTest.Registration(username, "321"));
+        //}
+
+        [Test]
+        public void LoginTest()
+        {
+            IKSRes mockRes = Substitute.For<IKSRes>();
+            mockRes.Registration("test", "test");
+            mockRes.Login("test", "test"); 
+
+            lkResTest.KSResProxy = mockRes;
+            Assert.AreEqual(mockRes, lkResTest.KSResProxy);
+
+            lkResTest.Registration("test", "test");
+            lkResTest.Login("test", "test");
+        }
+
+        [Test]
+        public void ClientTest()
+        {
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
+            Assert.AreEqual(mockClient, lkResTest.Client);
+        }
+
+        //[Test]
+        //public void ActivePowerTest()
+        //{
+        //    Group group = new Group()
+        //    {
+        //        MRID = "1"
+        //    };
+        //    Generator gen = new Generator()
+        //    {
+        //        MRID = "2",
+        //        GroupID = group.MRID,
+        //        HasMeasurment = true,
+        //        SetPoint = -1
+                    
+        //    };
+
+        //    lkResTest.updateInfo.Generators.Add(gen);
+        //    lkResTest.updateInfo.Groups.Add(group);
+        //    Thread thread = new Thread(() => lkResTest.ChangeActivePower());
+        //    thread.Start();
+        //}
     }
 }

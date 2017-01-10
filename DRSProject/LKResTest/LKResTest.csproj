@@ -29,6 +29,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NSubstitute">
       <HintPath>..\KSResTest\NSubstitute.dll</HintPath>
@@ -54,6 +57,10 @@
     <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj">
       <Project>{fe22eae6-876b-4c52-b1ee-ee1e03432769}</Project>
       <Name>CommonLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KSRes\KSRes.csproj">
+      <Project>{26bcbd69-6b8e-4a70-a877-9fb3055328da}</Project>
+      <Name>KSRes</Name>
     </ProjectReference>
     <ProjectReference Include="..\LKRes\LKRes.csproj">
       <Project>{8a029237-38b2-4bee-b415-e6ef8eb3b2e2}</Project>

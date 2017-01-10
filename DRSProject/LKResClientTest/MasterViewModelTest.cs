@@ -16,16 +16,6 @@ namespace LKResClientTest
         #region Declarations
 
         private MasterViewModel masterVM;
-        /// <summary>
-        /// Represent view model for add actions
-        /// </summary>
-        /// 
-        private AddWindowViewModel addWindowVM = null;
-
-        /// <summary>
-        /// Represent view model for edit and remove actions
-        /// </summary>
-        private EditRemoveViewModel editRemoveWindowVM = null;
 
         /// <summary>
         /// Represent instance of client
@@ -33,16 +23,9 @@ namespace LKResClientTest
         private LKClientService client = null;
 
         /// <summary>
-        /// exit command
-        /// </summary>
-        private DelegateCommand clickExitCommand;
-
-        /// <summary>
         /// Use for closing MainWindow
         /// </summary>
         private MainWindow mainWindow = null;
-
-        private ILKForClient mockService = null;
 
         #endregion
 
