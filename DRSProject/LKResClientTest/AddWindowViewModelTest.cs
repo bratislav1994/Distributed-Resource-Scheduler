@@ -1,23 +1,38 @@
-﻿using CommonLibrary;
-using CommonLibrary.Interfaces;
-using KLRESClient;
-using NSubstitute;
-using NUnit.Framework;
-using Prism.Commands;
-using System;
-using System.ComponentModel;
-using System.ServiceModel;
-using System.Windows;
-using System.Collections.Generic;
-using System.Threading;
+﻿// <copyright file="AddWindowViewModelTest.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace LKResClientTest
 {
+    using System.ComponentModel;
+    using System.Threading;
+    using System.Windows;
+    using CommonLibrary;
+    using CommonLibrary.Interfaces;
+    using KLRESClient;
+    using NSubstitute;
+    using NUnit.Framework;
+
+    /// <summary>
+    /// Used for testing AddWindowViewModel
+    /// </summary>
     public class AddWindowViewModelTest
     {
+        /// <summary>
+        /// instance of add window view model
+        /// </summary>
         private AddWindowViewModel addWindowVM = null;
+
+        /// <summary>
+        /// instance of client
+        /// </summary>
         private LKClientService client = null;
 
+        /// <summary>
+        /// initialize fields
+        /// </summary>
         [OneTimeSetUp]
         public void SetupTest()
         {
@@ -25,6 +40,9 @@ namespace LKResClientTest
             this.addWindowVM = new AddWindowViewModel(this.client);
         }
 
+        /// <summary>
+        /// testing constructor of add window view model
+        /// </summary>
         [Test]
         public void ConstructorTest()
         {
@@ -32,6 +50,9 @@ namespace LKResClientTest
             Assert.AreNotEqual(null, this.addWindowVM.Client);
         }
 
+        /// <summary>
+        /// test for get and set client
+        /// </summary>
         [Test]
         public void ClientTest()
         {
@@ -40,6 +61,9 @@ namespace LKResClientTest
             Assert.AreEqual(client2, this.addWindowVM.Client);
         }
 
+        /// <summary>
+        /// test for get and set name
+        /// </summary>
         [Test]
         public void NameTest()
         {
@@ -48,6 +72,9 @@ namespace LKResClientTest
             Assert.AreEqual(name, this.addWindowVM.Name);
         }
 
+        /// <summary>
+        /// test for get and set active power
+        /// </summary>
         [Test]
         public void ActivePowerTest()
         {
@@ -56,6 +83,9 @@ namespace LKResClientTest
             Assert.AreEqual(active, this.addWindowVM.ActivePower);
         }
 
+        /// <summary>
+        /// test for get and set power min
+        /// </summary>
         [Test]
         public void PMinTest()
         {
@@ -64,6 +94,9 @@ namespace LKResClientTest
             Assert.AreEqual(powerMin, this.addWindowVM.PMin);
         }
 
+        /// <summary>
+        /// test for get and set power max
+        /// </summary>
         [Test]
         public void PMaxTest()
         {
@@ -72,6 +105,9 @@ namespace LKResClientTest
             Assert.AreEqual(powerMax, this.addWindowVM.PMax);
         }
 
+        /// <summary>
+        /// test for get and set price
+        /// </summary>
         [Test]
         public void PriceTest()
         {
@@ -80,6 +116,9 @@ namespace LKResClientTest
             Assert.AreEqual(price, this.addWindowVM.Price);
         }
 
+        /// <summary>
+        /// test for get and set combo box
+        /// </summary>
         [Test]
         public void CmbHasMeasSelectedItemTest()
         {
@@ -88,6 +127,9 @@ namespace LKResClientTest
             Assert.AreEqual(hasMeasure, this.addWindowVM.CmbHasMeasSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box
+        /// </summary>
         [Test]
         public void CmbGeneratorTypeSelectedItemTest()
         {
@@ -96,6 +138,9 @@ namespace LKResClientTest
             Assert.AreEqual(genType, this.addWindowVM.CmbGeneratorTypeSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box
+        /// </summary>
         [Test]
         public void CmbWorkingModeSelectedItemTest()
         {
@@ -104,6 +149,9 @@ namespace LKResClientTest
             Assert.AreEqual(workMode, this.addWindowVM.CmbWorkingModeSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set radio button
+        /// </summary>
         [Test]
         public void RadioButtonTest()
         {
@@ -112,6 +160,9 @@ namespace LKResClientTest
             Assert.AreEqual(radioButton, this.addWindowVM.RadioButton);
         }
 
+        /// <summary>
+        /// test for get and set radio button
+        /// </summary>
         [Test]
         public void RadioButton1Test()
         {
@@ -120,6 +171,9 @@ namespace LKResClientTest
             Assert.AreEqual(radioButton, this.addWindowVM.RadioButton1);
         }
 
+        /// <summary>
+        /// test for get and set radio button
+        /// </summary>
         [Test]
         public void RadioButton2Test()
         {
@@ -128,6 +182,9 @@ namespace LKResClientTest
             Assert.AreEqual(radioButton, this.addWindowVM.RadioButton2);
         }
 
+        /// <summary>
+        /// test for get and set site name
+        /// </summary>
         [Test]
         public void SiteNameTest()
         {
@@ -136,6 +193,9 @@ namespace LKResClientTest
             Assert.AreEqual(site, this.addWindowVM.SiteName);
         }
 
+        /// <summary>
+        /// test for get and set group name
+        /// </summary>
         [Test]
         public void GroupNameTest()
         {
@@ -144,6 +204,9 @@ namespace LKResClientTest
             Assert.AreEqual(group, this.addWindowVM.GroupName);
         }
 
+        /// <summary>
+        /// test for get and set group name
+        /// </summary>
         [Test]
         public void TxbGroupNameTest()
         {
@@ -152,6 +215,9 @@ namespace LKResClientTest
             Assert.AreEqual(txb, this.addWindowVM.TxbGroupName);
         }
 
+        /// <summary>
+        /// test for get and set combo box items
+        /// </summary>
         [Test]
         public void CmbSiteNameSelectedItemTest()
         {
@@ -160,6 +226,9 @@ namespace LKResClientTest
             Assert.AreEqual(site, this.addWindowVM.CmbSiteNameSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box selected item
+        /// </summary>
         [Test]
         public void Cmb2GroupNameSelectedItemTest()
         {
@@ -168,6 +237,9 @@ namespace LKResClientTest
             Assert.AreEqual(group, this.addWindowVM.Cmb2GroupNameSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set combo box selected item
+        /// </summary>
         [Test]
         public void Cmb3SiteNameSelectedItemTest()
         {
@@ -176,6 +248,9 @@ namespace LKResClientTest
             Assert.AreEqual(site, this.addWindowVM.Cmb3SiteNameSelectedItem);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Txb8VisibilityTest()
         {
@@ -184,6 +259,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.addWindowVM.Txb8Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Txb9VisibilityTest()
         {
@@ -192,6 +270,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.addWindowVM.Txb9Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void CmbVisibilityTest()
         {
@@ -200,6 +281,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.addWindowVM.CmbVisibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Cmb2VisibilityTest()
         {
@@ -208,6 +292,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.addWindowVM.Cmb2Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void Cmb3VisibilityTest()
         {
@@ -216,6 +303,9 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.addWindowVM.Cmb3Visibility);
         }
 
+        /// <summary>
+        /// test for get and set visibility of input field
+        /// </summary>
         [Test]
         public void TxbVisibilityTest()
         {
@@ -224,30 +314,42 @@ namespace LKResClientTest
             Assert.AreEqual(visibility, this.addWindowVM.TxbVisibility);
         }
 
+        /// <summary>
+        /// test create command
+        /// </summary>
         [Test]
         public void CreateCommandTest()
         {
             Assert.AreNotEqual(null, this.addWindowVM.CreateCommand);
         }
 
+        /// <summary>
+        /// test cancel command
+        /// </summary>
         [Test]
         public void CancelCommandTest()
         {
             Assert.AreNotEqual(null, this.addWindowVM.CancelCommand);
         }
 
+        /// <summary>
+        /// test click add command
+        /// </summary>
         [Test]
         public void ClickAddCommandTest()
         {
             Assert.AreNotEqual(null, this.addWindowVM.ClickAddCommand);
         }
 
+        /// <summary>
+        /// test for property changed
+        /// </summary>
         [Test]
         public void PropertyChanged()
         {
             string receivedEvents = null;
 
-            this.addWindowVM.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            this.addWindowVM.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents = e.PropertyName;
             };
@@ -263,6 +365,9 @@ namespace LKResClientTest
             this.addWindowVM.CmbSiteNameSelectedItem = new Site() { MRID = "1" };
         }
 
+        /// <summary>
+        /// test for add click command action
+        /// </summary>
         [Test]
         public void AddClickCommandActionTest()
         {
@@ -280,6 +385,9 @@ namespace LKResClientTest
             t.Join();
         }
 
+        /// <summary>
+        /// test for cancel command action
+        /// </summary>
         [Test]
         public void CancelCommandActionTest()
         {
@@ -294,6 +402,9 @@ namespace LKResClientTest
             t.Join();
         }
 
+        /// <summary>
+        /// test for create command action
+        /// </summary>
         [Test]
         public void CreateCommandActionTest()
         {
@@ -313,10 +424,8 @@ namespace LKResClientTest
 
             Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
 
-
             this.addWindowVM.SiteName = string.Empty;
             Assert.IsFalse(this.addWindowVM.CreateCommand.CanExecute());
-
 
             this.addWindowVM.SiteName = "test";
             this.addWindowVM.PMin = "10";
@@ -330,7 +439,6 @@ namespace LKResClientTest
 
             this.addWindowVM.RadioButton = false;
             this.addWindowVM.RadioButton1 = true;
-
 
             this.addWindowVM.CmbSiteNameSelectedItem = null;
             this.addWindowVM.Cmb2GroupNameSelectedItem = new Group() { MRID = "1" };
@@ -362,9 +470,9 @@ namespace LKResClientTest
             mockService2.GetMySystem().Returns(update);
             mockService2.Update(update);
 
-            client.Proxy = mockService2;
-            client.LogIn("proba", "proba");
-            client.Command(update);
+            this.client.Proxy = mockService2;
+            this.client.LogIn("proba", "proba");
+            this.client.Command(update);
 
             var t = new Thread(() =>
             {

@@ -1,59 +1,76 @@
-﻿using CommonLibrary;
-using CommonLibrary.Interfaces;
-using KLRESClient;
-using NSubstitute;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="LKClientServiceTest.cs" company="company">
+// product
+// Copyright (c) 2016
+// by company ( http://www.example.com )
+// </copyright>
 
 namespace LKResClientTest
 {
+    using System;
+    using System.ComponentModel;
+    using System.IO;
+    using CommonLibrary;
+    using CommonLibrary.Interfaces;
+    using KLRESClient;
+    using NSubstitute;
+    using NUnit.Framework;
+
+    /// <summary>
+    /// Used for testing LKClient
+    /// </summary>
     [TestFixture]
     public class LKClientServiceTest
     {
         #region Declarations
 
+        /// <summary>
+        /// instance of client
+        /// </summary>
         private LKClientService client = null;
 
-
+        /// <summary>
+        /// mock for calling service methods
+        /// </summary>
         private ILKForClient mockService = null;
+
+        /// <summary>
+        /// mock for calling service methods
+        /// </summary>
         private ILKForClient mockService2 = null;
 
         #endregion
 
+        /// <summary>
+        /// initialize fields
+        /// </summary>
         [OneTimeSetUp]
         public void SetupTest()
         {
-            client = new LKClientService();
-            mockService = Substitute.For<ILKForClient>();
-            mockService.Registration("proba", "proba");
+            this.client = new LKClientService();
+            this.mockService = Substitute.For<ILKForClient>();
+            this.mockService.Registration("proba", "proba");
             UpdateInfo update = new UpdateInfo();
             update.UpdateType = UpdateType.ADD;
             update.Generators.Add(new Generator());
             update.Groups.Add(new Group());
             update.Sites.Add(new Site());
-            mockService.GetMySystem().Returns(update);
+            this.mockService.GetMySystem().Returns(update);
 
-            //mockService.Update(new UpdateInfo());
+            this.mockService2 = Substitute.For<ILKForClient>();
+            this.mockService2.Login("proba", "proba");
+            this.mockService2.GetMySystem().Returns(update);
+            this.mockService2.Update(update);
 
-            mockService2 = Substitute.For<ILKForClient>();
-            mockService2.Login("proba", "proba");
-            mockService2.GetMySystem().Returns(update);
-            mockService2.Update(update);
-
-            client.Proxy = mockService;
-            client.Registration("proba", "proba");
-            client.Proxy = mockService2;
-            client.LogIn("proba", "proba");
-            client.Command(update);
+            this.client.Proxy = this.mockService;
+            this.client.Registration("proba", "proba");
+            this.client.Proxy = this.mockService2;
+            this.client.LogIn("proba", "proba");
+            this.client.Command(update);
         }
 
+        /// <summary>
+        /// test for constructor
+        /// </summary>
         [Test]
         public void ConstructorTest()
         {
@@ -70,6 +87,9 @@ namespace LKResClientTest
             Assert.AreEqual(null, this.client.DataContext);
         }
 
+        /// <summary>
+        /// test for list of generators
+        /// </summary>
         [Test]
         public void GeneratorsTest()
         {
@@ -80,6 +100,9 @@ namespace LKResClientTest
             Assert.AreEqual(generators, this.client.Generators);
         }
 
+        /// <summary>
+        /// test for list of sites
+        /// </summary>
         [Test]
         public void SitesTest()
         {
@@ -90,6 +113,9 @@ namespace LKResClientTest
             Assert.AreEqual(sites, this.client.Sites);
         }
 
+        /// <summary>
+        /// test for list of groups
+        /// </summary>
         [Test]
         public void GroupsTest()
         {
@@ -100,6 +126,9 @@ namespace LKResClientTest
             Assert.AreEqual(groups, this.client.Groups);
         }
 
+        /// <summary>
+        /// test for list of value in has measurement list
+        /// </summary>
         [Test]
         public void HasMeasurementsTest()
         {
@@ -110,6 +139,9 @@ namespace LKResClientTest
             Assert.AreEqual(hasM, this.client.HasMeasurments);
         }
 
+        /// <summary>
+        /// test for list of generator types
+        /// </summary>
         [Test]
         public void GeneratorTypesTest()
         {
@@ -120,6 +152,9 @@ namespace LKResClientTest
             Assert.AreEqual(genTypes, this.client.GeneratorTypes);
         }
 
+        /// <summary>
+        /// test for list of working modes
+        /// </summary>
         [Test]
         public void WorkingModeTest()
         {
@@ -130,6 +165,9 @@ namespace LKResClientTest
             Assert.AreEqual(workModes, this.client.WorkingModes);
         }
 
+        /// <summary>
+        /// test for list of group names
+        /// </summary>
         [Test]
         public void GroupNamesTest()
         {
@@ -140,6 +178,9 @@ namespace LKResClientTest
             Assert.AreEqual(groupNames, this.client.GroupNames);
         }
 
+        /// <summary>
+        /// test for list of site names
+        /// </summary>
         [Test]
         public void SiteNamesTest()
         {
@@ -150,6 +191,9 @@ namespace LKResClientTest
             Assert.AreEqual(siteNames, this.client.SiteNames);
         }
 
+        /// <summary>
+        /// test for list of group names
+        /// </summary>
         [Test]
         public void EditGroupNamesTest()
         {
@@ -160,6 +204,9 @@ namespace LKResClientTest
             Assert.AreEqual(editGroupName, this.client.EditGroupNames);
         }
 
+        /// <summary>
+        /// test for get and set data context
+        /// </summary>
         [Test]
         public void DataContextTest()
         {
@@ -170,6 +217,9 @@ namespace LKResClientTest
             Assert.AreEqual(data, this.client.DataContext);
         }
 
+        /// <summary>
+        /// test method for getting group from generator id
+        /// </summary>
         [Test]
         public void GetGroupFromIdTest()
         {
@@ -185,6 +235,9 @@ namespace LKResClientTest
             Assert.AreEqual(group.MRID, this.client.GetGroupFromId("1").MRID);
         }
 
+        /// <summary>
+        /// test method for getting site from group id
+        /// </summary>
         [Test]
         public void GetSiteFromIdTest()
         {
@@ -200,6 +253,9 @@ namespace LKResClientTest
             Assert.AreEqual(site.MRID, this.client.GetSiteFromId("1").MRID);
         }
 
+        /// <summary>
+        /// test method for validation of input fields
+        /// </summary>
         [Test]
         public void CheckStringInputFieldTest()
         {
@@ -208,6 +264,9 @@ namespace LKResClientTest
             Assert.AreEqual(true, this.client.CheckStringInputField("string"));
         }
 
+        /// <summary>
+        /// test method for validation of input fields
+        /// </summary>
         [Test]
         public void CheckDoubleInputFieldTest()
         {
@@ -218,12 +277,18 @@ namespace LKResClientTest
             Assert.AreEqual(true, this.client.CheckDoubleInputField("2.0"));
         }
 
+        /// <summary>
+        /// test method for invalid data which is sent to service
+        /// </summary>
         [Test]
         public void UpdateTest()
         {
             Assert.Throws<InvalidDataException>(() => this.client.Update(null));
         }
 
+        /// <summary>
+        /// test method for adding data to service
+        /// </summary>
         [Test]
         public void UpdateAddTest()
         {
@@ -241,6 +306,9 @@ namespace LKResClientTest
             Assert.AreEqual(update.Sites, this.client.Sites);
         }
 
+        /// <summary>
+        /// test method for removing data to service
+        /// </summary>
         [Test]
         public void UpdateDeleteTest()
         {
@@ -267,6 +335,9 @@ namespace LKResClientTest
             Assert.AreEqual(0, this.client.Sites.Count);
         }
 
+        /// <summary>
+        /// test method for editing data to service
+        /// </summary>
         [Test]
         public void UpdateEditTest()
         {
@@ -296,12 +367,15 @@ namespace LKResClientTest
             Assert.AreEqual(2, this.client.Sites.Count);
         }
 
+        /// <summary>
+        /// test method for property changed
+        /// </summary>
         [Test]
         public void RaisePropertyChangedTest()
         {
             string receivedEvents = null;
 
-            this.client.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            this.client.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents = e.PropertyName;
             };

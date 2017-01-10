@@ -359,6 +359,17 @@ namespace KSRESClient
             return null;
         }
 
+        public SortedDictionary<DateTime, double> GetLoadForecast()
+        {
+            SortedDictionary<DateTime, double> retVal = new SortedDictionary<DateTime, double>();
+            retVal = Proxy.GetLoadForecast();
+            if(retVal == null)
+            {
+                throw new Exception("Not enaugh data.");
+            }
+            return Proxy.GetLoadForecast();
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string propName)

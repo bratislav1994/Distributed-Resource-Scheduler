@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KSRes.Data
 {
-    public class ProductionHistroy
+    public class ProductionHistory
     {
         private int id;
         private String username;

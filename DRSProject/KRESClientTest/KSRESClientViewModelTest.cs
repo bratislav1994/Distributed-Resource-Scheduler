@@ -280,7 +280,7 @@ namespace KRESClientTest
 
             Assert.IsFalse(this.model.IssueCommand.CanExecute());
 
-            model.NeededPower = "5";
+            model.NeededPower = "5"; 
             model.CbSelectedItem = "temp";
 
             Assert.IsTrue(this.model.IssueCommand.CanExecute());
