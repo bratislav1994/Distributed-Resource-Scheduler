@@ -370,6 +370,11 @@ namespace LKRes.Services
             Thread.Sleep(50);
             client.Update(update);
         }
+
+        public void SendBasePoint(Dictionary<int, List<Point>> basePoints)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

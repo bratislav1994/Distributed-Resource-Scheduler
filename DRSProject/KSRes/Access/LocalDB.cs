@@ -75,9 +75,17 @@ namespace KSRes.Access
         {
             using (var access = new AccessDB())
             {
-                List<ProductionHistory> productions = access.ProductionHistory.Where(x => x.TimeStamp.ToOADate() > condition.ToOADate()).ToList();
-                
-                return productions;
+                List<ProductionHistory> productions = access.ProductionHistory.ToList();
+                List<ProductionHistory> temp = new List<ProductionHistory>();
+
+                foreach (ProductionHistory production in productions)
+                {
+                    if (production.TimeStamp.ToOADate() >= condition.ToOADate())
+                    {
+                        temp.Add(production);
+                    }
+                }
+                return temp;
             }
         }
 

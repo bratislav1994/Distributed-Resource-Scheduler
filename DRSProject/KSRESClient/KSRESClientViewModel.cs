@@ -433,15 +433,7 @@ namespace KSRESClient
                     throw new Exception("Number of days must be positive.");
                 }
 
-                //ProductionHistory = Client.GetProductionHistory(np);
-                SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
-                test.Add(DateTime.Now, 100);
-                test.Add(DateTime.Now.AddMonths(1), 130);
-                test.Add(DateTime.Now.AddMonths(2), 150);
-                test.Add(DateTime.Now.AddMonths(3), 125);
-                test.Add(DateTime.Now.AddMonths(4), 140);
-                ProductionHistory = test;
-
+                ProductionHistory = Client.GetProductionHistory(np);
             }
             catch (Exception ex)
             {

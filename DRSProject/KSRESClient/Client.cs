@@ -359,6 +359,11 @@ namespace KSRESClient
             return null;
         }
 
+        public SortedDictionary<DateTime, double> GetProductionHistory(double np)
+        {
+            return proxy.GetProductionHistory(np);
+        }
+
         public SortedDictionary<DateTime, double> GetLoadForecast()
         {
             SortedDictionary<DateTime, double> retVal = new SortedDictionary<DateTime, double>();

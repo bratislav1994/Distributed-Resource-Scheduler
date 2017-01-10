@@ -361,22 +361,29 @@ namespace KSRes
 
             foreach (string mrid in measurments.Keys)
             {
-                ProductionHistory productionHistory = new ProductionHistory();
-                productionHistory.Username = username;
-                productionHistory.MRID = mrid;
-                productionHistory.ActivePower = measurments[mrid];
+                ProductionHistory productionHistory;
 
                 lock (lockObj1)
                 {
-                    MultiThreadBuffer.Add(productionHistory);
+                    if ((productionHistory = multiThreadBuffer.Where(x => x.MRID.Equals(mrid)).FirstOrDefault()) == null)
+                    {
+                        productionHistory = new ProductionHistory();
+                        productionHistory.Username = username;
+                        productionHistory.MRID = mrid;
+                        productionHistory.ActivePower = measurments[mrid];
+                        MultiThreadBuffer.Add(productionHistory);
+                    }
+                    else
+                    {
+                        productionHistory.ActivePower = measurments[mrid];
+                    }
                 }
-
                 Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).FirstOrDefault();
                 generator.ActivePower = measurments[mrid];
 
                 update.Generators.Add(generator);
-            }  
-
+            }
+            
             foreach(IKSClient client in clients)
             {
                 client.Update(update, username);
@@ -388,9 +395,10 @@ namespace KSRes
             while (true)
             {
                 Thread.Sleep(10000);
-
+                DateTime time = DateTime.Now;
                 foreach (ProductionHistory productionHistory in MultiThreadBuffer)
                 {
+                    productionHistory.TimeStamp = time;
                     LocalDB.Instance.AddProductions(productionHistory);
                 }
 
@@ -621,7 +629,7 @@ namespace KSRes
 
                     foreach(LKResService service in ActiveService)
                     {
-                        service.Client.SendBasePoint(deployment[service.Username]);
+                        //service.Client.SendBasePoint(deployment[service.Username]);
                     }
                 }
             }
