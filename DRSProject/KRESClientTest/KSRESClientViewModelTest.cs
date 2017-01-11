@@ -15,8 +15,8 @@ namespace KRESClientTest
     [TestFixture]
     public class KSRESClientViewModelTest
     {
-        KSRESClientViewModel model;
-        Client client = null;
+        private KSRESClientViewModel model;
+        private Client client = null;
         private IKSForClient mockService;
 
         [OneTimeSetUp]
@@ -50,140 +50,140 @@ namespace KRESClientTest
         [Test]
         public void NeededPowerPropTest()
         {
-            String NeededPower = "test";
-            model.NeededPower = NeededPower;
+            String neededPower = "test";
+            model.NeededPower = neededPower;
 
-            Assert.AreEqual(NeededPower, model.NeededPower);
+            Assert.AreEqual(neededPower, model.NeededPower);
             Assert.AreNotEqual(null, model.NeededPower);
         }
 
         [Test]
         public void GenMRIDPropTest()
         {
-            string GenMRID = "test";
-            model.GenMRID = GenMRID;
+            string genMRID = "test";
+            model.GenMRID = genMRID;
 
-            Assert.AreEqual(GenMRID, model.GenMRID);
+            Assert.AreEqual(genMRID, model.GenMRID);
             Assert.AreNotEqual(null, model.GenMRID);
         }
 
         [Test]
         public void GenNamePropTest()
         {
-            string GenName = "test";
-            model.GenName = GenName;
+            string genName = "test";
+            model.GenName = genName;
 
-            Assert.AreEqual(GenName, model.GenName);
+            Assert.AreEqual(genName, model.GenName);
             Assert.AreNotEqual(null, model.GenName);
         }
 
         [Test]
         public void GenWorkingModePropTest()
         {
-            string GenWorkingMode = "test";
-            model.GenWorkingMode = GenWorkingMode;
+            string genWorkingMode = "test";
+            model.GenWorkingMode = genWorkingMode;
 
-            Assert.AreEqual(GenWorkingMode, model.GenWorkingMode);
+            Assert.AreEqual(genWorkingMode, model.GenWorkingMode);
             Assert.AreNotEqual(null, model.GenWorkingMode);
         }
 
         [Test]
         public void GenTypePropTest()
         {
-            string GenType = "test";
-            model.GenType = GenType;
+            string genType = "test";
+            model.GenType = genType;
 
-            Assert.AreEqual(GenType, model.GenType);
+            Assert.AreEqual(genType, model.GenType);
             Assert.AreNotEqual(null, model.GenType);
         }
 
         [Test]
         public void GenSPPropTest()
         {
-            string GenSP = "test";
-            model.GenSP = GenSP;
+            string genSP = "test";
+            model.GenSP = genSP;
 
-            Assert.AreEqual(GenSP, model.GenSP);
+            Assert.AreEqual(genSP, model.GenSP);
             Assert.AreNotEqual(null, model.GenSP);
         }
 
         [Test]
         public void GenPricePropTest()
         {
-            string GenPrice = "test";
-            model.GenPrice = GenPrice;
+            string genPrice = "test";
+            model.GenPrice = genPrice;
 
-            Assert.AreEqual(GenPrice, model.GenPrice);
+            Assert.AreEqual(genPrice, model.GenPrice);
             Assert.AreNotEqual(null, model.GenPrice);
         }
 
         [Test]
         public void GenAPPropTest()
         {
-            string GenAP = "test";
-            model.GenAP = GenAP;
+            string genAP = "test";
+            model.GenAP = genAP;
 
-            Assert.AreEqual(GenAP, model.GenAP);
+            Assert.AreEqual(genAP, model.GenAP);
             Assert.AreNotEqual(null, model.GenAP);
         }
 
         [Test]
         public void GenBPPropTest()
         {
-            string GenBP = "test";
-            model.GenBP = GenBP;
+            string genBP = "test";
+            model.GenBP = genBP;
 
-            Assert.AreEqual(GenBP, model.GenBP);
+            Assert.AreEqual(genBP, model.GenBP);
             Assert.AreNotEqual(null, model.GenBP);
         }
 
         [Test]
         public void GenHasMeasPropTest()
         {
-            string GenHasMeas = "test";
-            model.GenHasMeas = GenHasMeas;
+            string genHasMeas = "test";
+            model.GenHasMeas = genHasMeas;
 
-            Assert.AreEqual(GenHasMeas, model.GenHasMeas);
+            Assert.AreEqual(genHasMeas, model.GenHasMeas);
             Assert.AreNotEqual(null, model.GenHasMeas);
         }
 
         [Test]
         public void GenPMaxPropTest()
         {
-            string GenPMax = "test";
-            model.GenPMax = GenPMax;
+            string genPMax = "test";
+            model.GenPMax = genPMax;
 
-            Assert.AreEqual(GenPMax, model.GenPMax);
+            Assert.AreEqual(genPMax, model.GenPMax);
             Assert.AreNotEqual(null, model.GenPMax);
         }
 
         [Test]
         public void GenPMinPropTest()
         {
-            string GenPMin = "test";
-            model.GenPMin = GenPMin;
+            string genPMin = "test";
+            model.GenPMin = genPMin;
 
-            Assert.AreEqual(GenPMin, model.GenPMin);
+            Assert.AreEqual(genPMin, model.GenPMin);
             Assert.AreNotEqual(null, model.GenPMin);
         }
 
         [Test]
         public void GenSitePropTest()
         {
-            string GenSite = "test";
-            model.GenSite = GenSite;
+            string genSite = "test";
+            model.GenSite = genSite;
 
-            Assert.AreEqual(GenSite, model.GenSite);
+            Assert.AreEqual(genSite, model.GenSite);
             Assert.AreNotEqual(null, model.GenSite);
         }
 
         [Test]
         public void GenGroupPropTest()
         {
-            string GenGroup = "test";
-            model.GenGroup = GenGroup;
+            string genGroup = "test";
+            model.GenGroup = genGroup;
 
-            Assert.AreEqual(GenGroup, model.GenGroup);
+            Assert.AreEqual(genGroup, model.GenGroup);
             Assert.AreNotEqual(null, model.GenGroup);
         }
 
@@ -192,7 +192,7 @@ namespace KRESClientTest
         {
             string receivedEvents = null;
 
-            this.model.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            this.model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents = e.PropertyName;
             };
@@ -207,7 +207,7 @@ namespace KRESClientTest
         {
             string receivedEvents = null;
 
-            this.model.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            this.model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents = e.PropertyName;
             };
@@ -256,7 +256,7 @@ namespace KRESClientTest
 
             model.Client = client;
 
-            this.model.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            this.model.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
             {
                 receivedEvents = e.PropertyName;
             };

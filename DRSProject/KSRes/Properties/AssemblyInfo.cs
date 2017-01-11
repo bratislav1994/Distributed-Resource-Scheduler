@@ -1,4 +1,11 @@
-﻿using System.Reflection;
+﻿//-----------------------------------------------------------------------
+// <copyright file="AssemblyInfo.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>Class that implements callback interface for WCF communication.</summary>
+//-----------------------------------------------------------------------
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

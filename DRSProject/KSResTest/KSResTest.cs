@@ -101,7 +101,7 @@ namespace KSResTest
             update.Generators.Add(generator5);
             update.Generators.Add(generator6);
             LKResService temp2 = new LKResService("user3", mockService, "sessionId3");
-            KSRes.Services.KSRes.Controler.ActiveService.Add(temp2); ;
+            KSRes.Services.KSRes.Controler.ActiveService.Add(temp2); 
             KSRes.Services.KSRes.Controler.Update("sessionId3", update);
         }
 

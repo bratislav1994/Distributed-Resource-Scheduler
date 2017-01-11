@@ -18,13 +18,13 @@ namespace KSResTest
     [TestFixture]
     public class ControlerTest
     {
-        Controler database = null;
-        ILKRes mockService = null;
-        IKSClient mockClient = null;
-        Generator generator = null;
-        Group group = null;
-        Site site = null;
-        UpdateInfo update = null;
+        private Controler database = null;
+        private ILKRes mockService = null;
+        private IKSClient mockClient = null;
+        private Generator generator = null;
+        private Group group = null;
+        private Site site = null;
+        private UpdateInfo update = null;
 
         [OneTimeSetUp]
         public void SetupTest()
@@ -62,9 +62,10 @@ namespace KSResTest
         [Test]
         public void ConstructorTest()
         {
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() => 
+            {
                 database = new Controler();
-                } );
+            });
 
             Assert.AreNotEqual(null, database.ActiveService);
             Assert.AreNotEqual(null, database.Clients);
@@ -314,7 +315,7 @@ namespace KSResTest
             database.ActiveService.Add(service);
             database.Clients.Add(mockClient);
 
-            Assert.DoesNotThrow(() =>database.Update("sessionId", update));
+            Assert.DoesNotThrow(() => database.Update("sessionId", update));
         }
 
         [Test]

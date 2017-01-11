@@ -1,19 +1,26 @@
-﻿using CommonLibrary.Interfaces;
-using KSRes.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.Entity;
-using KSRes.Access;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>Class that implements callback interface for WCF communication.</summary>
+//-----------------------------------------------------------------------
 
 namespace KSRes
 {
-    class Program
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.ServiceModel;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CommonLibrary.Interfaces;
+    using KSRes.Access;
+    using KSRes.Services;
+
+    public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             NetTcpBinding binding = new NetTcpBinding();
             string address = "net.tcp://localhost:10020/IKSForClient";

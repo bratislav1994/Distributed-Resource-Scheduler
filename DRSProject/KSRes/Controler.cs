@@ -1,19 +1,27 @@
-﻿using CommonLibrary;
-using CommonLibrary.Exceptions;
-using CommonLibrary.Interfaces;
-using KSRes.Access;
-using KSRes.Data;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Controler.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>Class that implements callback interface for WCF communication.</summary>
+//-----------------------------------------------------------------------
+
 namespace KSRes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.ServiceModel;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using CommonLibrary;
+    using CommonLibrary.Exceptions;
+    using CommonLibrary.Interfaces;
+    using KSRes.Access;
+    using KSRes.Data;
+
     public class Controler
     {
         private Dictionary<string, string> registrationService = null;
@@ -24,6 +32,33 @@ namespace KSRes
         private object lockObj1 = new object();
         private ILoadForecast proxy;
         private SortedDictionary<DateTime, double> lastValuesLC = null;
+
+        #region Constructor
+        public Controler()
+        {
+            registrationService = new Dictionary<string, string>();
+            activeService = new List<LKResService>();
+            clients = new List<IKSClient>();
+            lockObj = new object();
+            multiThreadBuffer = new List<ProductionHistory>();
+
+            ChannelFactory<ILoadForecast> factory = new ChannelFactory<ILoadForecast>(
+                new NetTcpBinding(),
+                 new EndpointAddress("net.tcp://localhost:10040/ILoadForecast"));
+            proxy = factory.CreateChannel();
+
+            LastValuesLC = new SortedDictionary<DateTime, double>();
+
+            Thread checkIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
+            //CheckIfLKServiceIsAliveThread.Start();
+
+            Thread processingDataThread = new Thread(() => ProcessingData());
+            processingDataThread.Start();
+
+            Thread loadForecastThread = new Thread(() => LoadForecast());
+            loadForecastThread.Start();
+        }
+        #endregion Constructor
 
         #region Property
         public List<LKResService> ActiveService
@@ -63,33 +98,6 @@ namespace KSRes
             }
         }
         #endregion Property
-
-        #region Constructor
-        public Controler()
-        {
-            registrationService = new Dictionary<string, string>();
-            activeService = new List<LKResService>();
-            clients = new List<IKSClient>();
-            lockObj = new object();
-            multiThreadBuffer = new List<ProductionHistory>();
-
-            ChannelFactory<ILoadForecast> factory = new ChannelFactory<ILoadForecast>(
-                new NetTcpBinding(),
-                 new EndpointAddress("net.tcp://localhost:10040/ILoadForecast"));
-            proxy = factory.CreateChannel();
-
-            LastValuesLC = new SortedDictionary<DateTime, double>();
-
-            Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
-            //CheckIfLKServiceIsAliveThread.Start();
-
-            Thread ProcessingDataThread = new Thread(() => ProcessingData());
-            ProcessingDataThread.Start();
-
-            Thread LoadForecastThread = new Thread(() => LoadForecast());
-            LoadForecastThread.Start();
-        }
-        #endregion Constructor
 
         #region GetService
         public LKResService GetServiceSID(string sessionID)
@@ -146,7 +154,7 @@ namespace KSRes
         {
             RegisteredService service = null;
 
-            if((service = LocalDB.Instance.GetService(username)) != null)
+            if ((service = LocalDB.Instance.GetService(username)) != null)
             {
                 if (!service.Password.SequenceEqual(HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes(password))))
                 {
@@ -154,9 +162,9 @@ namespace KSRes
                     throw new FaultException<IdentificationExeption>(ex);
                 }
 
-                foreach(LKResService service1 in activeService)
+                foreach (LKResService service1 in activeService)
                 {
-                    if(service1.Username.Equals(username))
+                    if (service1.Username.Equals(username))
                     {
                         IdentificationExeption ex = new IdentificationExeption("Service is already logged in.");
                         throw new FaultException<IdentificationExeption>(ex);
@@ -194,7 +202,7 @@ namespace KSRes
                 throw new InvalidDataException();
             }
 
-            switch(update.UpdateType)
+            switch (update.UpdateType)
             {
                 case UpdateType.ADD:
                 case UpdateType.UPDATE:
@@ -211,144 +219,6 @@ namespace KSRes
 
             NotifyClients(update, serviceUp.Username);
         }
-
-        #region private add/update/remove
-        private void AddOrUpdateSite(List<Site> sites, LKResService service)
-        {
-            if (sites != null)
-            {
-                foreach (Site site in sites)
-                {
-                    service.Sites.Add(site);
-                }
-            }
-        }
-
-        private void AddOrUpdateGroup(List<Group> groups, LKResService service)
-        {
-            if (groups != null)
-            {
-                foreach (Group group in groups)
-                {
-                    service.Gropus.Add(group);
-                }
-            }
-        }
-
-        private void AddOrUpdateGenerator(List<Generator> generators, LKResService service)
-        {
-            if (generators == null)
-            {
-                throw new InvalidDataException();
-            }
-
-            bool edit = false;
-            List<Generator> addGenerator = new List<Generator>();
-
-            foreach (Generator newGenerator in generators)
-            {
-                foreach (Generator generator in service.Generators)
-                {
-                    if (newGenerator.MRID.Equals(generator.MRID))
-                    {
-                        generator.HasMeasurment = newGenerator.HasMeasurment;
-                        generator.Name = newGenerator.Name;
-                        generator.Pmax = newGenerator.Pmax;
-                        generator.Pmin = newGenerator.Pmin;
-                        generator.Price = newGenerator.Price;
-                        generator.WorkingMode = newGenerator.WorkingMode;
-                        generator.ActivePower = newGenerator.ActivePower;
-                        generator.SetPoint = newGenerator.SetPoint;
-                        generator.BasePoint = newGenerator.BasePoint;
-                        generator.GeneratorType = newGenerator.GeneratorType;
-
-                        edit = true;
-                        //break;
-                    }
-                }
-                if (!edit)
-                {
-                    addGenerator.Add(newGenerator);
-                }
-            }
-
-            //service.Generators.AddRange(addGenerator);
-            foreach (Generator generator in addGenerator)
-            {
-                service.Generators.Add(generator);
-            }
-        }
-
-        private void RemoveSite(List<Site> sites, LKResService service)
-        {
-            List<Site> removeList = new List<Site>();
-            if (sites != null)
-            {
-                foreach (Site removesite in sites)
-                {
-                    foreach (Site site in service.Sites)
-                    {
-                        if (removesite.MRID.Equals(site.MRID))
-                        {
-                            removeList.Add(site);
-                        }
-                    }
-                }
-
-                foreach (Site site in removeList)
-                {
-                    service.Sites.Remove(site);
-                }
-            }
-        }
-
-        private void RemoveGroup(List<Group> groups, LKResService service)
-        {
-            List<Group> removeList = new List<Group>();
-            if (groups != null)
-            {
-                foreach (Group removesite in groups)
-                {
-                    foreach (Group group in service.Gropus)
-                    {
-                        if (removesite.MRID.Equals(group.MRID))
-                        {
-                            removeList.Add(group);
-                        }
-                    }
-                }
-
-                foreach (Group group in removeList)
-                {
-                    service.Gropus.Remove(group);
-                }
-            }
-        }
-
-        private void RemoveGenerator(List<Generator> generators, LKResService service)
-        {
-            List<Generator> removeList = new List<Generator>();
-            if (generators != null)
-            {
-                foreach (Generator removesite in generators)
-                {
-                    foreach (Generator generator in service.Generators)
-                    {
-                        if (removesite.MRID.Equals(generator.MRID))
-                        {
-                            removeList.Add(generator);
-                        }
-                    }
-                }
-
-                foreach (Generator generator in removeList)
-                {
-                    service.Generators.Remove(generator);
-                }
-            }
-        }
-        #endregion add/update/remove
-        #endregion Update
 
         public void SendMeasurement(string username, Dictionary<string, double> measurments)
         {
@@ -378,13 +248,14 @@ namespace KSRes
                         productionHistory.ActivePower = measurments[mrid];
                     }
                 }
+
                 Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).FirstOrDefault();
                 generator.ActivePower = measurments[mrid];
 
                 update.Generators.Add(generator);
             }
-            
-            foreach(IKSClient client in clients)
+
+            foreach (IKSClient client in clients)
             {
                 client.Update(update, username);
             }
@@ -409,62 +280,6 @@ namespace KSRes
             }
         }
 
-        private void CheckIfLKServiceIsAlive()
-        {
-            while (true)
-            {
-                List<LKResService> serviceForRemove = new List<LKResService>();
-
-                foreach (LKResService user in ActiveService)
-                {
-                    try
-                    {
-                        user.Client.Ping();
-                    }
-                    catch
-                    {
-                        serviceForRemove.Add(user);
-                    }
-                }
-
-                foreach (LKResService user in serviceForRemove)
-                {
-                    lock (lockObj)
-                    {
-                        ActiveService.Remove(user);
-                    }
-                }
-
-                serviceForRemove.Clear();
-
-                Thread.Sleep(1000);
-            }
-        }
-
-        private void NotifyClients(UpdateInfo update, string username)
-        {
-            List<IKSClient> notActiveClient = new List<IKSClient>();
-            foreach(IKSClient client in Clients)
-            {
-                try
-                {
-                    client.Update(update, username);
-                }
-                catch
-                {
-                    notActiveClient.Add(client);
-                }
-            }
-
-            foreach(IKSClient client in notActiveClient)
-            {
-                lock (lockObj)
-                {
-                    clients.Remove(client);
-                }
-            }
-        }
-
         #region DeployActivePower
         public List<Point> P(double requiredAP, bool isBasePoint)
         {
@@ -479,8 +294,7 @@ namespace KSRes
 
             double activePower = 0;
             double diff = 0;
-
-
+            
             foreach (Generator generator in generators)
             {
                 activePower += generator.ActivePower;
@@ -489,12 +303,12 @@ namespace KSRes
                 {
                     remoteGenerators.Add(generator);
                 }
-                else if(isBasePoint)
+                else if (isBasePoint)
                 {
                     remoteGenerators.Add(generator);
                 }
             }
-            
+
             diff = requiredAP - activePower;
 
             if (diff > 0)
@@ -565,6 +379,7 @@ namespace KSRes
                     }
                 }
             }
+
             return points;
         }
 
@@ -584,11 +399,207 @@ namespace KSRes
                             temp.Add(point);
                         }
                     }
+
                     service.Client.SendSetPoint(temp);
                 }
             }
         }
         #endregion DeployActivePower
+
+        #region private add/update/remove
+        private void AddOrUpdateSite(List<Site> sites, LKResService service)
+        {
+            if (sites != null)
+            {
+                foreach (Site site in sites)
+                {
+                    service.Sites.Add(site);
+                }
+            }
+        }
+
+        private void AddOrUpdateGroup(List<Group> groups, LKResService service)
+        {
+            if (groups != null)
+            {
+                foreach (Group group in groups)
+                {
+                    service.Gropus.Add(group);
+                }
+            }
+        }
+
+        private void AddOrUpdateGenerator(List<Generator> generators, LKResService service)
+        {
+            if (generators == null)
+            {
+                throw new InvalidDataException();
+            }
+
+            bool edit = false;
+            List<Generator> addGenerator = new List<Generator>();
+
+            foreach (Generator newGenerator in generators)
+            {
+                foreach (Generator generator in service.Generators)
+                {
+                    if (newGenerator.MRID.Equals(generator.MRID))
+                    {
+                        generator.HasMeasurment = newGenerator.HasMeasurment;
+                        generator.Name = newGenerator.Name;
+                        generator.Pmax = newGenerator.Pmax;
+                        generator.Pmin = newGenerator.Pmin;
+                        generator.Price = newGenerator.Price;
+                        generator.WorkingMode = newGenerator.WorkingMode;
+                        generator.ActivePower = newGenerator.ActivePower;
+                        generator.SetPoint = newGenerator.SetPoint;
+                        generator.BasePoint = newGenerator.BasePoint;
+                        generator.GeneratorType = newGenerator.GeneratorType;
+                        edit = true;
+                        //break;
+                    }
+                }
+
+                if (!edit)
+                {
+                    addGenerator.Add(newGenerator);
+                }
+            }
+
+            //service.Generators.AddRange(addGenerator);
+            foreach (Generator generator in addGenerator)
+            {
+                service.Generators.Add(generator);
+            }
+        }
+
+        private void RemoveSite(List<Site> sites, LKResService service)
+        {
+            List<Site> removeList = new List<Site>();
+            if (sites != null)
+            {
+                foreach (Site removesite in sites)
+                {
+                    foreach (Site site in service.Sites)
+                    {
+                        if (removesite.MRID.Equals(site.MRID))
+                        {
+                            removeList.Add(site);
+                        }
+                    }
+                }
+
+                foreach (Site site in removeList)
+                {
+                    service.Sites.Remove(site);
+                }
+            }
+        }
+
+        private void RemoveGroup(List<Group> groups, LKResService service)
+        {
+            List<Group> removeList = new List<Group>();
+            if (groups != null)
+            {
+                foreach (Group removesite in groups)
+                {
+                    foreach (Group group in service.Gropus)
+                    {
+                        if (removesite.MRID.Equals(group.MRID))
+                        {
+                            removeList.Add(group);
+                        }
+                    }
+                }
+
+                foreach (Group group in removeList)
+                {
+                    service.Gropus.Remove(group);
+                }
+            }
+        }
+        
+        #endregion add/update/remove
+        #endregion Update
+        
+        private void CheckIfLKServiceIsAlive()
+        {
+            while (true)
+            {
+                List<LKResService> serviceForRemove = new List<LKResService>();
+
+                foreach (LKResService user in ActiveService)
+                {
+                    try
+                    {
+                        user.Client.Ping();
+                    }
+                    catch
+                    {
+                        serviceForRemove.Add(user);
+                    }
+                }
+
+                foreach (LKResService user in serviceForRemove)
+                {
+                    lock (lockObj)
+                    {
+                        ActiveService.Remove(user);
+                    }
+                }
+
+                serviceForRemove.Clear();
+
+                Thread.Sleep(1000);
+            }
+        }
+
+        private void RemoveGenerator(List<Generator> generators, LKResService service)
+        {
+            List<Generator> removeList = new List<Generator>();
+            if (generators != null)
+            {
+                foreach (Generator removesite in generators)
+                {
+                    foreach (Generator generator in service.Generators)
+                    {
+                        if (removesite.MRID.Equals(generator.MRID))
+                        {
+                            removeList.Add(generator);
+                        }
+                    }
+                }
+
+                foreach (Generator generator in removeList)
+                {
+                    service.Generators.Remove(generator);
+                }
+            }
+        }
+
+        private void NotifyClients(UpdateInfo update, string username)
+        {
+            List<IKSClient> notActiveClient = new List<IKSClient>();
+            foreach (IKSClient client in Clients)
+            {
+                try
+                {
+                    client.Update(update, username);
+                }
+                catch
+                {
+                    notActiveClient.Add(client);
+                }
+            }
+
+            foreach (IKSClient client in notActiveClient)
+            {
+                lock (lockObj)
+                {
+                    clients.Remove(client);
+                }
+            }
+        }
 
         #region LoadForecast
         private void LoadForecast()
@@ -610,24 +621,26 @@ namespace KSRes
                     Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
                     int minute = 0;
 
-                    foreach(double value in LastValuesLC.Values)
+                    foreach (double value in LastValuesLC.Values)
                     {
                         List<Point> basePoints = P(value, true);
 
-                        foreach(LKResService service in ActiveService)
+                        foreach (LKResService service in ActiveService)
                         {
                             List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
                             
-                            if(!deployment.ContainsKey(service.Username))
+                            if (!deployment.ContainsKey(service.Username))
                             {
                                 deployment.Add(service.Username, new Dictionary<int, List<Point>>());
                             }
+
                             deployment[service.Username].Add(minute, temp);
                         }
+
                         minute++;
                     }
 
-                    foreach(LKResService service in ActiveService)
+                    foreach (LKResService service in ActiveService)
                     {
                         //service.Client.SendBasePoint(deployment[service.Username]);
                     }

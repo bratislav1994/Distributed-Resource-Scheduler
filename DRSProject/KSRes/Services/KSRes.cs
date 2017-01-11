@@ -1,17 +1,24 @@
-﻿using CommonLibrary.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommonLibrary;
-using System.ServiceModel;
-using CommonLibrary.Exceptions;
-using KSRes.Access;
-using KSRes.Data;
+﻿//-----------------------------------------------------------------------
+// <copyright file="KSRes.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>Class that implements callback interface for WCF communication.</summary>
+//-----------------------------------------------------------------------
 
 namespace KSRes.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.ServiceModel;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Access;
+    using CommonLibrary;
+    using CommonLibrary.Exceptions;
+    using CommonLibrary.Interfaces;
+    using Data; 
+    
     //[CallbackBehavior(UseSynchronizationContext = false)]
     public class KSRes : IKSRes, IKSForClient
     {
@@ -109,10 +116,11 @@ namespace KSRes.Services
 
         public SortedDictionary<DateTime, double> GetLoadForecast()
         {
-            if(Controler.LastValuesLC.Count != 0)
+            if (Controler.LastValuesLC.Count != 0)
             {
                 return Controler.LastValuesLC;
             }
+
             return null;
         }
 
@@ -123,16 +131,17 @@ namespace KSRes.Services
             Dictionary<DateTime, List<double>> temp = new Dictionary<DateTime, List<double>>();
             List<ProductionHistory> productions = LocalDB.Instance.ReadProductions(condition);
 
-            foreach(ProductionHistory production in productions)
+            foreach (ProductionHistory production in productions)
             {
                 if (!temp.ContainsKey(production.TimeStamp))
                 {
                     temp[production.TimeStamp] = new List<double>();
                 }
+
                 temp[production.TimeStamp].Add(production.ActivePower);
             }
             
-            foreach(KeyValuePair<DateTime,List<double>> kp in temp)
+            foreach (KeyValuePair<DateTime, List<double>> kp in temp)
             {
                 retVal.Add(kp.Key, SumActivePower(kp.Value));
             }
@@ -150,6 +159,7 @@ namespace KSRes.Services
                     retVal += d;
                 }
             }
+
             return retVal;
         }
         #endregion IKSForClient

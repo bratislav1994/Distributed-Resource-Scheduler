@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KSRes.Data;
+﻿//-----------------------------------------------------------------------
+// <copyright file="LocalDB.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>Class that implements callback interface for WCF communication.</summary>
+//-----------------------------------------------------------------------
 
 namespace KSRes.Access
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using KSRes.Data;
+
     public class LocalDB : ILocalDB
     {
         private static ILocalDB myDB;
@@ -16,14 +23,19 @@ namespace KSRes.Access
             get
             {
                 if (myDB == null)
+                {
                     myDB = new LocalDB();
+                }
 
                 return myDB;
             }
+
             set
             {
                 if (myDB == null)
+                {
                     myDB = value;
+                }
             }
         }
 
@@ -35,7 +47,10 @@ namespace KSRes.Access
                 int i = access.SaveChanges();
 
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }
@@ -48,7 +63,10 @@ namespace KSRes.Access
                 int i = access.SaveChanges();
 
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }
@@ -85,6 +103,7 @@ namespace KSRes.Access
                         temp.Add(production);
                     }
                 }
+
                 return temp;
             }
         }
@@ -97,7 +116,10 @@ namespace KSRes.Access
                 int i = access.SaveChanges();
 
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }

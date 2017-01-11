@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ProductionHistory.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>Class that implements callback interface for WCF communication.</summary>
+//-----------------------------------------------------------------------
 
 namespace KSRes.Data
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public class ProductionHistory
     {
         private int id;
@@ -76,6 +83,7 @@ namespace KSRes.Data
             {
                 return timeStamp;
             }
+
             set
             {
                 timeStamp = value;
