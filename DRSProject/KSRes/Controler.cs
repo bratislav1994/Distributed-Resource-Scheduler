@@ -50,7 +50,7 @@ namespace KSRes
             LastValuesLC = new SortedDictionary<DateTime, double>();
 
             Thread checkIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
-            //CheckIfLKServiceIsAliveThread.Start();
+            checkIfLKServiceIsAliveThread.Start();
 
             Thread processingDataThread = new Thread(() => ProcessingData());
             processingDataThread.Start();
@@ -186,7 +186,6 @@ namespace KSRes
         }
         #endregion Registration/Login
 
-        #region Update
         public void Update(string sessionID, UpdateInfo update)
         {
             LKResService serviceUp = GetServiceSID(sessionID);
@@ -406,6 +405,47 @@ namespace KSRes
         }
         #endregion DeployActivePower
 
+        #region GetProductionHistory
+        public SortedDictionary<DateTime, double> GetProductionHistory(double days)
+        {
+            SortedDictionary<DateTime, double> retVal = new SortedDictionary<DateTime, double>();
+            DateTime condition = DateTime.Now.AddMinutes(0 - days);
+            Dictionary<DateTime, List<double>> temp = new Dictionary<DateTime, List<double>>();
+            List<ProductionHistory> productions = LocalDB.Instance.ReadProductions(condition);
+
+            foreach (ProductionHistory production in productions)
+            {
+                if (!temp.ContainsKey(production.TimeStamp))
+                {
+                    temp[production.TimeStamp] = new List<double>();
+                }
+
+                temp[production.TimeStamp].Add(production.ActivePower);
+            }
+
+            foreach (KeyValuePair<DateTime, List<double>> kp in temp)
+            {
+                retVal.Add(kp.Key, SumActivePower(kp.Value));
+            }
+
+            return retVal;
+        }
+
+        private double SumActivePower(List<double> list)
+        {
+            double retVal = 0;
+            if (list != null)
+            {
+                foreach (double d in list)
+                {
+                    retVal += d;
+                }
+            }
+
+            return retVal;
+        }
+        #endregion GetProductionHistory
+
         #region private add/update/remove
         private void AddOrUpdateSite(List<Site> sites, LKResService service)
         {
@@ -455,6 +495,7 @@ namespace KSRes
                         generator.SetPoint = newGenerator.SetPoint;
                         generator.BasePoint = newGenerator.BasePoint;
                         generator.GeneratorType = newGenerator.GeneratorType;
+                        generator.GroupID = newGenerator.GroupID;
                         edit = true;
                         //break;
                     }
@@ -466,10 +507,29 @@ namespace KSRes
                 }
             }
 
-            //service.Generators.AddRange(addGenerator);
-            foreach (Generator generator in addGenerator)
+            service.Generators.AddRange(addGenerator);
+        }
+
+        private void RemoveGenerator(List<Generator> generators, LKResService service)
+        {
+            List<Generator> removeList = new List<Generator>();
+            if (generators != null)
             {
-                service.Generators.Add(generator);
+                foreach (Generator removesite in generators)
+                {
+                    foreach (Generator generator in service.Generators)
+                    {
+                        if (removesite.MRID.Equals(generator.MRID))
+                        {
+                            removeList.Add(generator);
+                        }
+                    }
+                }
+
+                foreach (Generator generator in removeList)
+                {
+                    service.Generators.Remove(generator);
+                }
             }
         }
 
@@ -520,7 +580,6 @@ namespace KSRes
         }
         
         #endregion add/update/remove
-        #endregion Update
         
         private void CheckIfLKServiceIsAlive()
         {
@@ -551,29 +610,6 @@ namespace KSRes
                 serviceForRemove.Clear();
 
                 Thread.Sleep(1000);
-            }
-        }
-
-        private void RemoveGenerator(List<Generator> generators, LKResService service)
-        {
-            List<Generator> removeList = new List<Generator>();
-            if (generators != null)
-            {
-                foreach (Generator removesite in generators)
-                {
-                    foreach (Generator generator in service.Generators)
-                    {
-                        if (removesite.MRID.Equals(generator.MRID))
-                        {
-                            removeList.Add(generator);
-                        }
-                    }
-                }
-
-                foreach (Generator generator in removeList)
-                {
-                    service.Generators.Remove(generator);
-                }
             }
         }
 

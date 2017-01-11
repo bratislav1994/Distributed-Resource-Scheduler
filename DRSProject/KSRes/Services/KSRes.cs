@@ -126,42 +126,14 @@ namespace KSRes.Services
 
         public SortedDictionary<DateTime, double> GetProductionHistory(double days)
         {
-            SortedDictionary<DateTime, double> retVal = new SortedDictionary<DateTime, double>();
-            DateTime condition = DateTime.Now.AddMinutes(0 - days);
-            Dictionary<DateTime, List<double>> temp = new Dictionary<DateTime, List<double>>();
-            List<ProductionHistory> productions = LocalDB.Instance.ReadProductions(condition);
-
-            foreach (ProductionHistory production in productions)
+            if( days < 0)
             {
-                if (!temp.ContainsKey(production.TimeStamp))
-                {
-                    temp[production.TimeStamp] = new List<double>();
-                }
-
-                temp[production.TimeStamp].Add(production.ActivePower);
-            }
-            
-            foreach (KeyValuePair<DateTime, List<double>> kp in temp)
-            {
-                retVal.Add(kp.Key, SumActivePower(kp.Value));
+                throw new ArgumentOutOfRangeException();
             }
 
-            return retVal;
+            return controler.GetProductionHistory(days);
         }
 
-        private double SumActivePower(List<double> list)
-        {
-            double retVal = 0;
-            if (list != null)
-            {
-                foreach (double d in list)
-                {
-                    retVal += d;
-                }
-            }
-
-            return retVal;
-        }
         #endregion IKSForClient
     }
 }
