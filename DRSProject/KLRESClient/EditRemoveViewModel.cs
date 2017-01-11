@@ -924,7 +924,10 @@ namespace KLRESClient
         /// </summary>
         private void ExitCommandAction()
         {
+            this.SelectedItem = null;
+            this.DataHistory = null;
             this.showWin.Close();
+            this.ShowDataCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
