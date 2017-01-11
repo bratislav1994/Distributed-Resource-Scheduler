@@ -4,17 +4,16 @@
 // by company ( http://www.example.com )
 // </copyright>
 
-using System.Linq;
-using System.Text;
-
 namespace KLRESClient
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq;
+    using System.Text;
     using System.Windows;
     using CommonLibrary;
-    using Prism.Commands;
-    using System;    
+    using Prism.Commands; 
     
     /// <summary>
     /// View model for edit and remove actions
@@ -27,11 +26,6 @@ namespace KLRESClient
         /// exit command
         /// </summary>
         private DelegateCommand clickExitCommand;
-
-        /// <summary>
-        /// Use for closing ShowDataWindow
-        /// </summary>
-        private ShowDataWindow showWindow = null;
 
         /// <summary>
         /// Represent text box for showing measurement
@@ -217,6 +211,11 @@ namespace KLRESClient
         /// show command
         /// </summary>
         private DelegateCommand showDataCommand;
+
+        /// <summary>
+        /// data history which will be shown on chart
+        /// </summary>
+        private SortedDictionary<DateTime, double> dataHistory;
 
         #endregion
 
@@ -702,23 +701,25 @@ namespace KLRESClient
                 this.RaisePropertyChanged("EditTxbVisibility");
             }
         }
-
-        private SortedDictionary<DateTime, double> dataHistory;
+        
+        /// <summary>
+        /// Gets or sets data history
+        /// </summary>
         public SortedDictionary<DateTime, double> DataHistory
         {
             get
             {
-                if (dataHistory == null)
+                if (this.dataHistory == null)
                 {
-                    dataHistory = new SortedDictionary<DateTime, double>();
+                    this.dataHistory = new SortedDictionary<DateTime, double>();
                 }
 
-                return dataHistory;
+                return this.dataHistory;
             }
 
             set
             {
-                dataHistory = value;
+                this.dataHistory = value;
             }
         }
 
@@ -735,6 +736,26 @@ namespace KLRESClient
             set
             {
                 this.allHistory = value;
+            }
+        }
+
+        #endregion
+
+        #region EditCommandProperty
+
+        /// <summary>
+        /// Gets information if edit command can be executed
+        /// </summary>
+        public DelegateCommand EditCommand
+        {
+            get
+            {
+                if (this.editCommand == null)
+                {
+                    this.editCommand = new DelegateCommand(this.EditCommandAction, this.CanExecuteEditCommand);
+                }
+
+                return this.editCommand;
             }
         }
 
@@ -839,7 +860,11 @@ namespace KLRESClient
         }
 
         #endregion
-
+        
+        /// <summary>
+        /// Validation for click on show data button
+        /// </summary>
+        /// <returns>true if generator is selected and generator has measurement, otherwise false</returns>
         private bool CanShowDataExecute()
         {
             if (this.SelectedItem == null)
@@ -850,6 +875,9 @@ namespace KLRESClient
             return this.SelectedItem.HasMeasurment;
         }
 
+        /// <summary>
+        /// Show command execution
+        /// </summary>
         private void ShowCommandAction()
         {
             try
@@ -900,24 +928,8 @@ namespace KLRESClient
         }
 
         #endregion
-
+        
         #region EditCommand
-
-        /// <summary>
-        /// Gets information if edit command can be executed
-        /// </summary>
-        public DelegateCommand EditCommand
-        {
-            get
-            {
-                if (this.editCommand == null)
-                {
-                    this.editCommand = new DelegateCommand(this.EditCommandAction, this.CanExecuteEditCommand);
-                }
-
-                return this.editCommand;
-            }
-        }
 
         /// <summary>
         /// Validation for edit input fields

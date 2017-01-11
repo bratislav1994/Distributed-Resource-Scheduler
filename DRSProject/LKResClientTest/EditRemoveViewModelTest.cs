@@ -6,6 +6,8 @@
 
 namespace LKResClientTest
 {
+    using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Threading;
     using System.Windows;
@@ -14,10 +16,10 @@ namespace LKResClientTest
     using KLRESClient;
     using NSubstitute;
     using NUnit.Framework;
-    using System.Collections.Generic;
-    using System;    /// <summary>
-                     /// Used for testing EditRemoveViewModel
-                     /// </summary>
+
+    /// <summary>
+    /// Used for testing EditRemoveViewModel
+    /// </summary>
     public class EditRemoveViewModelTest
     {
         /// <summary>
@@ -663,6 +665,9 @@ namespace LKResClientTest
             Assert.AreEqual(this.viewModel.AllHistory, history);
         }
 
+        /// <summary>
+        /// Test method about execution show data
+        /// </summary>
         [Test]
         public void ShowDataExecuteTest()
         {
@@ -670,7 +675,7 @@ namespace LKResClientTest
             this.client.Groups.Clear();
             this.client.Sites.Clear();
 
-            Generator g = new Generator() { MRID = "1", GroupID = "2", HasMeasurment = true};
+            Generator g = new Generator() { MRID = "1", GroupID = "2", HasMeasurment = true };
             Group group = new Group() { MRID = "2", SiteID = "3" };
             Site site = new Site() { MRID = "3" };
 
