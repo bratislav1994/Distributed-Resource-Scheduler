@@ -394,7 +394,23 @@ namespace LKRes.Services
 
         public void SendBasePoint(Dictionary<int, List<Point>> basePoints)
         {
-            throw new NotImplementedException();
+            int i = 0;
+            do
+            {
+                Thread.Sleep(60000);
+                List<Point> points = basePoints[i];
+                foreach (Point g in points)
+                {
+                    Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(g.GeneratorID)).FirstOrDefault();
+                    if (generator != null)
+                    {
+                        generator.BasePoint = g.Power;
+                        DataBase.Instance.UpdateGenerator(generator);
+                    }
+                }
+
+                i++;
+            } while (i < 180);
         }
     }
 }
