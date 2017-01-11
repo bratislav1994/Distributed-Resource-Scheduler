@@ -588,17 +588,22 @@ namespace KSResTest
             p3.ActivePower = 1;
             p3.TimeStamp = time;
 
-            ILocalDB mock = Substitute.For<ILocalDB>();
-            mock.ReadProductions(Arg.Any<DateTime>()).Returns(new List<ProductionHistory>());
-            LocalDB.Instance = mock;
-            SortedDictionary<DateTime, double> retVal = controler.GetProductionHistory(9999);
+            List<ProductionHistory> test = new List<ProductionHistory>();
+            test.Add(p);
+            test.Add(p2);
+            test.Add(p3);
+            test.Add(p1);
 
-            DateTime condition = DateTime.Now.AddMinutes(0 - 9999);
-            List<ProductionHistory> productions = KSRes.Access.LocalDB.Instance.ReadProductions(condition);
+            ILocalDB mock = Substitute.For<ILocalDB>();
+            mock.ReadProductions(Arg.Any<DateTime>()).Returns(test);
+            LocalDB.Instance = mock;
+            SortedDictionary<DateTime, double> retVal = controler.GetProductionHistory(5);
+
+            DateTime condition = DateTime.Now.AddMinutes(0 - 5);
 
             foreach(DateTime key in retVal.Keys)
             {
-                List<ProductionHistory> temp = productions.Where(x => x.TimeStamp.Equals(condition)).ToList();
+                List<ProductionHistory> temp = test.Where(x => x.TimeStamp.Equals(key)).ToList();
                 double sum = 0;
                 foreach(ProductionHistory productionHistory in temp)
                 {
