@@ -7,12 +7,13 @@
 namespace KLRESClient
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using CommonLibrary;
     using CommonLibrary.Interfaces;
-    using System.Collections.Generic;
+
     /// <summary>
     /// Implement interface ILKClient
     /// </summary>
@@ -493,9 +494,14 @@ namespace KLRESClient
 
         #region GetMeasurement
 
-        public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
+        /// <summary>
+        /// Call service to get measurement for selected generator
+        /// </summary>
+        /// <param name="id">id from selected generator</param>
+        /// <returns>all measurement for selected generator</returns>
+        public SortedDictionary<DateTime, double> GetMeasurements(string id)
         {
-            return this.Proxy.GetMeasurements(mRID);
+            return this.Proxy.GetMeasurements(id);
         }
 
         #endregion

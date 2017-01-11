@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿//-----------------------------------------------------------------------
+// <copyright file="App.xaml.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>App.xaml.cs class.</summary>
+//-----------------------------------------------------------------------
 
 namespace KSRESClient
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Data;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows;
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>

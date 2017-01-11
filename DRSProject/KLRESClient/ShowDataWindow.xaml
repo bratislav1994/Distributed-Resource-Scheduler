@@ -13,7 +13,7 @@
     
         
         mc:Ignorable="d"
-        Title="ShowDataWindow" Height="525" Width="450">
+        Title="ShowDataWindow" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" Height="525" Width="450">
     <Window.Resources>
         <PointCollection x:Key="PCol1">1,10 2,30 3,20 4,40</PointCollection>
         <PointCollection x:Key="PCol2">1,40 2,20 3,30 4,10</PointCollection>
@@ -77,6 +77,66 @@
             </Setter>
         </Style>
 
+            <Style BasedOn="{StaticResource {x:Type TextBlock}}"
+       TargetType="TextBlock"
+       x:Key="TitleText">
+                <Setter Property="FontSize" Value="40"/>
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStop Offset="0.0" Color="#90DDDD" />
+                                <GradientStop Offset="1.0" Color="#5BFFFF" />
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Color x:Key="WindowBackgroundColor">#FF2D2D30</Color>
+            <Color x:Key="HighlightColor">#EB2F2F</Color>
+            <Color x:Key="BlueColor">#7C0000</Color>
+            <Color x:Key="ForegroundColor">#222222</Color>
+
+            <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}"/>
+            <SolidColorBrush x:Key="HighlightColorBrush" Color="{StaticResource HighlightColor}"/>
+            <SolidColorBrush x:Key="BlueColorBrush" Color="{StaticResource BlueColor}"/>
+            <SolidColorBrush x:Key="ForegroundColorBrush" Color="{StaticResource ForegroundColor}"/>
+
+            <Style x:Key="WindowButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundColorBrush}" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Padding" Value="1" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ContentPresenter x:Name="contentPresenter"
+                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                          Margin="{TemplateBinding Padding}"
+                          RecognizesAccessKey="True" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource HighlightColorBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource BlueColorBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter TargetName="contentPresenter" Property="Opacity" Value=".5" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
     </Window.Resources>
 
     <Grid Background="#FF5B6570">
@@ -106,6 +166,9 @@
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  ScrollViewer.CanContentScroll="True"/>
         <Label x:Name="label1" Background="#FFD4D7DB" Content="All data history from selected generator" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top"/>
+
+        <Button x:Name="button" Command="{Binding EditRemoveWindowVM.ExitCommand}" Content="X" FontSize="20" FontWeight="UltraBold" HorizontalAlignment="Left" Style="{StaticResource ResourceKey=WindowButtonStyle}" Margin="420,0,0,0" Height="30" Width="30" VerticalAlignment="Top"/>
+
 
     </Grid>
 </Window>
