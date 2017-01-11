@@ -14,13 +14,24 @@ namespace KLRESClient
     using System.Windows;
     using CommonLibrary;
     using Prism.Commands;
-    using System.Windows.Controls.DataVisualization.Charting;
-    using System;    /// <summary>
-                     /// View model for edit and remove actions
-                     /// </summary>
+    using System;    
+    
+    /// <summary>
+    /// View model for edit and remove actions
+    /// </summary>
     public class EditRemoveViewModel : INotifyPropertyChanged
     {
         #region fields
+
+        /// <summary>
+        /// exit command
+        /// </summary>
+        private DelegateCommand clickExitCommand;
+
+        /// <summary>
+        /// Use for closing ShowDataWindow
+        /// </summary>
+        private ShowDataWindow showWindow = null;
 
         /// <summary>
         /// Represent text box for showing measurement
@@ -235,6 +246,22 @@ namespace KLRESClient
         /// The source of the event
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets show window
+        /// </summary>
+        public ShowDataWindow ShowWin
+        {
+            get
+            {
+                return this.showWin;
+            }
+
+            set
+            {
+                this.showWin = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets instance of client
@@ -773,6 +800,26 @@ namespace KLRESClient
 
         #endregion
 
+        #region ExitCommandProperty
+
+        /// <summary>
+        /// Gets information if exit command can be executed
+        /// </summary>
+        public DelegateCommand ExitCommand
+        {
+            get
+            {
+                if (this.clickExitCommand == null)
+                {
+                    this.clickExitCommand = new DelegateCommand(this.ExitCommandAction);
+                }
+
+                return this.clickExitCommand;
+            }
+        }
+
+        #endregion
+
         #region ShowCommandProperty
 
         /// <summary>
@@ -809,8 +856,8 @@ namespace KLRESClient
             {
                 SortedDictionary<DateTime, double> temp = this.Client.GetMeasurements(this.SelectedItem.MRID);
                 StringBuilder allHist = new StringBuilder();
-
-                if (temp.ToList().Count > 10)
+                
+                if (temp.Count > 10)
                 {
                     List<KeyValuePair<DateTime, double>> lastFive = temp.ToList().GetRange(temp.Count - 10, 10);
 
@@ -841,7 +888,19 @@ namespace KLRESClient
             this.SelectedItem = null;
             this.DataHistory = null;
         }
-        
+
+        #region exit
+
+        /// <summary>
+        /// Close main window
+        /// </summary>
+        private void ExitCommandAction()
+        {
+            this.showWin.Close();
+        }
+
+        #endregion
+
         #region EditCommand
 
         /// <summary>

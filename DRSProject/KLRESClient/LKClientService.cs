@@ -493,6 +493,11 @@ namespace KLRESClient
 
         #region GetMeasurement
 
+        /// <summary>
+        /// Call service to get measurement for selected generator
+        /// </summary>
+        /// <param name="mRID">id from selected generator</param>
+        /// <returns>all measurement for selected generator</returns>
         public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
         {
             return this.Proxy.GetMeasurements(mRID);

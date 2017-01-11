@@ -14,10 +14,10 @@ namespace LKResClientTest
     using KLRESClient;
     using NSubstitute;
     using NUnit.Framework;
-
-    /// <summary>
-    /// Used for testing EditRemoveViewModel
-    /// </summary>
+    using System.Collections.Generic;
+    using System;    /// <summary>
+                     /// Used for testing EditRemoveViewModel
+                     /// </summary>
     public class EditRemoveViewModelTest
     {
         /// <summary>
@@ -636,6 +636,107 @@ namespace LKResClientTest
             this.viewModel.EditName = "test";
             this.viewModel.EditPMin = "10";
             this.viewModel.EditPMax = "20";
+        }
+
+        /// <summary>
+        /// Test for data history property
+        /// </summary>
+        [Test]
+        public void DataHistoryTest()
+        {
+            SortedDictionary<DateTime, double> history = new SortedDictionary<DateTime, double>();
+            this.viewModel.DataHistory = history;
+            Assert.AreEqual(this.viewModel.DataHistory, history);
+            this.viewModel.DataHistory = null;
+            history.Add(DateTime.Now, 20);
+            Assert.AreNotEqual(this.viewModel.DataHistory, history);
+        }
+
+        /// <summary>
+        /// Test for all history property
+        /// </summary>
+        [Test]
+        public void AllHistoryTest()
+        {
+            string history = "test";
+            this.viewModel.AllHistory = history;
+            Assert.AreEqual(this.viewModel.AllHistory, history);
+        }
+
+        [Test]
+        public void ShowDataExecuteTest()
+        {
+            this.client.Generators.Clear();
+            this.client.Groups.Clear();
+            this.client.Sites.Clear();
+
+            Generator g = new Generator() { MRID = "1", GroupID = "2", HasMeasurment = true};
+            Group group = new Group() { MRID = "2", SiteID = "3" };
+            Site site = new Site() { MRID = "3" };
+
+            this.client.Generators.Add(g);
+            this.client.Groups.Add(group);
+            this.client.Sites.Add(site);
+            this.viewModel.SelectedItem = g;
+            
+            Assert.IsTrue(this.viewModel.ShowDataCommand.CanExecute());
+            this.viewModel.ShowDataCommand.Execute();
+
+            ILKForClient mockService = Substitute.For<ILKForClient>();
+            SortedDictionary<DateTime, double> temp = new SortedDictionary<DateTime, double>();
+            temp.Add(DateTime.Now, 20);
+
+            mockService.GetMeasurements("1").Returns(temp);
+            this.viewModel.Client.Proxy = mockService;
+            this.viewModel.SelectedItem = g;
+            this.viewModel.ShowDataCommand.Execute();
+
+            this.viewModel.SelectedItem = g;
+
+            for (int i = 0; i < 10; i++)
+            {
+                temp.Add(DateTime.Now.AddDays(1 * i), i * 10);
+            }
+
+            var t = new Thread(() =>
+            {
+                this.viewModel.ShowWin = new ShowDataWindow(this.client.DataContext);
+                this.viewModel.ShowDataCommand.Execute();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+        }
+
+        /// <summary>
+        /// test for exit command
+        /// </summary>
+        [Test]
+        public void ExitCommandTest()
+        {
+            Assert.AreNotEqual(null, this.viewModel.ExitCommand);
+        }
+
+        /// <summary>
+        /// test for exit command action, when variable execute is true
+        /// </summary>
+        [Test]
+        public void ExitCommandAction()
+        {
+            ShowDataWindow window = null;
+
+            var t = new Thread(() =>
+            {
+                window = new ShowDataWindow(this.client.DataContext);
+                Assert.AreNotEqual(window, this.viewModel.ShowWin);
+                this.viewModel.ShowWin = new ShowDataWindow(this.client.DataContext);
+                this.viewModel.ExitCommand.Execute();
+            });
+
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
         }
     }
 }
