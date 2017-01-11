@@ -4,23 +4,28 @@
 // by company ( http://www.example.com )
 // </copyright>
 
-using System.Linq;
-using System.Text;
-
 namespace KLRESClient
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq;
+    using System.Text;
     using System.Windows;
     using CommonLibrary;
-    using Prism.Commands;
-    using System.Windows.Controls.DataVisualization.Charting;
-    using System;    /// <summary>
-                     /// View model for edit and remove actions
-                     /// </summary>
+    using Prism.Commands; 
+    
+    /// <summary>
+    /// View model for edit and remove actions
+    /// </summary>
     public class EditRemoveViewModel : INotifyPropertyChanged
     {
         #region fields
+
+        /// <summary>
+        /// exit command
+        /// </summary>
+        private DelegateCommand clickExitCommand;
 
         /// <summary>
         /// Represent text box for showing measurement
@@ -207,6 +212,11 @@ namespace KLRESClient
         /// </summary>
         private DelegateCommand showDataCommand;
 
+        /// <summary>
+        /// data history which will be shown on chart
+        /// </summary>
+        private SortedDictionary<DateTime, double> dataHistory;
+
         #endregion
 
         #region constructor
@@ -235,6 +245,22 @@ namespace KLRESClient
         /// The source of the event
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets show window
+        /// </summary>
+        public ShowDataWindow ShowWin
+        {
+            get
+            {
+                return this.showWin;
+            }
+
+            set
+            {
+                this.showWin = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets instance of client
@@ -675,23 +701,25 @@ namespace KLRESClient
                 this.RaisePropertyChanged("EditTxbVisibility");
             }
         }
-
-        private SortedDictionary<DateTime, double> dataHistory;
+        
+        /// <summary>
+        /// Gets or sets data history
+        /// </summary>
         public SortedDictionary<DateTime, double> DataHistory
         {
             get
             {
-                if (dataHistory == null)
+                if (this.dataHistory == null)
                 {
-                    dataHistory = new SortedDictionary<DateTime, double>();
+                    this.dataHistory = new SortedDictionary<DateTime, double>();
                 }
 
-                return dataHistory;
+                return this.dataHistory;
             }
 
             set
             {
-                dataHistory = value;
+                this.dataHistory = value;
             }
         }
 
@@ -708,6 +736,26 @@ namespace KLRESClient
             set
             {
                 this.allHistory = value;
+            }
+        }
+
+        #endregion
+
+        #region EditCommandProperty
+
+        /// <summary>
+        /// Gets information if edit command can be executed
+        /// </summary>
+        public DelegateCommand EditCommand
+        {
+            get
+            {
+                if (this.editCommand == null)
+                {
+                    this.editCommand = new DelegateCommand(this.EditCommandAction, this.CanExecuteEditCommand);
+                }
+
+                return this.editCommand;
             }
         }
 
@@ -773,6 +821,26 @@ namespace KLRESClient
 
         #endregion
 
+        #region ExitCommandProperty
+
+        /// <summary>
+        /// Gets information if exit command can be executed
+        /// </summary>
+        public DelegateCommand ExitCommand
+        {
+            get
+            {
+                if (this.clickExitCommand == null)
+                {
+                    this.clickExitCommand = new DelegateCommand(this.ExitCommandAction);
+                }
+
+                return this.clickExitCommand;
+            }
+        }
+
+        #endregion
+
         #region ShowCommandProperty
 
         /// <summary>
@@ -792,7 +860,11 @@ namespace KLRESClient
         }
 
         #endregion
-
+        
+        /// <summary>
+        /// Validation for click on show data button
+        /// </summary>
+        /// <returns>true if generator is selected and generator has measurement, otherwise false</returns>
         private bool CanShowDataExecute()
         {
             if (this.SelectedItem == null)
@@ -803,14 +875,17 @@ namespace KLRESClient
             return this.SelectedItem.HasMeasurment;
         }
 
+        /// <summary>
+        /// Show command execution
+        /// </summary>
         private void ShowCommandAction()
         {
             try
             {
                 SortedDictionary<DateTime, double> temp = this.Client.GetMeasurements(this.SelectedItem.MRID);
                 StringBuilder allHist = new StringBuilder();
-
-                if (temp.ToList().Count > 10)
+                
+                if (temp.Count > 10)
                 {
                     List<KeyValuePair<DateTime, double>> lastFive = temp.ToList().GetRange(temp.Count - 10, 10);
 
@@ -841,24 +916,20 @@ namespace KLRESClient
             this.SelectedItem = null;
             this.DataHistory = null;
         }
-        
-        #region EditCommand
+
+        #region exit
 
         /// <summary>
-        /// Gets information if edit command can be executed
+        /// Close main window
         /// </summary>
-        public DelegateCommand EditCommand
+        private void ExitCommandAction()
         {
-            get
-            {
-                if (this.editCommand == null)
-                {
-                    this.editCommand = new DelegateCommand(this.EditCommandAction, this.CanExecuteEditCommand);
-                }
-
-                return this.editCommand;
-            }
+            this.showWin.Close();
         }
+
+        #endregion
+        
+        #region EditCommand
 
         /// <summary>
         /// Validation for edit input fields

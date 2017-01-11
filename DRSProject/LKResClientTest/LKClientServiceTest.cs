@@ -7,6 +7,7 @@
 namespace LKResClientTest
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
     using CommonLibrary;
@@ -383,6 +384,32 @@ namespace LKResClientTest
             this.client.Generators = new BindingList<Generator>();
             Assert.IsNotNull(receivedEvents);
             Assert.AreEqual("Generators", receivedEvents);
+        }
+
+        /// <summary>
+        /// test method for get measurement which will be displayed
+        /// </summary>
+        [Test]
+        public void GetMeasurementTest()
+        {
+            this.client.Generators.Clear();
+            this.client.Groups.Clear();
+            this.client.Sites.Clear();
+
+            Generator g = new Generator() { MRID = "1", GroupID = "2" };
+            Group group = new Group() { MRID = "2", SiteID = "3" };
+            Site site = new Site() { MRID = "3" };
+
+            this.client.Generators.Add(g);
+            this.client.Groups.Add(group);
+            this.client.Sites.Add(site);
+
+            this.mockService = Substitute.For<ILKForClient>();
+            SortedDictionary<DateTime, double> temp = new SortedDictionary<DateTime, double>();
+
+            this.mockService.GetMeasurements("1").Returns(temp);
+            this.client.Proxy = this.mockService;
+            this.client.GetMeasurements("1");
         }
     }
 }

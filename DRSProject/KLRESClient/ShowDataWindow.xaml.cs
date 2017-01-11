@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-// <copyright file="ShowDataWindow.xaml.cs" company="company">
+﻿// <copyright file="ShowDataWindow.xaml.cs" company="company">
 // product
 // Copyright (c) 2016
 // by company ( http://www.example.com )
@@ -15,14 +6,20 @@ using System.Windows.Documents;
 
 namespace KLRESClient
 {
+    using System.Windows;
+
     /// <summary>
-    /// Interaction logic for ShowDataWindow.xaml
+    /// Interaction logic for ShowDataWindow
     /// </summary>
     public partial class ShowDataWindow : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShowDataWindow" /> class.
+        /// </summary>
+        /// <param name="dataContext">data context</param>
         public ShowDataWindow(object dataContext)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DataContext = dataContext;
         }
     }
