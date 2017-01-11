@@ -1,15 +1,22 @@
-﻿using CommonLibrary.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommonLibrary;
-using System.ComponentModel;
-using System.ServiceModel;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Client.cs" company="CompanyName">
+//     Company copyright tag.
+// </copyright>
+// <summary>Class that implements callback interface for WCF communication.</summary>
+//-----------------------------------------------------------------------
 
 namespace KSRESClient
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.ServiceModel;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CommonLibrary;
+    using CommonLibrary.Interfaces;
+
     public class Client : IKSClient
     {
         private BindingList<Generator> generatorsForShowing;
@@ -27,6 +34,8 @@ namespace KSRESClient
             currentUser = null;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        
         public IKSForClient Proxy
         {
             get
@@ -41,22 +50,13 @@ namespace KSRESClient
             }
         }
 
-        private void GetAllUser()
-        {
-            allUsers = Proxy.GetAllSystem();
-            foreach (LKResService user in allUsers)
-            {
-                userNames.Add(user.Username);
-            }
-            FillListForShowing();
-        }
-
         public BindingList<Generator> Generators
         {
             get
             {
                 return generatorsForShowing;
             }
+
             set
             {
                 generatorsForShowing = value;
@@ -77,8 +77,7 @@ namespace KSRESClient
                 RaisePropertyChanged("Usernames");
             }
         }
-
-
+        
         public void Update(UpdateInfo update, string username)
         {
             if (update == null)
@@ -96,6 +95,7 @@ namespace KSRESClient
                         allUsers.Add(client);
                         userNames.Add(client.Username);
                     }
+
                     foreach (LKResService user in allUsers)
                     {
                         if (user.Username.Equals(username))
@@ -120,9 +120,11 @@ namespace KSRESClient
                                     user.Sites.Add(s);
                                 }
                             }
+
                             FillListForShowing();
                         }
                     }
+
                     break;
                 case UpdateType.REMOVE:
                     List<Generator> removingListGen = new List<Generator>();
@@ -146,6 +148,7 @@ namespace KSRESClient
                             {
                                 removeUser.Generators.Remove(g2);
                             }
+
                             removingListGen.Clear();
                         }
 
@@ -165,6 +168,7 @@ namespace KSRESClient
                                 {
                                     removeUser.Gropus.Remove(g2);
                                 }
+
                                 removingListGr.Clear();
                             }
                         }
@@ -185,11 +189,14 @@ namespace KSRESClient
                                 {
                                     removeUser.Sites.Remove(g2);
                                 }
+
                                 removingListS.Clear();
                             }
                         }
+
                         FillListForShowing();
                     }
+
                     break;
                 case UpdateType.UPDATE:
                     Dictionary<int, Generator> tempListGen = new Dictionary<int, Generator>();
@@ -213,8 +220,7 @@ namespace KSRESClient
                         {
                             updateUser.Generators[kp.Key] = kp.Value;
                         }
-
-
+                        
                         if (update.Groups != null)
                         {
                             foreach (Group group in update.Groups)
@@ -233,32 +239,11 @@ namespace KSRESClient
 
                         FillListForShowing();
                     }
+
                     break;
             }
         }
-
-        private void FillListForShowing()
-        {
-            generatorsForShowing.Clear();
-            if (currentUser == null)
-            {
-                foreach (LKResService user in allUsers)
-                {
-                    foreach (Generator g in user.Generators)
-                    {
-                        generatorsForShowing.Add(g);
-                    }
-                }
-            }
-            else
-            {
-                foreach(Generator g in currentUser.Generators)
-                {
-                    generatorsForShowing.Add(g);
-                }
-            }
-        }
-
+        
         public void SetCurrentUser(string username)
         {
             if (username.Equals("All"))
@@ -276,6 +261,7 @@ namespace KSRESClient
                     }
                 }
             }
+
             FillListForShowing();
         }
 
@@ -301,16 +287,17 @@ namespace KSRESClient
 
         public Generator GetGeneratorFromId(string mrId)
         {
-            foreach(LKResService user in allUsers)
+            foreach (LKResService user in allUsers)
             {
-                foreach(Generator g in user.Generators)
+                foreach (Generator g in user.Generators)
                 {
-                    if(g.MRID.Equals(mrId))
+                    if (g.MRID.Equals(mrId))
                     {
                         return g;
                     }
                 }
             }
+
             return null;
         }
 
@@ -326,6 +313,7 @@ namespace KSRESClient
                     }
                 }
             }
+
             return null;
         }
 
@@ -341,6 +329,7 @@ namespace KSRESClient
                     }
                 }
             }
+
             return null;
         }
 
@@ -356,6 +345,7 @@ namespace KSRESClient
                     }
                 }
             }
+
             return null;
         }
 
@@ -368,14 +358,47 @@ namespace KSRESClient
         {
             SortedDictionary<DateTime, double> retVal = new SortedDictionary<DateTime, double>();
             retVal = Proxy.GetLoadForecast();
-            if(retVal == null)
+
+            if (retVal == null)
             {
                 throw new Exception("Not enaugh data.");
             }
+
             return Proxy.GetLoadForecast();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void FillListForShowing()
+        {
+            generatorsForShowing.Clear();
+            if (currentUser == null)
+            {
+                foreach (LKResService user in allUsers)
+                {
+                    foreach (Generator g in user.Generators)
+                    {
+                        generatorsForShowing.Add(g);
+                    }
+                }
+            }
+            else
+            {
+                foreach (Generator g in currentUser.Generators)
+                {
+                    generatorsForShowing.Add(g);
+                }
+            }
+        }
+
+        private void GetAllUser()
+        {
+            allUsers = Proxy.GetAllSystem();
+            foreach (LKResService user in allUsers)
+            {
+                userNames.Add(user.Username);
+            }
+
+            FillListForShowing();
+        }
 
         private void RaisePropertyChanged(string propName)
         {
