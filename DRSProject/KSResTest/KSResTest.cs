@@ -111,9 +111,7 @@ namespace KSResTest
         {
             List<Point> setPoints = new List<Point>();
 
-            
-            PrivateObject obj = new PrivateObject(service);
-            List<Point> retVal = (List<Point>)obj.Invoke("P", requiredAP);
+            List<Point> retVal = KSRes.Services.KSRes.Controler.P(requiredAP, false);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "2");
             NUnit.Framework.Assert.AreEqual(retVal[0].Power, 15);
@@ -125,9 +123,7 @@ namespace KSResTest
         {
             List<Point> setPoints = new List<Point>();
 
-
-            PrivateObject obj = new PrivateObject(service);
-            List<Point> retVal = (List<Point>)obj.Invoke("P", requiredAP);
+            List<Point> retVal = KSRes.Services.KSRes.Controler.P(requiredAP, false);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "2");
             NUnit.Framework.Assert.AreEqual(retVal[0].Power, 20);
@@ -142,9 +138,7 @@ namespace KSResTest
         {
             List<Point> setPoints = new List<Point>();
 
-
-            PrivateObject obj = new PrivateObject(service);
-            List<Point> retVal = (List<Point>)obj.Invoke("P", requiredAP);
+            List<Point> retVal = KSRes.Services.KSRes.Controler.P(requiredAP, false);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "2");
             NUnit.Framework.Assert.AreEqual(retVal[0].Power, 20);
@@ -179,8 +173,7 @@ namespace KSResTest
 
             KSRes.Services.KSRes.Controler.Update("sessionId", update1);
 
-            PrivateObject obj = new PrivateObject(service);
-            List<Point> retVal = (List<Point>)obj.Invoke("P", requiredAP);
+            List<Point> retVal = KSRes.Services.KSRes.Controler.P(requiredAP, false);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "6");
             NUnit.Framework.Assert.AreEqual(retVal[0].Power, 16);
@@ -192,9 +185,7 @@ namespace KSResTest
         {
             List<Point> setPoints = new List<Point>();
 
-
-            PrivateObject obj = new PrivateObject(service);
-            List<Point> retVal = (List<Point>)obj.Invoke("P", requiredAP);
+            List<Point> retVal = KSRes.Services.KSRes.Controler.P(requiredAP, false);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "6");
             NUnit.Framework.Assert.AreEqual(retVal[0].Power, 20);
@@ -209,9 +200,7 @@ namespace KSResTest
         {
             List<Point> setPoints = new List<Point>();
 
-
-            PrivateObject obj = new PrivateObject(service);
-            List<Point> retVal = (List<Point>)obj.Invoke("P", requiredAP);
+            List<Point> retVal = KSRes.Services.KSRes.Controler.P(requiredAP, false);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "4");
             NUnit.Framework.Assert.AreEqual(retVal[0].Power, 0);
@@ -231,19 +220,11 @@ namespace KSResTest
         public void IssueCommand_07(double requiredAP)
         {
             List<Point> setPoints = new List<Point>();
-            //UpdateInfo update1 = new UpdateInfo();
-            //update1.UpdateType = UpdateType.UPDATE;
 
             generator1.ActivePower = 5;
             generator2.ActivePower = 10;
 
-            //update1.Generators.Add(generator1);
-            //update1.Generators.Add(generator2);
-
-            //KSRes.Services.KSRes.DynamicDataBase.Update("sessionID", update1);
-
-            PrivateObject obj = new PrivateObject(service);
-            List<Point> retVal = (List<Point>)obj.Invoke("P", requiredAP);
+            List<Point> retVal = KSRes.Services.KSRes.Controler.P(requiredAP, false);
 
             NUnit.Framework.Assert.AreEqual(retVal[0].GeneratorID, "4");
             NUnit.Framework.Assert.AreEqual(retVal[0].Power, 0);
@@ -260,6 +241,5 @@ namespace KSResTest
             NUnit.Framework.Assert.AreEqual(retVal[4].GeneratorID, "6");
             NUnit.Framework.Assert.AreEqual(retVal[4].Power, 8);
         }
-
     }
 }

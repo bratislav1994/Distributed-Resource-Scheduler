@@ -1,5 +1,8 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">VISIBLE_FILES</s:String>
+	<s:Boolean x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=620DDE8D4CA247AF95EE52939B41AACA/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=620DDE8D4CA247AF95EE52939B41AACA/ProductVersion/@EntryValue">2016.3.1</s:String>
+	<s:String x:Key="/Default/CoverageSessionsPersistenceManagerSettings/SessionPersistentData/=620DDE8D4CA247AF95EE52939B41AACA/SnapshotLocation/@EntryValue">C:\Users\Gogic\AppData\Local\Temp\ssm.Toxyhig.tmp</s:String>
 	
 	
 	

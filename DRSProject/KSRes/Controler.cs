@@ -81,7 +81,7 @@ namespace KSRes
             LastValuesLC = new SortedDictionary<DateTime, double>();
 
             Thread CheckIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
-            //CheckIfLKServiceIsAliveThread.Start();
+            CheckIfLKServiceIsAliveThread.Start();
 
             Thread ProcessingDataThread = new Thread(() => ProcessingData());
             ProcessingDataThread.Start();
@@ -261,6 +261,7 @@ namespace KSRes
                         generator.SetPoint = newGenerator.SetPoint;
                         generator.BasePoint = newGenerator.BasePoint;
                         generator.GeneratorType = newGenerator.GeneratorType;
+                        generator.GroupID = newGenerator.GroupID;
 
                         edit = true;
                         //break;
