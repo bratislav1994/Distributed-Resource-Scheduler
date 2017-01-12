@@ -92,6 +92,7 @@ namespace KSRes.Services
         {
             OperationContext context = OperationContext.Current;
             IKSClient client = context.GetCallbackChannel<IKSClient>();
+
             Controler.Clients.Add(client);
 
             return Controler.ActiveService;

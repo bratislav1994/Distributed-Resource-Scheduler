@@ -27,9 +27,9 @@ namespace KSRes
         private Dictionary<string, string> registrationService = null;
         private List<LKResService> activeService = null;
         private List<IKSClient> clients = null;
-        private List<ProductionHistory> multiThreadBuffer = null;
-        private object lockObj = null;
-        private object lockObj1 = new object();
+        private Dictionary<string, List<ProductionHistory>> multiThreadBuffer = null;
+        private object lockForMultiThreadBuffer = null;
+        private object lockForActiveService = null;
         private ILoadForecast proxy;
         private SortedDictionary<DateTime, double> lastValuesLC = null;
 
@@ -39,8 +39,9 @@ namespace KSRes
             registrationService = new Dictionary<string, string>();
             activeService = new List<LKResService>();
             clients = new List<IKSClient>();
-            lockObj = new object();
-            multiThreadBuffer = new List<ProductionHistory>();
+            lockForMultiThreadBuffer = new object();
+            lockForActiveService = new object();
+            multiThreadBuffer = new Dictionary<string, List<ProductionHistory>>();
 
             ChannelFactory<ILoadForecast> factory = new ChannelFactory<ILoadForecast>(
                 new NetTcpBinding(),
@@ -48,7 +49,7 @@ namespace KSRes
             proxy = factory.CreateChannel();
 
             LastValuesLC = new SortedDictionary<DateTime, double>();
-
+            
             Thread checkIfLKServiceIsAliveThread = new Thread(() => CheckIfLKServiceIsAlive());
             checkIfLKServiceIsAliveThread.Start();
 
@@ -77,7 +78,7 @@ namespace KSRes
             }
         }
 
-        public List<ProductionHistory> MultiThreadBuffer
+        public Dictionary<string, List<ProductionHistory>> MultiThreadBuffer
         {
             get
             {
@@ -102,31 +103,24 @@ namespace KSRes
         #region GetService
         public LKResService GetServiceSID(string sessionID)
         {
-            foreach (LKResService service in ActiveService)
+            LKResService service = null;
+            lock (lockForActiveService)
             {
-                if (service.SessionID.Equals(sessionID))
-                {
-                    return service;
-                }
+                service = ActiveService.Where(o => o.SessionID.Equals(sessionID)).FirstOrDefault();
             }
 
-            return null;
+            return service;
         }
 
         public LKResService GetService(string username)
         {
-            LKResService retVal = null;
-
-            foreach (LKResService service in ActiveService)
+            LKResService service = null;
+            lock (lockForActiveService)
             {
-                if (service.Username.Equals(username))
-                {
-                    retVal = service;
-                    break;
-                }
+                service = ActiveService.Where(o => o.Username.Equals(username)).FirstOrDefault();
             }
 
-            return retVal;
+            return service;
         }
         #endregion GetService
 
@@ -139,15 +133,12 @@ namespace KSRes
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
-            lock (lockObj)
+            LocalDB.Instance.Registration(new Data.RegisteredService()
             {
-                byte[] hash = HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes(password));
-                LocalDB.Instance.Registration(new Data.RegisteredService()
-                {
-                    Username = username,
-                    Password = hash
-                });
-            }
+                Username = username,
+                Password = HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes(password))
+            });
+            Console.WriteLine("{0}\t User: {1} is registered.", DateTime.Now, username);
         }
 
         public void Login(string username, string password, ILKRes channel, string sessionID)
@@ -162,19 +153,16 @@ namespace KSRes
                     throw new FaultException<IdentificationExeption>(ex);
                 }
 
-                foreach (LKResService service1 in activeService)
+                lock (lockForActiveService)
                 {
-                    if (service1.Username.Equals(username))
+                    if (ActiveService.Where(o => o.Username.Equals(username)).FirstOrDefault() != null)
                     {
                         IdentificationExeption ex = new IdentificationExeption("Service is already logged in.");
                         throw new FaultException<IdentificationExeption>(ex);
                     }
-                }
-                
-                LKResService newService = new LKResService(username, channel, sessionID);
-                lock (lockObj)
-                {
-                    Console.WriteLine("User: {0} je logovan.", username);
+
+                    LKResService newService = new LKResService(username, channel, sessionID);
+                    Console.WriteLine("{0}\t User: {1} is logged in.", DateTime.Now, username);
                     ActiveService.Add(newService);
                 }
             }
@@ -186,6 +174,7 @@ namespace KSRes
         }
         #endregion Registration/Login
 
+        #region Update
         public void Update(string sessionID, UpdateInfo update)
         {
             LKResService serviceUp = GetServiceSID(sessionID);
@@ -218,7 +207,9 @@ namespace KSRes
 
             NotifyClients(update, serviceUp.Username);
         }
+        #endregion Update
 
+        #region ProcessingMeasurement
         public void SendMeasurement(string username, Dictionary<string, double> measurments)
         {
             UpdateInfo update = new UpdateInfo();
@@ -232,19 +223,24 @@ namespace KSRes
             {
                 ProductionHistory productionHistory;
 
-                lock (lockObj1)
+                lock (lockForMultiThreadBuffer)
                 {
-                    if ((productionHistory = multiThreadBuffer.Where(x => x.MRID.Equals(mrid)).FirstOrDefault()) == null)
+                    if (!multiThreadBuffer.ContainsKey(mrid))
                     {
                         productionHistory = new ProductionHistory();
                         productionHistory.Username = username;
                         productionHistory.MRID = mrid;
                         productionHistory.ActivePower = measurments[mrid];
-                        MultiThreadBuffer.Add(productionHistory);
+                        MultiThreadBuffer[mrid] = new List<ProductionHistory>();
+                        MultiThreadBuffer[mrid].Add(productionHistory);
                     }
                     else
                     {
+                        productionHistory = new ProductionHistory();
+                        productionHistory.Username = username;
+                        productionHistory.MRID = mrid;
                         productionHistory.ActivePower = measurments[mrid];
+                        MultiThreadBuffer[mrid].Add(productionHistory);
                     }
                 }
 
@@ -254,10 +250,7 @@ namespace KSRes
                 update.Generators.Add(generator);
             }
 
-            foreach (IKSClient client in clients)
-            {
-                client.Update(update, username);
-            }
+            NotifyClients(update, username);
         }
 
         public void ProcessingData()
@@ -266,18 +259,24 @@ namespace KSRes
             {
                 Thread.Sleep(10000);
                 DateTime time = DateTime.Now;
-                foreach (ProductionHistory productionHistory in MultiThreadBuffer)
+                lock (lockForMultiThreadBuffer)
                 {
-                    productionHistory.TimeStamp = time;
-                    LocalDB.Instance.AddProductions(productionHistory);
-                }
+                    foreach (KeyValuePair<string, List<ProductionHistory>> kp in MultiThreadBuffer)
+                    {
+                        ProductionHistory p = new ProductionHistory();
+                        p.TimeStamp = time;
+                        p.MRID = kp.Key;
+                        p.Username = kp.Value.First().Username;
+                        p.ActivePower = AverageAP(kp.Value);
+                        LocalDB.Instance.AddProductions(p);
+                    }
 
-                lock (lockObj1)
-                {
                     MultiThreadBuffer.Clear();
                 }
             }
         }
+        
+        #endregion ProcessingMeasurement
 
         #region DeployActivePower
         public List<Point> P(double requiredAP, bool isBasePoint)
@@ -286,9 +285,12 @@ namespace KSRes
             List<Point> points = new List<Point>();
             List<Generator> generators = new List<Generator>();
 
-            foreach (LKResService client in ActiveService)
+            lock (lockForActiveService)
             {
-                generators.AddRange(client.Generators);
+                foreach (LKResService client in ActiveService)
+                {
+                    generators.AddRange(client.Generators);
+                }
             }
 
             double activePower = 0;
@@ -386,20 +388,23 @@ namespace KSRes
         {
             if (points.Count != 0)
             {
-                foreach (LKResService service in ActiveService)
+                lock (lockForActiveService)
                 {
-                    List<Point> temp = new List<Point>();
-                    foreach (Generator generator in service.Generators)
+                    foreach (LKResService service in ActiveService)
                     {
-                        Point point = points.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
-
-                        if (point != null)
+                        List<Point> temp = new List<Point>();
+                        foreach (Generator generator in service.Generators)
                         {
-                            temp.Add(point);
-                        }
-                    }
+                            Point point = points.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
 
-                    service.Client.SendSetPoint(temp);
+                            if (point != null)
+                            {
+                                temp.Add(point);
+                            }
+                        }
+
+                        service.Client.SendSetPoint(temp);
+                    }
                 }
             }
         }
@@ -446,7 +451,7 @@ namespace KSRes
         }
         #endregion GetProductionHistory
 
-        #region private add/update/remove
+        #region Private add/update/remove
         private void AddOrUpdateSite(List<Site> sites, LKResService service)
         {
             if (sites != null)
@@ -601,7 +606,7 @@ namespace KSRes
 
                 foreach (LKResService user in serviceForRemove)
                 {
-                    lock (lockObj)
+                    lock (lockForActiveService)
                     {
                         ActiveService.Remove(user);
                     }
@@ -630,10 +635,7 @@ namespace KSRes
 
             foreach (IKSClient client in notActiveClient)
             {
-                lock (lockObj)
-                {
-                    clients.Remove(client);
-                }
+                clients.Remove(client);
             }
         }
 
@@ -667,24 +669,29 @@ namespace KSRes
                 {
                     List<Point> basePoints = P(value, true);
 
-                    foreach (LKResService service in ActiveService)
+                    lock (lockForActiveService)
                     {
-                        List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
-
-                        if (!deployment.ContainsKey(service.Username))
+                        foreach (LKResService service in ActiveService)
                         {
-                            deployment.Add(service.Username, new Dictionary<int, List<Point>>());
+                            List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
+
+                            if (!deployment.ContainsKey(service.Username))
+                            {
+                                deployment.Add(service.Username, new Dictionary<int, List<Point>>());
+                            }
+
+                            deployment[service.Username].Add(minute, temp);
                         }
-
-                        deployment[service.Username].Add(minute, temp);
                     }
-
                     minute++;
                 }
 
-                foreach (LKResService service in ActiveService)
+                lock (lockForActiveService)
                 {
-                    service.Client.SendBasePoint(deployment[service.Username]);
+                    foreach (LKResService service in ActiveService)
+                    {
+                        service.Client.SendBasePoint(deployment[service.Username]);
+                    }
                 }
             }
         }
@@ -711,6 +718,19 @@ namespace KSRes
             }
 
             return temp;
+        }
+
+        private double AverageAP(List<ProductionHistory> list)
+        {
+            double retVal = 0;
+            foreach (ProductionHistory p in list)
+            {
+                retVal += p.ActivePower;
+            }
+
+            retVal /= list.Count;
+
+            return retVal;
         }
         #endregion LoadForecast
     }
