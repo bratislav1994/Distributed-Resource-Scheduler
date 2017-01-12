@@ -485,7 +485,7 @@ namespace KSRESClient
         private bool CanExecuteDrawHistoryCommand()
         {
             Double nod = 0;
-            return !string.IsNullOrEmpty(NumberOfDays) && Double.TryParse(NumberOfDays, out nod);
+            return !string.IsNullOrEmpty(NumberOfDays) && Double.TryParse(NumberOfDays, out nod) && nod > 0;
         }
 
         private void DrawHistoryCommandAction()

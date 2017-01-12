@@ -24,6 +24,11 @@ namespace LoadForecast
                 double x3 = data.AddMinutes(i).ToOADate();
                 double y3 = LinearFunction(x1, x2, y1, y2, x3);
 
+                if( y3 < 0 )
+                {
+                    y3 = 0;
+                }
+
                 retVal.Add(DateTime.FromOADate(x3), y3);
             }
 
@@ -32,7 +37,6 @@ namespace LoadForecast
 
         private double LinearFunction(double x1, double x2, double y1, double y2, double x3)
         {
-            Random rnd = new Random();
             double k = (y2 - y1) / (x2 - x1);
             double n = y1 - (k * x1);
             

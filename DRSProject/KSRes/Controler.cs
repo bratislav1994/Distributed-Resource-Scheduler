@@ -719,6 +719,7 @@ namespace KSRes
 
             return temp;
         }
+        #endregion LoadForecast
 
         private double AverageAP(List<ProductionHistory> list)
         {
@@ -732,6 +733,5 @@ namespace KSRes
 
             return retVal;
         }
-        #endregion LoadForecast
     }
 }

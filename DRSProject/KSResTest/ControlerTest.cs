@@ -704,5 +704,16 @@ namespace KSResTest
             controler.LastValuesLC = new SortedDictionary<DateTime, double>();
             Assert.AreNotEqual(null, controler.LastValuesLC);
         }
+
+        [Test]
+        public void AverageAPTest()
+        {
+            List<ProductionHistory> list = new List<ProductionHistory>();
+            list.Add(new ProductionHistory() { ActivePower = 5 });
+            list.Add(new ProductionHistory() { ActivePower = 15 });
+
+            Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject pObject = new Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject(controler);
+            Assert.AreEqual(10, pObject.Invoke("AverageAP", list));
+        }
     }
 }

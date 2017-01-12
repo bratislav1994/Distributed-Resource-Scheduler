@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivePowerGenerator", "Act
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivePowerGeneratorTest", "ActivePowerGeneratorTest\ActivePowerGeneratorTest.csproj", "{EE259D55-0B9F-46AD-A3BA-D16450A42B46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadForecastTest", "LoadForecastTest\LoadForecastTest.csproj", "{EB9424DB-E9D6-4840-BDE2-872F0129935D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{EE259D55-0B9F-46AD-A3BA-D16450A42B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE259D55-0B9F-46AD-A3BA-D16450A42B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE259D55-0B9F-46AD-A3BA-D16450A42B46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB9424DB-E9D6-4840-BDE2-872F0129935D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB9424DB-E9D6-4840-BDE2-872F0129935D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB9424DB-E9D6-4840-BDE2-872F0129935D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB9424DB-E9D6-4840-BDE2-872F0129935D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,5 +99,6 @@ Global
 		{197D7CA5-1C1E-44C6-9B06-6832C31E86E8} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 		{1975673E-B715-42F5-A5D9-9969CC33C615} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 		{EE259D55-0B9F-46AD-A3BA-D16450A42B46} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
+		{EB9424DB-E9D6-4840-BDE2-872F0129935D} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 	EndGlobalSection
 EndGlobal
