@@ -334,21 +334,21 @@ namespace KSResTest
 
             Assert.DoesNotThrow(() => controler.SendMeasurement("user", measurement));
 
-            Assert.AreEqual("1", controler.MultiThreadBuffer[0].MRID);
-            Assert.AreEqual(3, controler.MultiThreadBuffer[0].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[0].Username);
+            Assert.AreEqual("1", controler.MultiThreadBuffer["1"][0].MRID);
+            Assert.AreEqual(3, controler.MultiThreadBuffer["1"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["1"][0].Username);
 
-            Assert.AreEqual("3", controler.MultiThreadBuffer[1].MRID);
-            Assert.AreEqual(33, controler.MultiThreadBuffer[1].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[1].Username);
+            Assert.AreEqual("3", controler.MultiThreadBuffer["3"][0].MRID);
+            Assert.AreEqual(33, controler.MultiThreadBuffer["3"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["3"][0].Username);
 
-            Assert.AreEqual("2", controler.MultiThreadBuffer[2].MRID);
-            Assert.AreEqual(333, controler.MultiThreadBuffer[2].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[2].Username);
+            Assert.AreEqual("2", controler.MultiThreadBuffer["2"][0].MRID);
+            Assert.AreEqual(333, controler.MultiThreadBuffer["2"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["2"][0].Username);
 
-            Assert.AreEqual("9", controler.MultiThreadBuffer[3].MRID);
-            Assert.AreEqual(3333, controler.MultiThreadBuffer[3].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[3].Username);
+            Assert.AreEqual("9", controler.MultiThreadBuffer["9"][0].MRID);
+            Assert.AreEqual(3333, controler.MultiThreadBuffer["9"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["9"][0].Username);
 
             measurement["1"] = 4;
             measurement["3"] = 44;
@@ -357,21 +357,29 @@ namespace KSResTest
 
             Assert.DoesNotThrow(() => controler.SendMeasurement("user", measurement));
 
-            Assert.AreEqual("1", controler.MultiThreadBuffer[0].MRID);
-            Assert.AreEqual(4, controler.MultiThreadBuffer[0].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[0].Username);
+            Assert.AreEqual("1", controler.MultiThreadBuffer["1"][1].MRID);
+            Assert.AreEqual(4, controler.MultiThreadBuffer["1"][1].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["1"][1].Username);
 
-            Assert.AreEqual("3", controler.MultiThreadBuffer[1].MRID);
-            Assert.AreEqual(44, controler.MultiThreadBuffer[1].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[1].Username);
+            Assert.AreEqual("1", controler.MultiThreadBuffer["1"][0].MRID);
+            Assert.AreEqual(3, controler.MultiThreadBuffer["1"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["1"][0].Username);
 
-            Assert.AreEqual("2", controler.MultiThreadBuffer[2].MRID);
-            Assert.AreEqual(333, controler.MultiThreadBuffer[2].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[2].Username);
+            Assert.AreEqual("3", controler.MultiThreadBuffer["3"][1].MRID);
+            Assert.AreEqual(44, controler.MultiThreadBuffer["3"][1].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["3"][1].Username);
 
-            Assert.AreEqual("9", controler.MultiThreadBuffer[3].MRID);
-            Assert.AreEqual(3333, controler.MultiThreadBuffer[3].ActivePower);
-            Assert.AreEqual("user", controler.MultiThreadBuffer[3].Username);
+            Assert.AreEqual("3", controler.MultiThreadBuffer["3"][0].MRID);
+            Assert.AreEqual(33, controler.MultiThreadBuffer["3"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["3"][0].Username);
+
+            Assert.AreEqual("2", controler.MultiThreadBuffer["2"][0].MRID);
+            Assert.AreEqual(333, controler.MultiThreadBuffer["2"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["2"][0].Username);
+
+            Assert.AreEqual("9", controler.MultiThreadBuffer["9"][0].MRID);
+            Assert.AreEqual(3333, controler.MultiThreadBuffer["9"][0].ActivePower);
+            Assert.AreEqual("user", controler.MultiThreadBuffer["9"][0].Username);
         }
 
         [Test]

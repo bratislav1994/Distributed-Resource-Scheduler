@@ -77,6 +77,10 @@
       <Project>{3FD8A3BC-79C9-4662-BF7E-D82593717466}</Project>
       <Name>KSRESClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KSRes\KSRes.csproj">
+      <Project>{26BCBD69-6B8E-4A70-A877-9FB3055328DA}</Project>
+      <Name>KSRes</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

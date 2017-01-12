@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using CommonLibrary.Interfaces;
+using KSRes.Data;
 using KSRESClient;
 using NSubstitute;
 using NUnit.Framework;
@@ -188,6 +189,50 @@ namespace KRESClientTest
         }
 
         [Test]
+        public void NumberOfDaysPropTest()
+        {
+            string numberOfDays = "5";
+            model.NumberOfDays = numberOfDays;
+
+            Assert.AreEqual(numberOfDays, model.NumberOfDays);
+            Assert.AreNotEqual(null, model.NumberOfDays);
+        }
+
+        [Test]
+        public void ProductionHistoryPropTest()
+        {
+            model.ProductionHistory = null;
+
+            SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
+            for(int i = 0;i < 5; i++)
+            {
+                test.Add(DateTime.Now.AddMinutes(i), i);
+            }
+            model.ProductionHistory = test;
+
+            Assert.AreEqual(test.Count, model.ProductionHistory.Count);
+
+            Assert.IsTrue(test.SequenceEqual(model.ProductionHistory));
+        }
+
+        [Test]
+        public void LoadForecastPropTest()
+        {
+            model.LoadForecast = null;
+
+            SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
+            for (int i = 0; i < 5; i++)
+            {
+                test.Add(DateTime.Now.AddMinutes(i), i);
+            }
+            model.LoadForecast = test;
+
+            Assert.AreEqual(test.Count, model.LoadForecast.Count);
+
+            Assert.IsTrue(test.SequenceEqual(model.LoadForecast));
+        }
+
+        [Test]
         public void PropertyChanged()
         {
             string receivedEvents = null;
@@ -276,15 +321,96 @@ namespace KRESClientTest
             client.Proxy = mockService;
             model.Client = client;
             model.NeededPower = String.Empty;
-            model.CbSelectedItem = String.Empty;
 
             Assert.IsFalse(this.model.IssueCommand.CanExecute());
 
             model.NeededPower = "5"; 
-            model.CbSelectedItem = "temp";
 
             Assert.IsTrue(this.model.IssueCommand.CanExecute());
             Assert.DoesNotThrow(() => this.model.IssueCommand.Execute());
-        } 
+        }
+
+        [Test]
+        public void DrawHistoryCommandTest()
+        {
+            mockService = Substitute.For<IKSForClient>();
+            mockService.GetAllSystem().Returns(new List<LKResService>());
+
+            client = new Client();
+            client.Proxy = mockService;
+            model.Client = client;
+            model.NumberOfDays = String.Empty;
+
+            Assert.IsFalse(this.model.DrawHistoryCommand.CanExecute());
+
+            model.NumberOfDays = "-5";
+
+            Assert.IsFalse(this.model.DrawHistoryCommand.CanExecute());
+            this.model.DrawHistoryCommand.Execute();
+
+            model.NumberOfDays = "error";
+
+            Assert.IsFalse(this.model.DrawHistoryCommand.CanExecute());
+            this.model.DrawHistoryCommand.Execute();
+
+            model.NumberOfDays = "5";
+
+            Assert.IsTrue(this.model.DrawHistoryCommand.CanExecute());
+            this.model.DrawHistoryCommand.Execute();
+        }
+
+        [Test]
+        public void ClearDrawHistoryCommandTest()
+        {
+            mockService = Substitute.For<IKSForClient>();
+            mockService.GetAllSystem().Returns(new List<LKResService>());
+            SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                test.Add(DateTime.Now.AddMinutes(i), i);
+            }
+
+            client = new Client();
+            client.Proxy = mockService;
+            model.Client = client;
+            model.Client.Proxy.GetProductionHistory(Arg.Any<double>()).Returns(test);
+            model.NumberOfDays = "5";
+            
+            model.DrawHistoryCommand.Execute();
+
+            Assert.AreNotEqual(0,model.ProductionHistory.Count);
+
+            model.ClearHistoryCommand.Execute();
+
+            Assert.AreEqual(0, model.ProductionHistory.Count);
+        }
+
+        [Test]
+        public void DrawLoadForeCastCommandTest()
+        {
+            mockService = Substitute.For<IKSForClient>();
+            mockService.GetAllSystem().Returns(new List<LKResService>());
+
+            SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                test.Add(DateTime.Now.AddMinutes(i), i);
+            }
+
+            client = new Client();
+            client.Proxy = mockService;
+            model.Client = client;
+            model.Client.Proxy.GetLoadForecast().Returns(test);
+            
+            this.model.DrawLoadForecastCommand.Execute();
+
+            Assert.IsTrue(test.SequenceEqual(model.LoadForecast));
+
+            model.ClearLoadForecast.Execute();
+
+            Assert.AreEqual(0, model.LoadForecast.Count);
+        }
     }
 }
