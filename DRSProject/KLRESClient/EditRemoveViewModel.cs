@@ -860,7 +860,9 @@ namespace KLRESClient
         }
 
         #endregion
-        
+
+        #region ShowCommandAction
+
         /// <summary>
         /// Validation for click on show data button
         /// </summary>
@@ -918,6 +920,8 @@ namespace KLRESClient
                 this.RemoveCommand.RaiseCanExecuteChanged();
             }
         }
+
+        #endregion
 
         #region exit
 
