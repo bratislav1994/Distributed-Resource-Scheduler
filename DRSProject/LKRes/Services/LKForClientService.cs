@@ -95,7 +95,7 @@ namespace LKRes.Services
             Thread changePowerThread = new Thread(ChangeActivePower);
             changePowerThread.Start();
 
-            Thread basePointThread = new Thread(() => SendBasePoint(basepointBuffer));
+            Thread basePointThread = new Thread(() => WriteBasePoint());
             basePointThread.Start();
         }
 
@@ -121,6 +121,7 @@ namespace LKRes.Services
             while (true)
             {
                 Thread.Sleep(4000);
+                updateInfo = DataBase.Instance.ReadData();
                 Random randGenerator = new Random();
 
                 Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
@@ -447,6 +448,7 @@ namespace LKRes.Services
                         {
                             generator.BasePoint = g.Power;
                             DataBase.Instance.UpdateGenerator(generator);
+                            kSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
                         }
                     }
 
