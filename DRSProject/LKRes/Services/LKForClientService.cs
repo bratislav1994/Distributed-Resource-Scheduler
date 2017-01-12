@@ -24,9 +24,21 @@ namespace LKRes.Services
     [CallbackBehavior(UseSynchronizationContext = false)]
     public class LKForClientService : ILKForClient, ILKRes
     {
+        /// <summary>
+        /// It represents the minutes in which will be set basepoint
+        /// </summary>
         private int basepointCounter = 0;
-        Dictionary<int, List<Point>> basepointBuffer = new Dictionary<int, List<Point>>();
+        
+        /// <summary>
+        /// Multuthread buffer for storage basepoints 
+        /// </summary>
+        private Dictionary<int, List<Point>> basepointBuffer = new Dictionary<int, List<Point>>();
+        
+        /// <summary>
+        /// proxy for ActivePowerGenerator service
+        /// </summary>
         private IActivePowerManagement proxy = null;
+        
         /// <summary>
         /// Property to lock a shared resource
         /// </summary>
@@ -108,22 +120,31 @@ namespace LKRes.Services
             set { updateInfo = value; }
         }
 
+        public int BasePointCounter
+        {
+            get
+            {
+                return basepointCounter;
+            }
+            set
+            {
+                basepointCounter = value;
+            }
+        }
+
+        public Dictionary<int, List<Point>> BasepointBuffer
+        {
+            get
+            {
+                return basepointBuffer;
+            }
+            set
+            {
+                basepointBuffer = value;
+            }
+        }
         public LKForClientService()
         {
-
-            //DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-            //    new InstanceContext(this),
-            //    new NetTcpBinding(),
-            //    new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
-
-            //kSResProxy = ksResFactory.CreateChannel();
-
-            //ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
-            //   new NetTcpBinding(),
-            //    new EndpointAddress("net.tcp://localhost:3030/IActivePowerManagement"));
-
-            //proxy = factory.CreateChannel();
-
             Thread changePowerThread = new Thread(ChangeActivePower);
             changePowerThread.Start();
 
@@ -222,7 +243,6 @@ namespace LKRes.Services
                 Console.WriteLine("Error: {0}", ex.Message);
                 throw ex;
             }
-
         }
 
         public void Update(UpdateInfo update)
@@ -401,7 +421,7 @@ namespace LKRes.Services
                 lock (lockObj)
                 {
                     basepointBuffer = basePoints;
-                    basepointCounter = 0;
+                    BasePointCounter = 0;
                 }
             }
         }
@@ -410,24 +430,29 @@ namespace LKRes.Services
         {
             while (true)
             {
-                if (basepointCounter < basepointBuffer.Count)
-                {
-                    List<Point> points = basepointBuffer[basepointCounter];
-                    foreach (Point g in points)
-                    {
-                        Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(g.GeneratorID)).FirstOrDefault();
-                        if (generator != null)
-                        {
-                            generator.BasePoint = g.Power;
-                            DataBase.Instance.UpdateGenerator(generator);
-                            KSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
-                        }
-                    }
-
-                    basepointCounter++;
-                }
+                ProcessingBasePoint();
 
                 Thread.Sleep(60000);
+            }
+        }
+
+        public void ProcessingBasePoint()
+        {
+            if (BasePointCounter < BasepointBuffer.Count)
+            {
+                List<Point> points = BasepointBuffer[BasePointCounter];
+                foreach (Point g in points)
+                {
+                    Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(g.GeneratorID)).FirstOrDefault();
+                    if (generator != null)
+                    {
+                        generator.BasePoint = g.Power;
+                        DataBase.Instance.UpdateGenerator(generator);
+                        KSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
+                    }
+                }
+
+                BasePointCounter++;
             }
         }
     }
