@@ -52,9 +52,41 @@ namespace LKRes.Services
         /// </summary>
         private Thread notifyThread = null;
 
+        public IActivePowerManagement Proxy
+        {
+            get
+            {
+                if (this.proxy == null)
+                {
+                    ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
+               new NetTcpBinding(),
+                new EndpointAddress("net.tcp://localhost:3030/IActivePowerManagement"));
+
+                    proxy = factory.CreateChannel();
+                }
+
+                return this.proxy;
+            }
+
+            set { this.proxy = value; }
+        }
+
         public IKSRes KSResProxy
         {
-            get { return kSResProxy; }
+            get
+            {
+                if (this.kSResProxy == null)
+                {
+                    DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
+                new InstanceContext(this),
+                new NetTcpBinding(),
+                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+
+                    kSResProxy = ksResFactory.CreateChannel();
+                }
+
+                return kSResProxy;
+            }
             set { kSResProxy = value; }
         }
 
@@ -79,18 +111,18 @@ namespace LKRes.Services
         public LKForClientService()
         {
 
-            DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-                new InstanceContext(this),
-                new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+            //DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
+            //    new InstanceContext(this),
+            //    new NetTcpBinding(),
+            //    new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
-            kSResProxy = ksResFactory.CreateChannel();
+            //kSResProxy = ksResFactory.CreateChannel();
 
-            ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
-               new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:3030/IActivePowerManagement"));
+            //ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
+            //   new NetTcpBinding(),
+            //    new EndpointAddress("net.tcp://localhost:3030/IActivePowerManagement"));
 
-            proxy = factory.CreateChannel();
+            //proxy = factory.CreateChannel();
 
             Thread changePowerThread = new Thread(ChangeActivePower);
             changePowerThread.Start();
@@ -140,7 +172,7 @@ namespace LKRes.Services
                 {
                     lock (LockObj)
                     {
-                        kSResProxy.SendMeasurement(powerForProcessing);
+                        KSResProxy.SendMeasurement(powerForProcessing);
                     }
                 }
 
@@ -170,7 +202,7 @@ namespace LKRes.Services
         {
             try
             {
-                kSResProxy.Login(username, password);
+                KSResProxy.Login(username, password);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -183,7 +215,7 @@ namespace LKRes.Services
         {
             try
             {
-                kSResProxy.Registration(username, password);
+                KSResProxy.Registration(username, password);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -214,7 +246,7 @@ namespace LKRes.Services
             }
             updateInfo = DataBase.Instance.ReadData();
 
-            kSResProxy.Update(update);
+            KSResProxy.Update(update);
             notifyThread = new Thread(() => NotifyClient(update));
             notifyThread.Start();
         }
@@ -388,7 +420,7 @@ namespace LKRes.Services
                         {
                             generator.BasePoint = g.Power;
                             DataBase.Instance.UpdateGenerator(generator);
-                            kSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
+                            KSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
                         }
                     }
 
