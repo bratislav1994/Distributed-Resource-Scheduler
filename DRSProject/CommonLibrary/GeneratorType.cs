@@ -23,5 +23,5 @@ namespace CommonLibrary
         SOLAR,
         MICROHYDRO
 
-    }//end GeneratorType
+    }
 }

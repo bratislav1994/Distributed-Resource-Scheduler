@@ -20,5 +20,5 @@ namespace CommonLibrary
         LOCAL,
         REMOTE
 
-    }//end WorkingMode
+    }
 }

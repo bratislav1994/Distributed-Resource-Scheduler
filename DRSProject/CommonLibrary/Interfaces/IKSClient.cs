@@ -17,11 +17,7 @@ namespace CommonLibrary.Interfaces
     [ServiceContract]
     public interface IKSClient
     {
-        /// 
-        /// <param name="update"></param>
-        /// <param name="username"></param>
         [OperationContract]
         void Update(UpdateInfo update, string username);
-	}//end IKSClient
-
-}//end namespace InterfaceForDuplex
+    }
+}

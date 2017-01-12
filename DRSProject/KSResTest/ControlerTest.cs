@@ -114,7 +114,7 @@ namespace KSResTest
             update.Generators.Add(generator5);
             update.Generators.Add(generator6);
             LKResService temp2 = new LKResService("user3", mockService, "sessionId3");
-            controler.ActiveService.Add(temp2); ;
+            controler.ActiveService.Add(temp2); 
             controler.Update("sessionId3", update);
         }
 
@@ -125,7 +125,8 @@ namespace KSResTest
         public void ConstructorTest()
         {
             Controler controlerTest = null;
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() => 
+            {
                 controlerTest = new Controler();
             });
 
@@ -565,7 +566,7 @@ namespace KSResTest
                 .Do(x => retVal = x.Arg<List<Point>>());
 
             LKResService service = new LKResService("test", foo, "sessionTest");
-            service.Generators.Add(new Generator() { MRID = "test1"});
+            service.Generators.Add(new Generator() { MRID = "test1" });
             service.Generators.Add(new Generator() { MRID = "test2" });
             controler.ActiveService.Add(service);
 
@@ -613,11 +614,11 @@ namespace KSResTest
 
             DateTime condition = DateTime.Now.AddMinutes(0 - 5);
 
-            foreach(DateTime key in retVal.Keys)
+            foreach (DateTime key in retVal.Keys)
             {
                 List<ProductionHistory> temp = test.Where(x => x.TimeStamp.Equals(key)).ToList();
                 double sum = 0;
-                foreach(ProductionHistory productionHistory in temp)
+                foreach (ProductionHistory productionHistory in temp)
                 {
                     sum += productionHistory.ActivePower;
                 }

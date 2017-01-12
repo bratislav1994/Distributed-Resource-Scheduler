@@ -502,7 +502,7 @@ namespace KSRes
                         generator.GeneratorType = newGenerator.GeneratorType;
                         generator.GroupID = newGenerator.GroupID;
                         edit = true;
-                        //break;
+                        break;
                     }
                 }
 
@@ -683,6 +683,7 @@ namespace KSRes
                             deployment[service.Username].Add(minute, temp);
                         }
                     }
+
                     minute++;
                 }
 
@@ -696,7 +697,6 @@ namespace KSRes
             }
         }
     
-
         private List<Point> GetAllBasePointsForUser(string username, List<Point> basePoints)
         {
             List<Point> temp = new List<Point>();

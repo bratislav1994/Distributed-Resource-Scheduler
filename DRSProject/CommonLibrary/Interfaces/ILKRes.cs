@@ -21,11 +21,9 @@ namespace CommonLibrary.Interfaces
         string Ping();
 
         [OperationContract]
-        /// 
-        /// <param name="setPoints"></param>
         void SendSetPoint(List<Point> setPoints);
 
         [OperationContract]
         void SendBasePoint(Dictionary<int, List<Point>> basePoints);
-    }//end ILKRes
+    }
 }

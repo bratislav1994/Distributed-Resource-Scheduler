@@ -18,27 +18,17 @@ namespace CommonLibrary.Interfaces
     [ServiceContract(CallbackContract = typeof(ILKRes))]
     public interface IKSRes
     {
-        /// 
-        /// <param name="username"></param>
-        /// <param name="password"></param>
         [OperationContract]
         [FaultContract(typeof(IdentificationExeption))]
         void Login(string username, string password);
-
-        /// 
-        /// <param name="username"></param>
-        /// <param name="password"></param>
+        
         [OperationContract]
         [FaultContract(typeof(IdentificationExeption))]
         void Registration(string username, string password);
-
-        /// 
-        /// <param name="measurments"></param>
+        
         [OperationContract]
         void SendMeasurement(Dictionary<string, double> measurments);
-
-        /// 
-        /// <param name="update"></param>
+        
         [OperationContract]
         void Update(UpdateInfo update);
     }

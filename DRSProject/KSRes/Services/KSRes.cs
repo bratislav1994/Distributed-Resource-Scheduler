@@ -127,7 +127,7 @@ namespace KSRes.Services
 
         public SortedDictionary<DateTime, double> GetProductionHistory(double days)
         {
-            if( days < 0)
+            if (days < 0)
             {
                 throw new ArgumentOutOfRangeException();
             }

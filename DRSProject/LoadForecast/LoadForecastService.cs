@@ -11,7 +11,7 @@ namespace LoadForecast
     {
         public SortedDictionary<DateTime, double> LoadForecast(List<KeyValuePair<DateTime, double>> consumptions)
         {
-            SortedDictionary < DateTime, double> retVal = new SortedDictionary<DateTime, double>();
+            SortedDictionary<DateTime, double> retVal = new SortedDictionary<DateTime, double>();
             double x1 = consumptions[0].Key.ToOADate();
             double y1 = consumptions[0].Value;
             double x2 = consumptions[1].Key.ToOADate();
@@ -19,12 +19,12 @@ namespace LoadForecast
 
             DateTime data = DateTime.Now;
 
-            for(double i = 0; i < 180; i++)
+            for (double i = 0; i < 180; i++)
             {
                 double x3 = data.AddMinutes(i).ToOADate();
                 double y3 = LinearFunction(x1, x2, y1, y2, x3);
 
-                if( y3 < 0 )
+                if (y3 < 0)
                 {
                     y3 = 0;
                 }

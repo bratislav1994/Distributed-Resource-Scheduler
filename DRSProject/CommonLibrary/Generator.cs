@@ -132,8 +132,8 @@ namespace CommonLibrary
             set
             {
                 setPoint = value;
-                Thread SetActivePowerThread = new Thread(SetActivePower);
-                SetActivePowerThread.Start();
+                Thread setActivePowerThread = new Thread(SetActivePower);
+                setActivePowerThread.Start();
                 RaisePropertyChanged("setPoint");
             }
         }
@@ -200,5 +200,5 @@ namespace CommonLibrary
                 this.ActivePower = this.setPoint;
             }
         }
-    }//end Generator
+    }
 }

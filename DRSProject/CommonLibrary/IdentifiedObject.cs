@@ -65,5 +65,5 @@ namespace CommonLibrary
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-    }//end IdentifiedObject
+    }
 }

@@ -117,5 +117,5 @@ namespace CommonLibrary
                 sessionID = value;
             }
         }
-    }//end LKResService
+    }
 }

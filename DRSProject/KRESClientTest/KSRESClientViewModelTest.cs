@@ -204,7 +204,7 @@ namespace KRESClientTest
             model.ProductionHistory = null;
 
             SortedDictionary<DateTime, double> test = new SortedDictionary<DateTime, double>();
-            for(int i = 0;i < 5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 test.Add(DateTime.Now.AddMinutes(i), i);
             }
@@ -379,7 +379,7 @@ namespace KRESClientTest
             
             model.DrawHistoryCommand.Execute();
 
-            Assert.AreNotEqual(0,model.ProductionHistory.Count);
+            Assert.AreNotEqual(0, model.ProductionHistory.Count);
 
             model.ClearHistoryCommand.Execute();
 

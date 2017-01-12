@@ -16,10 +16,9 @@ using System.ServiceModel;
 namespace CommonLibrary.Interfaces
 {
     [ServiceContract]
-    public interface ILKClient  {
+    public interface ILKClient
+    {
         [OperationContract]
-		/// <param name="update"></param>
-		void Update(UpdateInfo update);
-	}//end ILKClient
-
-}//end namespace InterfaceForDuplex
+        void Update(UpdateInfo update);
+    }
+}

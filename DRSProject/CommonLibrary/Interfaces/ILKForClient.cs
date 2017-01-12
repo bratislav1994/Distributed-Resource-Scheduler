@@ -17,29 +17,21 @@ using System.ServiceModel;
 namespace CommonLibrary.Interfaces
 {
     [ServiceContract(CallbackContract = typeof(ILKClient))]
-    public interface ILKForClient  {
+    public interface ILKForClient
+    {
+        [OperationContract]
+        UpdateInfo GetMySystem();
 
         [OperationContract]
-		UpdateInfo GetMySystem();
-
-        [OperationContract]
-        /// <param name="update"></param>
         void Update(UpdateInfo update);
 
         [OperationContract]
-		/// 
-		/// <param name="username"></param>
-		/// <param name="password"></param>
-		void Login(string username, string password);
+        void Login(string username, string password);
 
         [OperationContract]
-		/// 
-		/// <param name="username"></param>
-		/// <param name="password"></param>
-		void Registration(string username, string password);
+        void Registration(string username, string password);
 
         [OperationContract]
         SortedDictionary<DateTime, double> GetMeasurements(string mRID);
-    }//end ILKForClient
-
-}//end namespace InterfaceForDuplex
+    }
+}

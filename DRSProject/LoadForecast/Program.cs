@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace LoadForecast
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             NetTcpBinding binding = new NetTcpBinding();
             string address = "net.tcp://localhost:10040/ILoadForecast";

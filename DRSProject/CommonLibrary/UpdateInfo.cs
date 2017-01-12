@@ -85,5 +85,5 @@ namespace CommonLibrary
                 sites = value;
             }
         }
-    }//end UpdateInfo
+    }
 }

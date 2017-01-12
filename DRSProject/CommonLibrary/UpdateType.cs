@@ -21,5 +21,5 @@ namespace CommonLibrary
         ADD,
         REMOVE
 
-    }//end UpdateType
+    }
 }
