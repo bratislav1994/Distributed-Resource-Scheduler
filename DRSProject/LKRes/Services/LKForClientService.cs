@@ -52,49 +52,10 @@ namespace LKRes.Services
         /// </summary>
         private Thread notifyThread = null;
 
-        public IActivePowerManagement Proxy
-        {
-            get
-            {
-                if (this.proxy == null)
-                {
-                    ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
-               new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:3000/IActivePowerManagement"));
-
-                    proxy = factory.CreateChannel();
-                }
-
-                return this.proxy;
-            }
-
-            set
-            {
-                this.proxy = value;
-            }
-        }
-
         public IKSRes KSResProxy
         {
-            get
-            {
-                if (this.kSResProxy == null)
-                {
-                    DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-                new InstanceContext(this),
-                new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
-
-                    this.kSResProxy = ksResFactory.CreateChannel();
-                }
-
-                return kSResProxy;
-            }
-
-            set
-            {
-                kSResProxy = value;
-            }
+            get { return kSResProxy; }
+            set { kSResProxy = value; }
         }
 
         public ILKClient Client
@@ -118,20 +79,18 @@ namespace LKRes.Services
         public LKForClientService()
         {
 
-            //DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-            //    new InstanceContext(this),
-            //    new NetTcpBinding(),
-            //    new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+            DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
+                new InstanceContext(this),
+                new NetTcpBinding(),
+                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
-            //kSResProxy = ksResFactory.CreateChannel();
+            kSResProxy = ksResFactory.CreateChannel();
 
-            //ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
-            //   new NetTcpBinding(),
-            //    new EndpointAddress("net.tcp://localhost:3000/IActivePowerManagement"));
+            ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
+               new NetTcpBinding(),
+                new EndpointAddress("net.tcp://localhost:3030/IActivePowerManagement"));
 
-            //proxy = factory.CreateChannel();
-
-            this.Updateinfo = new UpdateInfo();
+            proxy = factory.CreateChannel();
 
             Thread changePowerThread = new Thread(ChangeActivePower);
             changePowerThread.Start();
@@ -163,80 +122,20 @@ namespace LKRes.Services
             {
                 Thread.Sleep(4000);
                 updateInfo = DataBase.Instance.ReadData();
-                Random randGenerator = new Random();
+               
+                //posalji snagu modulu 2
+                Dictionary<string, double> powerForProcessing = proxy.ChangeActivePower(ref updateInfo);
 
-                Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
-                foreach (Group groupIterator in updateInfo.Groups)
+                foreach (KeyValuePair<string, double> pair in powerForProcessing)
                 {
-                    List<Generator> generetors = updateInfo.Generators.Where(gen => gen.GroupID.Equals(groupIterator.MRID)).ToList();
-                    foreach (Generator generatorIterator in generetors)
+                    DataBase.Instance.AddMeasurement(new Measurement()
                     {
-                        //samo radi ako je na lokalu
-                        if (generatorIterator.SetPoint == -1 && generatorIterator.HasMeasurment)
-                        {
-                            double newPower = 0;
-                            //povecaj za 10%
-                            if (randGenerator.Next(0, 2) == 0)
-                            {
-                                newPower = generatorIterator.ActivePower + (generatorIterator.ActivePower / 10);
-                                if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
-                                {
-                                    generatorIterator.ActivePower = newPower;
-                                    DataBase.Instance.AddMeasurement(new Measurement()
-                                    {
-                                        ActivePower = generatorIterator.ActivePower,
-                                        MRID = generatorIterator.MRID,
-                                        TimeStamp = DateTime.Now
-                                    });
-                                }
-                            }
-
-                            else
-                            {
-                                newPower = generatorIterator.ActivePower - (generatorIterator.ActivePower / 10);
-                                if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
-                                {
-                                    generatorIterator.ActivePower = newPower;
-                                    DataBase.Instance.AddMeasurement(new Measurement()
-                                    {
-                                        ActivePower = generatorIterator.ActivePower,
-                                        MRID = generatorIterator.MRID,
-                                        TimeStamp = DateTime.Now
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    //izracujan ukupnu snagu i broj reprezentativnih generatora 
-                    double totalPower = 0;
-                    int numberOfGeneratorsWithMeasurments = 0;
-                    foreach (Generator genIt in generetors)
-                    {
-                        if (genIt.HasMeasurment)
-                        {
-                            totalPower += genIt.ActivePower;
-                            numberOfGeneratorsWithMeasurments++;
-                        }
-                    }
-
-                    //postavi snagu ne reprezentativnih generatrora na prosecnu vrednost reprezentativnih generatoa
-                    double averagePower = totalPower / numberOfGeneratorsWithMeasurments;
-                    foreach (Generator genIt in generetors)
-                    {
-                        if (!genIt.HasMeasurment && genIt.SetPoint == -1)
-                        {
-                            genIt.ActivePower = averagePower;
-                        }
-                    }
-
-                    foreach (Generator genIt in generetors)
-                    {
-                        powerForProcessing.Add(genIt.MRID, genIt.ActivePower);
-                    }
+                        ActivePower = pair.Value,
+                        MRID = pair.Key,
+                        TimeStamp = DateTime.Now
+                    });
                 }
 
-                //posalji snagu modulu 2
                 if (powerForProcessing.Count != 0)
                 {
                     lock (LockObj)
@@ -271,7 +170,7 @@ namespace LKRes.Services
         {
             try
             {
-                KSResProxy.Login(username, password);
+                kSResProxy.Login(username, password);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -284,7 +183,7 @@ namespace LKRes.Services
         {
             try
             {
-                KSResProxy.Registration(username, password);
+                kSResProxy.Registration(username, password);
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -315,7 +214,7 @@ namespace LKRes.Services
             }
             updateInfo = DataBase.Instance.ReadData();
 
-            KSResProxy.Update(update);
+            kSResProxy.Update(update);
             notifyThread = new Thread(() => NotifyClient(update));
             notifyThread.Start();
         }
@@ -489,7 +388,7 @@ namespace LKRes.Services
                         {
                             generator.BasePoint = g.Power;
                             DataBase.Instance.UpdateGenerator(generator);
-                            KSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
+                            kSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
                         }
                     }
 
