@@ -860,7 +860,9 @@ namespace KLRESClient
         }
 
         #endregion
-        
+
+        #region ShowCommandAction
+
         /// <summary>
         /// Validation for click on show data button
         /// </summary>
@@ -911,11 +913,15 @@ namespace KLRESClient
             catch
             {
                 MessageBox.Show("Error during getting measurement for selected generator.");
+                this.SelectedItem = null;
+                this.DataHistory = null;
+                this.ShowDataCommand.RaiseCanExecuteChanged();
+                this.ClickEditCommand.RaiseCanExecuteChanged();
+                this.RemoveCommand.RaiseCanExecuteChanged();
             }
-
-            this.SelectedItem = null;
-            this.DataHistory = null;
         }
+
+        #endregion
 
         #region exit
 
@@ -924,7 +930,12 @@ namespace KLRESClient
         /// </summary>
         private void ExitCommandAction()
         {
+            this.SelectedItem = null;
+            this.DataHistory = null;
             this.showWin.Close();
+            this.ShowDataCommand.RaiseCanExecuteChanged();
+            this.ClickEditCommand.RaiseCanExecuteChanged();
+            this.RemoveCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -1148,6 +1159,9 @@ namespace KLRESClient
             this.site = null;
             this.SelectedItem = null;
             this.win1.Close();
+            this.ShowDataCommand.RaiseCanExecuteChanged();
+            this.ClickEditCommand.RaiseCanExecuteChanged();
+            this.RemoveCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -1228,6 +1242,9 @@ namespace KLRESClient
             this.SelectedItem = null;
 
             this.Client.Command(this.updateInfo);
+            this.ShowDataCommand.RaiseCanExecuteChanged();
+            this.ClickEditCommand.RaiseCanExecuteChanged();
+            this.RemoveCommand.RaiseCanExecuteChanged();
         }
 
         #endregion

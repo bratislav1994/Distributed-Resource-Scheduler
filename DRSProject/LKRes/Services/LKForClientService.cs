@@ -24,15 +24,18 @@ namespace LKRes.Services
     [CallbackBehavior(UseSynchronizationContext = false)]
     public class LKForClientService : ILKForClient, ILKRes
     {
+        private int basepointCounter = 0;
+        Dictionary<int, List<Point>> basepointBuffer = new Dictionary<int, List<Point>>();
+        private IActivePowerManagement proxy = null;
         /// <summary>
         /// Property to lock a shared resource
         /// </summary>
-        public static object LockObj = new object();
+        private static object lockObj = new object();
 
         /// <summary>
         /// Temporary data base
         /// </summary>
-        public UpdateInfo updateInfo = new UpdateInfo();
+        private UpdateInfo updateInfo = new UpdateInfo();
 
         /// <summary>
         /// proxy for KSRes module
@@ -47,7 +50,7 @@ namespace LKRes.Services
         /// <summary>
         /// The thread that informs the client about changes
         /// </summary>
-        Thread notifyThread = null;
+        private Thread notifyThread = null;
 
         public IKSRes KSResProxy
         {
@@ -61,6 +64,18 @@ namespace LKRes.Services
             set { client = value; }
         }
 
+        public object LockObj
+        {
+            get { return lockObj; }
+            set { lockObj = value; }
+        }
+
+        public UpdateInfo Updateinfo
+        {
+            get { return updateInfo; }
+            set { updateInfo = value; }
+        }
+
         public LKForClientService()
         {
 
@@ -71,8 +86,17 @@ namespace LKRes.Services
 
             kSResProxy = ksResFactory.CreateChannel();
 
-            Thread ChangePowerThread = new Thread(ChangeActivePower);
-            ChangePowerThread.Start();
+            ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
+               new NetTcpBinding(),
+                new EndpointAddress("net.tcp://localhost:3000/IActivePowerManagement"));
+
+            proxy = factory.CreateChannel();
+
+            Thread changePowerThread = new Thread(ChangeActivePower);
+            changePowerThread.Start();
+
+            Thread basePointThread = new Thread(() => SendBasePoint(basepointBuffer));
+            basePointThread.Start();
         }
 
         public string Ping()
@@ -98,8 +122,8 @@ namespace LKRes.Services
             {
                 Thread.Sleep(4000);
                 Random randGenerator = new Random();
-                Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
 
+                Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
                 foreach (Group groupIterator in updateInfo.Groups)
                 {
                     List<Generator> generetors = updateInfo.Generators.Where(gen => gen.GroupID.Equals(groupIterator.MRID)).ToList();
@@ -124,7 +148,7 @@ namespace LKRes.Services
                                     });
                                 }
                             }
-                            //smanji za 10%
+
                             else
                             {
                                 newPower = generatorIterator.ActivePower - (generatorIterator.ActivePower / 10);
@@ -169,6 +193,7 @@ namespace LKRes.Services
                         powerForProcessing.Add(genIt.MRID, genIt.ActivePower);
                     }
                 }
+
                 //posalji snagu modulu 2
                 if (powerForProcessing.Count != 0)
                 {
@@ -190,7 +215,6 @@ namespace LKRes.Services
                 }
             }
         }
-    
 
         public UpdateInfo GetMySystem()
         {
@@ -225,13 +249,15 @@ namespace LKRes.Services
                 Console.WriteLine("Error: {0}", ex.Message);
                 throw ex;
             }
-            
+
         }
 
         public void Update(UpdateInfo update)
         {
             if (update == null)
+            {
                 throw new ArgumentNullException("Update can't be null!");
+            }
 
             switch (update.UpdateType)
             {
@@ -243,7 +269,7 @@ namespace LKRes.Services
                     break;
                 case UpdateType.UPDATE:
                     UpdateData(update);
-                break;
+                    break;
             }
             updateInfo = DataBase.Instance.ReadData();
 
@@ -257,11 +283,15 @@ namespace LKRes.Services
         {
             update.Generators[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
 
-            if(update.Groups != null)
-                update.Groups[0].MRID = Guid.NewGuid().ToString().Substring(0, 10); ;
+            if (update.Groups != null)
+            {
+                update.Groups[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
+            }
 
-            if(update.Sites != null)
-                update.Sites[0].MRID = Guid.NewGuid().ToString().Substring(0, 10); ;
+            if (update.Sites != null)
+            {
+                update.Sites[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
+            }
 
             //dodavanje novog generatora, grupe i sajta
             if (update.Generators != null && update.Groups != null && update.Sites != null)
@@ -276,7 +306,7 @@ namespace LKRes.Services
                 DataBase.Instance.AddGenerator(new Data.GeneratorEntity()
                 {
                     Gen = update.Generators[0]
-                } );
+                });
                 DataBase.Instance.AddGroup(new Data.GroupEntity()
                 {
                     GEntity = update.Groups[0]
@@ -286,7 +316,6 @@ namespace LKRes.Services
                     SEntity = update.Sites[0]
                 });
             }
-            //dodavanje novog generatora i grupe. Sajt vec postoji.
             else if (update.Generators != null && update.Groups != null && update.Sites == null)
             {
                 update.Generators[0].GroupID = update.Groups[0].MRID;
@@ -303,7 +332,6 @@ namespace LKRes.Services
                     GEntity = update.Groups[0]
                 });
             }
-            //else if(update.Generators != null && update.Groups == null && update.Sites == null)
             else
             {
                 //updateInfo.Generators.Add(update.Generators[0]);
@@ -333,7 +361,7 @@ namespace LKRes.Services
                 DataBase.Instance.RemoveGenerator(gen);
             }
 
-            if(update.Groups != null)
+            if (update.Groups != null)
             {
                 Group group = null;
                 group = updateInfo.Groups.Where(g => g.MRID.Equals(update.Groups[0].MRID)).FirstOrDefault();
@@ -394,7 +422,39 @@ namespace LKRes.Services
 
         public void SendBasePoint(Dictionary<int, List<Point>> basePoints)
         {
-            throw new NotImplementedException();
+            if (basePoints.Count != 0)
+            {
+                // List<Point> points = basePoints[i];
+                lock (lockObj)
+                {
+                    basepointBuffer = basePoints;
+                    basepointCounter = 0;
+                }
+            }
+        }
+
+        public void WriteBasePoint()
+        {
+            while (true)
+            {
+                if (basepointCounter < basepointBuffer.Count)
+                {
+                    List<Point> points = basepointBuffer[basepointCounter];
+                    foreach (Point g in points)
+                    {
+                        Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(g.GeneratorID)).FirstOrDefault();
+                        if (generator != null)
+                        {
+                            generator.BasePoint = g.Power;
+                            DataBase.Instance.UpdateGenerator(generator);
+                        }
+                    }
+
+                    basepointCounter++;
+                }
+
+                Thread.Sleep(60000);
+            }
         }
     }
 }
