@@ -12,6 +12,8 @@ using System.ServiceModel;
 using NSubstitute;
 using KSRes;
 using System.Threading;
+using LKRes.Access;
+using LKRes.Data;
 
 namespace LKResTest.ServicesTest
 {
@@ -49,7 +51,7 @@ namespace LKResTest.ServicesTest
                 MRID = "1"
             };
 
-            lkResTest.updateInfo.Generators.Add(generator);
+            lkResTest.Updateinfo.Generators.Add(generator);
 
             Point setpoint = new Point();
             setpoint.GeneratorID = generator.MRID;
@@ -63,11 +65,12 @@ namespace LKResTest.ServicesTest
             Assert.AreNotEqual(null, setpoint);
         }
 
+        
         [Test]
         public void UpdateAddTest01()
         {
             IKSRes mockKSRes = Substitute.For<IKSRes>();
-            
+
             Assert.Throws<ArgumentNullException>(() => lkResTest.Update(null));
 
             UpdateInfo info = new UpdateInfo();
@@ -136,6 +139,7 @@ namespace LKResTest.ServicesTest
         public void UpdateRemoveTest01()
         {
             IKSRes mockKSRes = Substitute.For<IKSRes>();
+            IDataBase mockDB = Substitute.For<IDataBase>();
 
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.REMOVE;
@@ -144,23 +148,39 @@ namespace LKResTest.ServicesTest
             {
                 MRID = "g1"
             };
-            lkResTest.updateInfo.Generators.Add(generator);
+
+            lkResTest.Updateinfo.Generators.Add(generator);
+            mockDB.AddGenerator(new GeneratorEntity()
+            {
+                Gen = generator
+            });
             info.Generators.Add(generator);
 
             Group group = new Group()
             {
                 MRID = "gg1"
             };
-            lkResTest.updateInfo.Groups.Add(group);
+
+            lkResTest.Updateinfo.Groups.Add(group);
+            mockDB.AddGroup(new GroupEntity()
+            {
+                GEntity = group
+            });
             info.Groups.Add(group);
 
             Site site = new Site()
             {
                 MRID = "s1"
             };
-            lkResTest.updateInfo.Sites.Add(site);
+
+            lkResTest.Updateinfo.Sites.Add(site);
+            mockDB.AddSite(new SiteEntity()
+            {
+                SEntity = site
+            });
             info.Sites.Add(site);
 
+            DataBase.Instance = mockDB;
             mockKSRes.Update(info);
             lkResTest.KSResProxy = mockKSRes;
 
@@ -206,8 +226,8 @@ namespace LKResTest.ServicesTest
                 GeneratorType = GeneratorType.SOLAR,
                 HasMeasurment = false
             };
-            lkResTest.updateInfo.Generators.Add(generator1);
-
+            lkResTest.Updateinfo.Generators.Add(generator1);
+//
             Generator generator2 = new Generator()
             {
                 MRID = "g1",
@@ -251,8 +271,8 @@ namespace LKResTest.ServicesTest
                 GeneratorType = GeneratorType.SOLAR,
                 HasMeasurment = false
             };
-            lkResTest.updateInfo.Generators.Add(generator1);
-
+            lkResTest.Updateinfo.Generators.Add(generator1);
+//
             Generator generator2 = new Generator()
             {
                 MRID = "g2",
