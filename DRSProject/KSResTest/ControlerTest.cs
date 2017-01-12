@@ -14,6 +14,7 @@ using System.IO;
 using System.Threading;
 using KSRes.Data;
 using KSRes.Access;
+using System.Security.Cryptography;
 
 namespace KSResTest
 {
@@ -23,6 +24,7 @@ namespace KSResTest
         private Controler controler = null;
         private ILKRes mockService = null;
         private IKSClient mockClient = null;
+        private ILocalDB mockDataBase = null;
         private UpdateInfo update = null;
         private Generator generator1 = null;
         private Generator generator2 = null;
@@ -36,7 +38,10 @@ namespace KSResTest
         {
             mockService = Substitute.For<ILKRes>();
             mockService.Ping().Returns("OK");
-            
+
+            mockDataBase = Substitute.For<ILocalDB>();
+            LocalDB.Instance = mockDataBase;
+
             controler = new Controler();
 
             mockClient = Substitute.For<IKSClient>();
@@ -588,17 +593,21 @@ namespace KSResTest
             p3.ActivePower = 1;
             p3.TimeStamp = time;
 
-            ILocalDB mock = Substitute.For<ILocalDB>();
-            mock.ReadProductions(Arg.Any<DateTime>()).Returns(new List<ProductionHistory>());
-            LocalDB.Instance = mock;
-            SortedDictionary<DateTime, double> retVal = controler.GetProductionHistory(9999);
+            List<ProductionHistory> test = new List<ProductionHistory>();
+            test.Add(p);
+            test.Add(p2);
+            test.Add(p3);
+            test.Add(p1);
 
-            DateTime condition = DateTime.Now.AddMinutes(0 - 9999);
-            List<ProductionHistory> productions = KSRes.Access.LocalDB.Instance.ReadProductions(condition);
+            LocalDB.Instance.ReadProductions(Arg.Any<DateTime>()).Returns(test);
+
+            SortedDictionary<DateTime, double> retVal = controler.GetProductionHistory(5);
+
+            DateTime condition = DateTime.Now.AddMinutes(0 - 5);
 
             foreach(DateTime key in retVal.Keys)
             {
-                List<ProductionHistory> temp = productions.Where(x => x.TimeStamp.Equals(condition)).ToList();
+                List<ProductionHistory> temp = test.Where(x => x.TimeStamp.Equals(key)).ToList();
                 double sum = 0;
                 foreach(ProductionHistory productionHistory in temp)
                 {
@@ -607,6 +616,85 @@ namespace KSResTest
 
                 Assert.AreEqual(sum, retVal[key]);
             }
+        }
+
+        [Test]
+        public void GetAllBasePointsForUser()
+        {
+            List<Point> basePoints = new List<Point>();
+
+            Point basePoint = new Point();
+            basePoint.GeneratorID = "2";
+            basePoint.Power = 6;
+
+            basePoints.Add(basePoint);
+
+            Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject pObject = new Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject(controler);
+            List<Point> allBasePoints = (List<Point>)pObject.Invoke("GetAllBasePointsForUser", "user1", basePoints);
+
+            Assert.AreEqual(2, allBasePoints.Count);
+            Assert.AreEqual(7, allBasePoints.Where(o => o.GeneratorID.Equals("1")).FirstOrDefault().Power);
+        }
+
+        [Test]
+        public void Registration_01()
+        {
+            LocalDB.Instance.GetService(Arg.Any<string>()).Returns(new RegisteredService() { Username = "user", Password = Encoding.ASCII.GetBytes("pass") });
+            
+            Assert.Throws<FaultException<IdentificationExeption>>(() => controler.Registration("user", "pass"));
+        }
+
+        [Test]
+        public void Registration_02()
+        {
+            RegisteredService ret = null;
+            LocalDB.Instance.GetService(Arg.Any<string>()).Returns(ret);
+
+            Assert.DoesNotThrow(() => controler.Registration("user", "pass"));
+        }
+
+        [Test]
+        public void Login_01_NoReg()
+        {
+            RegisteredService ret = null;
+            LocalDB.Instance.GetService(Arg.Any<string>()).Returns(ret);
+
+            Assert.Throws<FaultException<IdentificationExeption>>(() => controler.Login("user", "pass", mockService, "sessionId"));
+        }
+
+        [Test]
+        public void Login_02_InvalidePassword()
+        {
+            RegisteredService ret = new RegisteredService() { Username = "user", Password = Encoding.ASCII.GetBytes("npass") };
+            LocalDB.Instance.GetService(Arg.Any<string>()).Returns(ret);
+
+            Assert.Throws<FaultException<IdentificationExeption>>(() => controler.Login("user", "pass", mockService, "sessionId"));
+        }
+
+        [Test]
+        public void Login_03()
+        {
+            RegisteredService ret = new RegisteredService() { Username = "loginUser", Password = HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes("pass")) };
+            LocalDB.Instance.GetService(Arg.Any<string>()).Returns(ret);
+
+            controler.Login("loginUser", "pass", mockService, "sessionIdLogIn");
+            Assert.AreNotEqual(null, controler.ActiveService.Where(o => o.Username.Equals("loginUser")).FirstOrDefault());
+        }
+
+        [Test]
+        public void Login_04()
+        {
+            RegisteredService ret = new RegisteredService() { Username = "loginUser", Password = HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes("pass")) };
+            LocalDB.Instance.GetService(Arg.Any<string>()).Returns(ret);
+
+            Assert.Throws<FaultException<IdentificationExeption>>(() => controler.Login("loginUser", "pass", mockService, "sessionIdLogIn"));
+        }
+
+        [Test]
+        public void LastValuesLC_01()
+        {
+            controler.LastValuesLC = new SortedDictionary<DateTime, double>();
+            Assert.AreNotEqual(null, controler.LastValuesLC);
         }
     }
 }

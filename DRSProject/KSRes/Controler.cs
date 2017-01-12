@@ -55,7 +55,7 @@ namespace KSRes
             Thread processingDataThread = new Thread(() => ProcessingData());
             processingDataThread.Start();
 
-            Thread loadForecastThread = new Thread(() => LoadForecast());
+            Thread loadForecastThread = new Thread(() => LoadForecastThread());
             loadForecastThread.Start();
         }
         #endregion Constructor
@@ -638,51 +638,57 @@ namespace KSRes
         }
 
         #region LoadForecast
-        private void LoadForecast()
+        private void LoadForecastThread()
         {
             while (true)
             {
                 Thread.Sleep(10000);
-                List<ConsuptionHistory> consuptions = LocalDB.Instance.ReadConsuptions();
-                if (consuptions.Count == 2)
+                LoadForecast();
+            }
+        }
+
+        private void LoadForecast()
+        {
+            List<ConsuptionHistory> consuptions = LocalDB.Instance.ReadConsuptions();
+            if (consuptions.Count == 2)
+            {
+                List<KeyValuePair<DateTime, double>> parameter = new List<KeyValuePair<DateTime, double>>();
+                foreach (ConsuptionHistory consuption in consuptions)
                 {
-                    List<KeyValuePair<DateTime, double>> parameter = new List<KeyValuePair<DateTime, double>>();
-                    foreach (ConsuptionHistory consuption in consuptions)
-                    {
-                        parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
-                    }
+                    parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
+                }
 
-                    LastValuesLC = proxy.LoadForecast(parameter);
+                LastValuesLC = proxy.LoadForecast(parameter);
 
-                    Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
-                    int minute = 0;
+                Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
+                int minute = 0;
 
-                    foreach (double value in LastValuesLC.Values)
-                    {
-                        List<Point> basePoints = P(value, true);
-
-                        foreach (LKResService service in ActiveService)
-                        {
-                            List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
-                            
-                            if (!deployment.ContainsKey(service.Username))
-                            {
-                                deployment.Add(service.Username, new Dictionary<int, List<Point>>());
-                            }
-
-                            deployment[service.Username].Add(minute, temp);
-                        }
-
-                        minute++;
-                    }
+                foreach (double value in LastValuesLC.Values)
+                {
+                    List<Point> basePoints = P(value, true);
 
                     foreach (LKResService service in ActiveService)
                     {
-                        //service.Client.SendBasePoint(deployment[service.Username]);
+                        List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
+
+                        if (!deployment.ContainsKey(service.Username))
+                        {
+                            deployment.Add(service.Username, new Dictionary<int, List<Point>>());
+                        }
+
+                        deployment[service.Username].Add(minute, temp);
                     }
+
+                    minute++;
+                }
+
+                foreach (LKResService service in ActiveService)
+                {
+                    service.Client.SendBasePoint(deployment[service.Username]);
                 }
             }
         }
+    
 
         private List<Point> GetAllBasePointsForUser(string username, List<Point> basePoints)
         {
