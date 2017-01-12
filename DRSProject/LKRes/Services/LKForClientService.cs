@@ -175,9 +175,10 @@ namespace LKRes.Services
             {
                 Thread.Sleep(4000);
                 updateInfo = DataBase.Instance.ReadData();
-               
+
                 //posalji snagu modulu 2
-                Dictionary<string, double> powerForProcessing = proxy.ChangeActivePower(ref updateInfo);
+                Random randGenerator = new Random();
+                Dictionary<string, double> powerForProcessing = proxy.ChangeActivePower(ref updateInfo, randGenerator.Next(0, 2));
 
                 foreach (KeyValuePair<string, double> pair in powerForProcessing)
                 {
@@ -417,7 +418,6 @@ namespace LKRes.Services
         {
             if (basePoints.Count != 0)
             {
-                // List<Point> points = basePoints[i];
                 lock (lockObj)
                 {
                     basepointBuffer = basePoints;

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ServiceModel;
-using CommonLibrary.Interfaces;
-
-namespace ActivePowerGenerator
+﻿namespace ActivePowerGenerator
 {
-    class Program
+    using System;
+    using System.ServiceModel;
+    using CommonLibrary.Interfaces;
+
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             NetTcpBinding binding = new NetTcpBinding();
             string address = "net.tcp://localhost:3030/IActivePowerManagement";

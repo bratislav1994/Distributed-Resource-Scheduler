@@ -11,6 +11,6 @@ namespace CommonLibrary.Interfaces
     public interface IActivePowerManagement
     {
         [OperationContract]
-        Dictionary<string, double> ChangeActivePower(ref UpdateInfo update);
+        Dictionary<string, double> ChangeActivePower(ref UpdateInfo update, int randomNumber);
     }
 }

@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommonLibrary;
-using CommonLibrary.Interfaces;
-using LKRes.Access;
-using LKRes.Data;
-
-namespace ActivePowerGenerator
+﻿namespace ActivePowerGenerator
 {
-    class ActivePowerManagement : IActivePowerManagement
-    {
-        public Dictionary<string, double> ChangeActivePower(ref UpdateInfo update)
-        {
-            Random randGenerator = new Random();
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using CommonLibrary;
+    using CommonLibrary.Interfaces;
 
+    public class ActivePowerManagement : IActivePowerManagement
+    {
+        public Dictionary<string, double> ChangeActivePower(ref UpdateInfo update, int randomNumber)
+        {
             Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
             foreach (Group groupIterator in update.Groups)
             {
@@ -27,7 +21,7 @@ namespace ActivePowerGenerator
                     {
                         double newPower = 0;
                         //povecaj za 10%
-                        if (randGenerator.Next(0, 2) == 0)
+                        if (randomNumber == 0)
                         {
                             newPower = generatorIterator.ActivePower + (generatorIterator.ActivePower / 10);
                             if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)

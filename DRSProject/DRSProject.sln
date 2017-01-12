@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadForecast", "LoadForecas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivePowerGenerator", "ActivePowerGenerator\ActivePowerGenerator.csproj", "{FFD8E67F-13A1-4A89-BE0E-2E2F94E5A49D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivePowerGeneratorTest", "ActivePowerGeneratorTest\ActivePowerGeneratorTest.csproj", "{EE259D55-0B9F-46AD-A3BA-D16450A42B46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{FFD8E67F-13A1-4A89-BE0E-2E2F94E5A49D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFD8E67F-13A1-4A89-BE0E-2E2F94E5A49D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFD8E67F-13A1-4A89-BE0E-2E2F94E5A49D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE259D55-0B9F-46AD-A3BA-D16450A42B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE259D55-0B9F-46AD-A3BA-D16450A42B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE259D55-0B9F-46AD-A3BA-D16450A42B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE259D55-0B9F-46AD-A3BA-D16450A42B46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +92,6 @@ Global
 		{685CDD25-9991-48EA-BB4E-C5FDE8057476} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 		{197D7CA5-1C1E-44C6-9B06-6832C31E86E8} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 		{1975673E-B715-42F5-A5D9-9969CC33C615} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
+		{EE259D55-0B9F-46AD-A3BA-D16450A42B46} = {F90CCE79-DACB-4758-9930-BAE38E8AB1FF}
 	EndGlobalSection
 EndGlobal
