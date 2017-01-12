@@ -88,7 +88,7 @@ namespace LKRes.Services
 
             ChannelFactory<IActivePowerManagement> factory = new ChannelFactory<IActivePowerManagement>(
                new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:3000/IActivePowerManagement"));
+                new EndpointAddress("net.tcp://localhost:3030/IActivePowerManagement"));
 
             proxy = factory.CreateChannel();
 
@@ -122,80 +122,20 @@ namespace LKRes.Services
             {
                 Thread.Sleep(4000);
                 updateInfo = DataBase.Instance.ReadData();
-                Random randGenerator = new Random();
+               
+                //posalji snagu modulu 2
+                Dictionary<string, double> powerForProcessing = proxy.ChangeActivePower(ref updateInfo);
 
-                Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
-                foreach (Group groupIterator in updateInfo.Groups)
+                foreach (KeyValuePair<string, double> pair in powerForProcessing)
                 {
-                    List<Generator> generetors = updateInfo.Generators.Where(gen => gen.GroupID.Equals(groupIterator.MRID)).ToList();
-                    foreach (Generator generatorIterator in generetors)
+                    DataBase.Instance.AddMeasurement(new Measurement()
                     {
-                        //samo radi ako je na lokalu
-                        if (generatorIterator.SetPoint == -1 && generatorIterator.HasMeasurment)
-                        {
-                            double newPower = 0;
-                            //povecaj za 10%
-                            if (randGenerator.Next(0, 2) == 0)
-                            {
-                                newPower = generatorIterator.ActivePower + (generatorIterator.ActivePower / 10);
-                                if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
-                                {
-                                    generatorIterator.ActivePower = newPower;
-                                    DataBase.Instance.AddMeasurement(new Measurement()
-                                    {
-                                        ActivePower = generatorIterator.ActivePower,
-                                        MRID = generatorIterator.MRID,
-                                        TimeStamp = DateTime.Now
-                                    });
-                                }
-                            }
-
-                            else
-                            {
-                                newPower = generatorIterator.ActivePower - (generatorIterator.ActivePower / 10);
-                                if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
-                                {
-                                    generatorIterator.ActivePower = newPower;
-                                    DataBase.Instance.AddMeasurement(new Measurement()
-                                    {
-                                        ActivePower = generatorIterator.ActivePower,
-                                        MRID = generatorIterator.MRID,
-                                        TimeStamp = DateTime.Now
-                                    });
-                                }
-                            }
-                        }
-                    }
-
-                    //izracujan ukupnu snagu i broj reprezentativnih generatora 
-                    double totalPower = 0;
-                    int numberOfGeneratorsWithMeasurments = 0;
-                    foreach (Generator genIt in generetors)
-                    {
-                        if (genIt.HasMeasurment)
-                        {
-                            totalPower += genIt.ActivePower;
-                            numberOfGeneratorsWithMeasurments++;
-                        }
-                    }
-
-                    //postavi snagu ne reprezentativnih generatrora na prosecnu vrednost reprezentativnih generatoa
-                    double averagePower = totalPower / numberOfGeneratorsWithMeasurments;
-                    foreach (Generator genIt in generetors)
-                    {
-                        if (!genIt.HasMeasurment && genIt.SetPoint == -1)
-                        {
-                            genIt.ActivePower = averagePower;
-                        }
-                    }
-
-                    foreach (Generator genIt in generetors)
-                    {
-                        powerForProcessing.Add(genIt.MRID, genIt.ActivePower);
-                    }
+                        ActivePower = pair.Value,
+                        MRID = pair.Key,
+                        TimeStamp = DateTime.Now
+                    });
                 }
 
-                //posalji snagu modulu 2
                 if (powerForProcessing.Count != 0)
                 {
                     lock (LockObj)
