@@ -47,6 +47,7 @@
     <Compile Include="GeneratorType.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="IdentifiedObject.cs" />
+    <Compile Include="Interfaces\IActivePowerManagement.cs" />
     <Compile Include="Interfaces\IKSClient.cs" />
     <Compile Include="Interfaces\IKSForClient.cs" />
     <Compile Include="Interfaces\IKSRes.cs" />
