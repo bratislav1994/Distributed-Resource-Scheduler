@@ -124,6 +124,8 @@ namespace LKRes.Access
                     entity.Gen.Pmin = updateGenerator.Pmin;
                     entity.Gen.Price = updateGenerator.Price;
                     entity.Gen.Name = updateGenerator.Name;
+                    entity.Gen.BasePoint = updateGenerator.BasePoint;
+
                     if (entity.Gen.WorkingMode == WorkingMode.REMOTE && updateGenerator.WorkingMode == WorkingMode.LOCAL)
                     {
                         entity.Gen.WorkingMode = updateGenerator.WorkingMode;

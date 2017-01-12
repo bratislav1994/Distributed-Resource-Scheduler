@@ -21,11 +21,21 @@ namespace LKResTest.ServicesTest
     public class LKForClientServiceTest
     {
         private LKForClientService lkResTest = null;
+        private IDataBase mockDataBase = null;
+        private IActivePowerManagement mockProxy = null;
+        private IKSRes mockKsRes = null;
 
         [OneTimeSetUp]
         public void SetupTest()
         {
             this.lkResTest = new LKForClientService();
+            this.lkResTest.Updateinfo = new UpdateInfo();
+            this.lkResTest.Proxy = Substitute.For<IActivePowerManagement>();
+            this.lkResTest.KSResProxy = Substitute.For<IKSRes>();
+            
+
+            this.mockDataBase = Substitute.For<IDataBase>();
+            DataBase.Instance = mockDataBase;
         }
 
         [Test]
@@ -85,6 +95,8 @@ namespace LKResTest.ServicesTest
             Site site = new Site();
             info.Sites.Add(site);
 
+            
+
             mockKSRes.Update(info);
             lkResTest.KSResProxy = mockKSRes;
 
@@ -138,8 +150,8 @@ namespace LKResTest.ServicesTest
         [Test]
         public void UpdateRemoveTest01()
         {
-            IKSRes mockKSRes = Substitute.For<IKSRes>();
-            IDataBase mockDB = Substitute.For<IDataBase>();
+            //IKSRes mockKSRes = Substitute.For<IKSRes>();
+            //IDataBase mockDB = Substitute.For<IDataBase>();
 
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.REMOVE;
@@ -149,8 +161,10 @@ namespace LKResTest.ServicesTest
                 MRID = "g1"
             };
 
+            lkResTest.Updateinfo = new UpdateInfo();
+
             lkResTest.Updateinfo.Generators.Add(generator);
-            mockDB.AddGenerator(new GeneratorEntity()
+            DataBase.Instance.AddGenerator(new GeneratorEntity()
             {
                 Gen = generator
             });
@@ -162,7 +176,7 @@ namespace LKResTest.ServicesTest
             };
 
             lkResTest.Updateinfo.Groups.Add(group);
-            mockDB.AddGroup(new GroupEntity()
+            DataBase.Instance.AddGroup(new GroupEntity()
             {
                 GEntity = group
             });
@@ -174,15 +188,15 @@ namespace LKResTest.ServicesTest
             };
 
             lkResTest.Updateinfo.Sites.Add(site);
-            mockDB.AddSite(new SiteEntity()
+            DataBase.Instance.AddSite(new SiteEntity()
             {
                 SEntity = site
             });
             info.Sites.Add(site);
 
-            DataBase.Instance = mockDB;
-            mockKSRes.Update(info);
-            lkResTest.KSResProxy = mockKSRes;
+            //DataBase.Instance = mockDataBase;
+            this.lkResTest.KSResProxy.Update(info);
+            //lkResTest.KSResProxy = mockKsRes;
 
             lkResTest.Update(info);
         }
@@ -190,8 +204,8 @@ namespace LKResTest.ServicesTest
         [Test]
         public void UpdateRemoveTest02()
         {
-            IKSRes mockKSRes = Substitute.For<IKSRes>();
-
+            //IKSRes mockKSRes = Substitute.For<IKSRes>();
+            this.lkResTest.Updateinfo = new UpdateInfo();
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.REMOVE;
 
@@ -204,8 +218,8 @@ namespace LKResTest.ServicesTest
             info.Groups = null;
             info.Sites = null;
 
-            mockKSRes.Update(info);
-            lkResTest.KSResProxy = mockKSRes;
+            this.lkResTest.KSResProxy.Update(info);
+            //lkResTest.KSResProxy = mockKSRes;
 
             lkResTest.Update(info);
         }
@@ -226,6 +240,8 @@ namespace LKResTest.ServicesTest
                 GeneratorType = GeneratorType.SOLAR,
                 HasMeasurment = false
             };
+            this.lkResTest.Updateinfo = new UpdateInfo();
+
             lkResTest.Updateinfo.Generators.Add(generator1);
 //
             Generator generator2 = new Generator()
@@ -271,6 +287,8 @@ namespace LKResTest.ServicesTest
                 GeneratorType = GeneratorType.SOLAR,
                 HasMeasurment = false
             };
+
+            this.lkResTest.Updateinfo = new UpdateInfo();
             lkResTest.Updateinfo.Generators.Add(generator1);
 //
             Generator generator2 = new Generator()

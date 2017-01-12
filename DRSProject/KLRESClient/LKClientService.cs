@@ -450,10 +450,11 @@ namespace KLRESClient
         /// </summary>
         /// <param name="username">username of user</param>
         /// <param name="password">password box</param>
-        public void Registration(string username, string password)
+        public bool Registration(string username, string password)
         {
             this.Proxy.Registration(username, password);
             this.Initialize();
+            return true;
         }
 
         /// <summary>
@@ -461,10 +462,11 @@ namespace KLRESClient
         /// </summary>
         /// <param name="username">username of user</param>
         /// <param name="password">password box</param>
-        public void LogIn(string username, string password)
+        public bool LogIn(string username, string password)
         {
             this.Proxy.Login(username, password);
             this.Initialize();
+            return true;
         }
 
         /// <summary>
