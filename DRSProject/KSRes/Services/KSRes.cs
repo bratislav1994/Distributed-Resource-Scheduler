@@ -98,7 +98,7 @@ namespace KSRes.Services
 
             try
             {
-                Controler.Update(sessionID, update);
+                new Thread(() => Controler.Update(sessionID, update)).Start();
             }
             catch (Exception ex)
             {
@@ -145,8 +145,11 @@ namespace KSRes.Services
                 TimeStamp = DateTime.Now
             });
 
-            List<Point> setPoints = Controler.P(requiredAP, false);
-            Controler.DeploySetPoint(setPoints);
+            new Thread(() =>
+            {
+                List<Point> setPoints = Controler.P(requiredAP, false);
+                Controler.DeploySetPoint(setPoints);
+            }).Start();
         }
 
         public SortedDictionary<DateTime, double> GetLoadForecast()

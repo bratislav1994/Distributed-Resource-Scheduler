@@ -56,7 +56,7 @@
                 double averagePower = totalPower / numberOfGeneratorsWithMeasurments;
                 foreach (Generator genIt in generetors)
                 {
-                    if (!genIt.HasMeasurment && genIt.SetPoint == -1)
+                    if (!genIt.HasMeasurment && genIt.SetPoint == -1 && averagePower >= genIt.Pmin && averagePower <= genIt.Pmax)
                     {
                         genIt.ActivePower = averagePower;
                     }

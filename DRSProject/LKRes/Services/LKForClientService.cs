@@ -17,6 +17,7 @@ namespace LKRes.Services
     using CommonLibrary.Exceptions;
     using CommonLibrary.Interfaces;
     using LKRes.Access;
+    using System.ServiceModel.Channels;
 
     /// <summary>
     /// Class represent a LKRes server who communicating with LKResClient and KSRes module
@@ -218,7 +219,22 @@ namespace LKRes.Services
             updateInfo = DataBase.Instance.ReadData();
             this.KSResProxy.Update(updateInfo);
             OperationContext context = OperationContext.Current;
-            client = context.GetCallbackChannel<ILKClient>();
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+            string ip = endpoint.Address;
+
+            if (ip.Equals("::1"))
+            {
+                ip = "localhost";
+            }
+
+            ChannelFactory<ILKClient> factory = new ChannelFactory<ILKClient>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://" + ip + ":10050/ILKClient"));
+
+            client = factory.CreateChannel();
+            client.Update(updateInfo);
+
             return updateInfo;
         }
 
