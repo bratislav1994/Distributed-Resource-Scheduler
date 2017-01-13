@@ -15,7 +15,6 @@ using CommonLibrary.Exceptions;
 
 namespace CommonLibrary.Interfaces
 {
-    [ServiceContract(CallbackContract = typeof(ILKRes))]
     public interface IKSRes
     {
         [OperationContract]
