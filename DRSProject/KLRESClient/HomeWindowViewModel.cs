@@ -65,6 +65,11 @@ namespace KLRESClient
             this.client = this.Client;
         }
 
+        public HomeWindowViewModel(LKClientService client)
+        {
+            this.client = client;
+        }
+
         #region Properties
 
         /// <summary>
@@ -83,12 +88,16 @@ namespace KLRESClient
                 {
                     this.client = new LKClientService() { DataContext = this };
 
-                    DuplexChannelFactory<ILKForClient> factory = new DuplexChannelFactory<ILKForClient>(
-                    new InstanceContext(this.client),
+                    ChannelFactory<ILKForClient> factory = new ChannelFactory<ILKForClient>(
                         new NetTcpBinding(),
                         new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
-
                     this.client.Proxy = factory.CreateChannel();
+
+                    NetTcpBinding binding = new NetTcpBinding();
+                    string address = "net.tcp://localhost:10050/ILKClient";
+                    ServiceHost host = new ServiceHost(this.client);
+                    host.AddServiceEndpoint(typeof(ILKClient), binding, address);
+                    host.Open();
                 }
 
                 return this.client;

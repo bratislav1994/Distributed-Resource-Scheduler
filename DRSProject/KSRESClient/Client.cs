@@ -16,7 +16,9 @@ namespace KSRESClient
     using System.Threading.Tasks;
     using CommonLibrary;
     using CommonLibrary.Interfaces;
+    using System.Windows.Data;
 
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class Client : IKSClient
     {
         private BindingList<Generator> generatorsForShowing;
@@ -24,10 +26,12 @@ namespace KSRESClient
         private IKSForClient proxy = null;
         private List<String> userNames;
         private LKResService currentUser;
+        private object lockObj = new object();
 
         public Client()
         {
             generatorsForShowing = new BindingList<Generator>();
+            BindingOperations.EnableCollectionSynchronization(generatorsForShowing, lockObj);
             allUsers = new List<LKResService>();
             UserNames = new List<string>();
             userNames.Add("All");
@@ -283,6 +287,8 @@ namespace KSRESClient
         public void IssueCommand(double neededPower)
         {
             Proxy.IssueCommand(neededPower);
+
+
         }
 
         public Generator GetGeneratorFromId(string mrId)
@@ -369,22 +375,25 @@ namespace KSRESClient
 
         private void FillListForShowing()
         {
-            generatorsForShowing.Clear();
-            if (currentUser == null)
+            lock (lockObj)
             {
-                foreach (LKResService user in allUsers)
+                generatorsForShowing.Clear();
+                if (currentUser == null)
                 {
-                    foreach (Generator g in user.Generators)
+                    foreach (LKResService user in allUsers)
+                    {
+                        foreach (Generator g in user.Generators)
+                        {
+                            generatorsForShowing.Add(g);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Generator g in currentUser.Generators)
                     {
                         generatorsForShowing.Add(g);
                     }
-                }
-            }
-            else
-            {
-                foreach (Generator g in currentUser.Generators)
-                {
-                    generatorsForShowing.Add(g);
                 }
             }
         }

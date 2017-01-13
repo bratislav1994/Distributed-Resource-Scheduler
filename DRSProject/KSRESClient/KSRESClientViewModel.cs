@@ -59,11 +59,16 @@ namespace KSRESClient
                 {
                     client = new Client();
 
-                    DuplexChannelFactory<IKSForClient> factory = new DuplexChannelFactory<IKSForClient>(
-                    new InstanceContext(client),
+                    ChannelFactory<IKSForClient> factory = new ChannelFactory<IKSForClient>(
                         new NetTcpBinding(),
                         new EndpointAddress("net.tcp://localhost:10020/IKSForClient"));
                     client.Proxy = factory.CreateChannel();
+
+                    NetTcpBinding binding = new NetTcpBinding();
+                    string address = "net.tcp://localhost:10030/IKSClient";
+                    ServiceHost host = new ServiceHost(client);
+                    host.AddServiceEndpoint(typeof(IKSClient), binding, address);
+                    host.Open();
                 }
 
                 return client;

@@ -68,7 +68,13 @@ namespace LKResClientTest
             this.homeVM.Username2 = "test";
             this.homeVM.Password = "password";
             this.homeVM.Password2 = "password";
+            
             Assert.IsTrue(this.homeVM.LoginCommand.CanExecute());
+
+            this.homeVM.Username = string.Empty;
+            Assert.IsFalse(this.homeVM.LoginCommand.CanExecute());
+
+            this.homeVM.Username = "test";
             this.homeVM.Password = string.Empty;
             Assert.IsFalse(this.homeVM.LoginCommand.CanExecute());
             this.homeVM.Password = "test";
@@ -109,6 +115,11 @@ namespace LKResClientTest
             this.homeVM.Password = "password";
             this.homeVM.Password2 = "password";
             Assert.IsTrue(this.homeVM.RegistrateCommand.CanExecute());
+
+            this.homeVM.Username2 = string.Empty;
+            Assert.IsFalse(this.homeVM.RegistrateCommand.CanExecute());
+
+            this.homeVM.Username2 = "test";
             this.homeVM.Password2 = string.Empty;
             Assert.IsFalse(this.homeVM.RegistrateCommand.CanExecute());
             this.homeVM.Password2 = "test";

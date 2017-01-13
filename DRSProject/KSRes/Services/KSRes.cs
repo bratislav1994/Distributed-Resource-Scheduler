@@ -17,9 +17,10 @@ namespace KSRes.Services
     using CommonLibrary;
     using CommonLibrary.Exceptions;
     using CommonLibrary.Interfaces;
-    using Data; 
-    
-    //[CallbackBehavior(UseSynchronizationContext = false)]
+    using Data;
+    using System.ServiceModel.Channels;
+    using System.Threading;
+
     public class KSRes : IKSRes, IKSForClient
     {
         private static Controler controler = new Controler();
@@ -36,8 +37,21 @@ namespace KSRes.Services
         public void Login(string username, string password)
         {
             OperationContext context = OperationContext.Current;
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+            string ip = endpoint.Address;
+
+            if(ip.Equals("::1"))
+            {
+                ip = "localhost";
+            }
+
+            ChannelFactory<ILKRes> factory = new ChannelFactory<ILKRes>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://"+ ip +":4000/ILKRes"));
             string sessionID = context.Channel.SessionId;
-            ILKRes service = context.GetCallbackChannel<ILKRes>();
+
+            ILKRes service = factory.CreateChannel();
 
             try
             {
@@ -66,9 +80,15 @@ namespace KSRes.Services
             OperationContext context = OperationContext.Current;
             string sessionID = context.Channel.SessionId;
 
-            string username = Controler.GetServiceSID(sessionID).Username;
+            LKResService service = null;
 
-            Controler.SendMeasurement(username, measurments);
+            if( (service = Controler.GetServiceSID(sessionID) ) == null)
+            {
+                IdentificationExeption ex = new IdentificationExeption("Service not logged in.");
+                throw new FaultException<IdentificationExeption>(ex);
+            }
+
+            new Thread(() => Controler.SendMeasurement(service.Username, measurments)).Start();
         }
 
         public void Update(UpdateInfo update)
@@ -78,7 +98,7 @@ namespace KSRes.Services
 
             try
             {
-                Controler.Update(sessionID, update);
+                new Thread(() => Controler.Update(sessionID, update)).Start();
             }
             catch (Exception ex)
             {
@@ -91,7 +111,21 @@ namespace KSRes.Services
         public List<LKResService> GetAllSystem()
         {
             OperationContext context = OperationContext.Current;
-            IKSClient client = context.GetCallbackChannel<IKSClient>();
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+            string ip = endpoint.Address;
+
+            if (ip.Equals("::1"))
+            {
+                ip = "localhost";
+            }
+
+            ChannelFactory<IKSClient> factory = new ChannelFactory<IKSClient>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://" + ip + ":10030/IKSClient"));
+            string sessionID = context.Channel.SessionId;
+
+            IKSClient client = factory.CreateChannel();
 
             Controler.Clients.Add(client);
 
@@ -111,8 +145,11 @@ namespace KSRes.Services
                 TimeStamp = DateTime.Now
             });
 
-            List<Point> setPoints = Controler.P(requiredAP, false);
-            Controler.DeploySetPoint(setPoints);
+            new Thread(() =>
+            {
+                List<Point> setPoints = Controler.P(requiredAP, false);
+                Controler.DeploySetPoint(setPoints);
+            }).Start();
         }
 
         public SortedDictionary<DateTime, double> GetLoadForecast()

@@ -215,7 +215,7 @@ namespace KLRESClient
         /// <summary>
         /// data history which will be shown on chart
         /// </summary>
-        private SortedDictionary<DateTime, double> dataHistory;
+        private List<KeyValuePair<DateTime, double>> dataHistory;
 
         #endregion
 
@@ -705,13 +705,13 @@ namespace KLRESClient
         /// <summary>
         /// Gets or sets data history
         /// </summary>
-        public SortedDictionary<DateTime, double> DataHistory
+        public List<KeyValuePair<DateTime, double>> DataHistory
         {
             get
             {
                 if (this.dataHistory == null)
                 {
-                    this.dataHistory = new SortedDictionary<DateTime, double>();
+                    this.dataHistory = new List<KeyValuePair<DateTime, double>>();
                 }
 
                 return this.dataHistory;
@@ -884,16 +884,16 @@ namespace KLRESClient
         {
             try
             {
-                SortedDictionary<DateTime, double> temp = this.Client.GetMeasurements(this.SelectedItem.MRID);
+                List<KeyValuePair<DateTime, double>> temp = this.Client.GetMeasurements(this.SelectedItem.MRID);
                 StringBuilder allHist = new StringBuilder();
                 
                 if (temp.Count > 10)
                 {
-                    List<KeyValuePair<DateTime, double>> lastFive = temp.ToList().GetRange(temp.Count - 10, 10);
+                    List<KeyValuePair<DateTime, double>> lastFive = temp.GetRange(temp.Count - 10, 10);
 
                     foreach (KeyValuePair<DateTime, double> kvp in lastFive)
                     {
-                        this.DataHistory.Add(kvp.Key, kvp.Value);
+                        this.DataHistory.Add(kvp);
                     }
                 }
                 else

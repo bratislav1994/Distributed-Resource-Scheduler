@@ -13,10 +13,12 @@ namespace KLRESClient
     using System.Linq;
     using CommonLibrary;
     using CommonLibrary.Interfaces;
+    using System.ServiceModel;
 
     /// <summary>
     /// Implement interface ILKClient
     /// </summary>
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class LKClientService : ILKClient
     {
         #region fields
@@ -453,7 +455,7 @@ namespace KLRESClient
         public bool Registration(string username, string password)
         {
             this.Proxy.Registration(username, password);
-            this.Initialize();
+            this.Proxy.Login(username, password);
             return true;
         }
 
@@ -501,7 +503,7 @@ namespace KLRESClient
         /// </summary>
         /// <param name="id">id from selected generator</param>
         /// <returns>all measurement for selected generator</returns>
-        public SortedDictionary<DateTime, double> GetMeasurements(string id)
+        public List<KeyValuePair<DateTime, double>> GetMeasurements(string id)
         {
             return this.Proxy.GetMeasurements(id);
         }

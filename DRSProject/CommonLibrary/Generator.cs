@@ -131,9 +131,7 @@ namespace CommonLibrary
             }
             set
             {
-                setPoint = value;
-                Thread setActivePowerThread = new Thread(SetActivePower);
-                setActivePowerThread.Start();
+                setPoint = value;        
                 RaisePropertyChanged("setPoint");
             }
         }
@@ -192,13 +190,5 @@ namespace CommonLibrary
             }
         }
 
-        private void SetActivePower()
-        {
-            Thread.Sleep(2000);
-            if (workingMode == WorkingMode.REMOTE && setPoint != -1)
-            {
-                this.ActivePower = this.setPoint;
-            }
-        }
     }
 }
