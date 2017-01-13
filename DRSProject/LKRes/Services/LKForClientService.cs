@@ -461,6 +461,7 @@ namespace LKRes.Services
             }
         }
 
+
         public void ProcessingBasePoint()
         {
             if (BasePointCounter < BasepointBuffer.Count)
