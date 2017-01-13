@@ -17,8 +17,9 @@ namespace KSRes.Services
     using CommonLibrary;
     using CommonLibrary.Exceptions;
     using CommonLibrary.Interfaces;
-    using Data; 
-    
+    using Data;
+    using System.ServiceModel.Channels;
+
     public class KSRes : IKSRes, IKSForClient
     {
         private static Controler controler = new Controler();
@@ -35,8 +36,21 @@ namespace KSRes.Services
         public void Login(string username, string password)
         {
             OperationContext context = OperationContext.Current;
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+            string ip = endpoint.Address;
+
+            if(ip.Equals("::1"))
+            {
+                ip = "localhost";
+            }
+
+            ChannelFactory<ILKRes> factory = new ChannelFactory<ILKRes>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://"+ ip +":4000/ILKRes"));
             string sessionID = context.Channel.SessionId;
-            ILKRes service = context.GetCallbackChannel<ILKRes>();
+
+            ILKRes service = factory.CreateChannel();
 
             try
             {
