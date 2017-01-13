@@ -14,6 +14,7 @@ namespace LKRes
     using System.Text;
     using System.Threading.Tasks;
     using System.Data.Entity;
+    using Services;
 
     /// <summary>
     /// Program.cs of LKRes server
@@ -26,15 +27,17 @@ namespace LKRes
         /// <param name="args">Command-Line arguments</param>
         public static void Main(string[] args)
         {
+            LKForClientService instance = new LKForClientService();
+
             NetTcpBinding binding = new NetTcpBinding();
             string address = "net.tcp://localhost:4000/ILKRes";
-            ServiceHost host = new ServiceHost(typeof(Services.LKForClientService));
+            ServiceHost host = new ServiceHost(instance);
             host.AddServiceEndpoint(typeof(ILKRes), binding, address);
             host.Open();
 
             NetTcpBinding binding1 = new NetTcpBinding();
             string address1 = "net.tcp://localhost:5000/ILKForClient";
-            ServiceHost host1 = new ServiceHost(typeof(Services.LKForClientService));
+            ServiceHost host1 = new ServiceHost(instance);
             host1.AddServiceEndpoint(typeof(ILKForClient), binding1, address1);
             host1.Open();
 

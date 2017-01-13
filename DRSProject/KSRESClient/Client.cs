@@ -17,7 +17,8 @@ namespace KSRESClient
     using CommonLibrary;
     using CommonLibrary.Interfaces;
     using System.Windows.Data;
-    
+
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class Client : IKSClient
     {
         private BindingList<Generator> generatorsForShowing;
@@ -286,6 +287,8 @@ namespace KSRESClient
         public void IssueCommand(double neededPower)
         {
             Proxy.IssueCommand(neededPower);
+
+
         }
 
         public Generator GetGeneratorFromId(string mrId)

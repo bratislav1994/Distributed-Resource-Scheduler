@@ -66,7 +66,7 @@ namespace KSRESClient
 
                     NetTcpBinding binding = new NetTcpBinding();
                     string address = "net.tcp://localhost:10030/IKSClient";
-                    ServiceHost host = new ServiceHost(typeof(Client));
+                    ServiceHost host = new ServiceHost(client);
                     host.AddServiceEndpoint(typeof(IKSClient), binding, address);
                     host.Open();
                 }

@@ -22,6 +22,7 @@ namespace LKRes.Services
     /// Class represent a LKRes server who communicating with LKResClient and KSRes module
     /// </summary>
     //[CallbackBehavior(UseSynchronizationContext = false)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class LKForClientService : ILKForClient, ILKRes
     {
         /// <summary>
@@ -156,6 +157,7 @@ namespace LKRes.Services
         {
             lock (LockObj)
             {
+                updateInfo = DataBase.Instance.ReadData();
                 foreach (Point setpoint in setPoints)
                 {
                     Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();

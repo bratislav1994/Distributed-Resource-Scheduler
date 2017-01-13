@@ -19,6 +19,7 @@ namespace KSRes.Services
     using CommonLibrary.Interfaces;
     using Data;
     using System.ServiceModel.Channels;
+    using System.Threading;
 
     public class KSRes : IKSRes, IKSForClient
     {
@@ -87,7 +88,7 @@ namespace KSRes.Services
                 throw new FaultException<IdentificationExeption>(ex);
             }
 
-            Controler.SendMeasurement(service.Username, measurments);
+            new Thread(() => Controler.SendMeasurement(service.Username, measurments)).Start();
         }
 
         public void Update(UpdateInfo update)
