@@ -503,7 +503,7 @@ namespace KLRESClient
         /// </summary>
         /// <param name="id">id from selected generator</param>
         /// <returns>all measurement for selected generator</returns>
-        public SortedDictionary<DateTime, double> GetMeasurements(string id)
+        public List<KeyValuePair<DateTime, double>> GetMeasurements(string id)
         {
             return this.Proxy.GetMeasurements(id);
         }
