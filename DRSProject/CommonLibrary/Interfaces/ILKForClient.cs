@@ -32,6 +32,6 @@ namespace CommonLibrary.Interfaces
         void Registration(string username, string password);
 
         [OperationContract]
-        SortedDictionary<DateTime, double> GetMeasurements(string mRID);
+        List<KeyValuePair<DateTime, double>> GetMeasurements(string mRID);
     }
 }

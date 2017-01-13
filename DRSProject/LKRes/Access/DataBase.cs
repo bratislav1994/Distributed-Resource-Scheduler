@@ -116,7 +116,7 @@ namespace LKRes.Access
 
                 if (entity != null)
                 {
-                    entity.Gen.ActivePower = updateGenerator.ActivePower;
+                    entity.Gen.ActivePower = Math.Round(updateGenerator.ActivePower, 3);
                     entity.Gen.GroupID = updateGenerator.GroupID;
                     entity.Gen.GeneratorType = updateGenerator.GeneratorType;
                     entity.Gen.HasMeasurment = updateGenerator.HasMeasurment;
@@ -124,19 +124,24 @@ namespace LKRes.Access
                     entity.Gen.Pmin = updateGenerator.Pmin;
                     entity.Gen.Price = updateGenerator.Price;
                     entity.Gen.Name = updateGenerator.Name;
-                    entity.Gen.BasePoint = updateGenerator.BasePoint;
+                    entity.Gen.BasePoint = Math.Round(updateGenerator.BasePoint, 3);
 
                     if (entity.Gen.WorkingMode == WorkingMode.REMOTE && updateGenerator.WorkingMode == WorkingMode.LOCAL)
                     {
-                        entity.Gen.WorkingMode = updateGenerator.WorkingMode;
                         entity.Gen.SetPoint = -1;
                     }
+                    else
+                    {
+                        entity.Gen.SetPoint = Math.Round(updateGenerator.SetPoint, 3);
+                    }
+
+                    entity.Gen.WorkingMode = updateGenerator.WorkingMode;
                 }
 
                 access.MeasurementHistory.Add(new Measurement()
                 {
                     MRID = entity.Gen.MRID,
-                    ActivePower = entity.Gen.ActivePower,
+                    ActivePower = Math.Round(entity.Gen.ActivePower),
                     TimeStamp = DateTime.Now
                 });
 
@@ -192,16 +197,16 @@ namespace LKRes.Access
             }
         }
 
-        public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
+        public List<KeyValuePair<DateTime, double>> GetMeasurements(string mRID)
         {
-            SortedDictionary<DateTime, double> returnMeasurements = new SortedDictionary<DateTime, double>();
+            List<KeyValuePair<DateTime, double>> returnMeasurements = new List<KeyValuePair<DateTime, double>>();
 
             using (var access = new AccessDB())
             {
                 List<Measurement> mesurements = access.MeasurementHistory.Where(m => m.MRID.Equals(mRID)).ToList();
                 foreach (Measurement m in mesurements)
                 {
-                    returnMeasurements.Add(m.TimeStamp, m.ActivePower);
+                    returnMeasurements.Add(new KeyValuePair<DateTime, double>(m.TimeStamp, m.ActivePower));
                 }
             }
 

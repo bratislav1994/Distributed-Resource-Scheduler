@@ -22,6 +22,6 @@ namespace LKRes.Access
    
         UpdateInfo ReadData();
         bool AddMeasurement(Measurement newMeasurement);
-        SortedDictionary<DateTime, double> GetMeasurements(string mRID);
+        List<KeyValuePair<DateTime, double>> GetMeasurements(string mRID);
     }
 }

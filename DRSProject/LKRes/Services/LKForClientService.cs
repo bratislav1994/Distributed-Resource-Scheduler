@@ -145,6 +145,7 @@ namespace LKRes.Services
         }
         public LKForClientService()
         {
+            updateInfo = new UpdateInfo();
             Thread changePowerThread = new Thread(ChangeActivePower);
             changePowerThread.Start();
 
@@ -178,7 +179,7 @@ namespace LKRes.Services
 
                 //posalji snagu modulu 2
                 Random randGenerator = new Random();
-                Dictionary<string, double> powerForProcessing = proxy.ChangeActivePower(ref updateInfo, randGenerator.Next(0, 2));
+                Dictionary<string, double> powerForProcessing = this.Proxy.ChangeActivePower(ref updateInfo, randGenerator.Next(0, 2));
 
                 foreach (KeyValuePair<string, double> pair in powerForProcessing)
                 {
@@ -376,7 +377,6 @@ namespace LKRes.Services
         #region Update
         private void UpdateData(UpdateInfo update)
         {
-
             DataBase.Instance.UpdateGenerator(update.Generators[0]);
 
             //nova grupa
@@ -401,7 +401,7 @@ namespace LKRes.Services
 
         #region GetMeasurement
 
-        public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
+        public List<KeyValuePair<DateTime, double>> GetMeasurements(string mRID)
         {
             return DataBase.Instance.GetMeasurements(mRID);
         }
