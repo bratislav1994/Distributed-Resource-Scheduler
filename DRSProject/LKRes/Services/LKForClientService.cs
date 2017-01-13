@@ -216,6 +216,14 @@ namespace LKRes.Services
 
         public UpdateInfo GetMySystem()
         {
+            CreateChannelToClient();
+            client.Update(updateInfo);
+
+            return updateInfo;
+        }
+
+        private void CreateChannelToClient()
+        {
             updateInfo = DataBase.Instance.ReadData();
             this.KSResProxy.Update(updateInfo);
             OperationContext context = OperationContext.Current;
@@ -233,9 +241,6 @@ namespace LKRes.Services
                        new EndpointAddress("net.tcp://" + ip + ":10050/ILKClient"));
 
             client = factory.CreateChannel();
-            client.Update(updateInfo);
-
-            return updateInfo;
         }
 
         public void Login(string username, string password)
@@ -263,6 +268,7 @@ namespace LKRes.Services
             try
             {
                 KSResProxy.Registration(username, password);
+                CreateChannelToClient();
             }
             catch (FaultException<IdentificationExeption> ex)
             {
