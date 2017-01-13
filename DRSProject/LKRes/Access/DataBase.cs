@@ -197,16 +197,16 @@ namespace LKRes.Access
             }
         }
 
-        public SortedDictionary<DateTime, double> GetMeasurements(string mRID)
+        public List<KeyValuePair<DateTime, double>> GetMeasurements(string mRID)
         {
-            SortedDictionary<DateTime, double> returnMeasurements = new SortedDictionary<DateTime, double>();
+            List<KeyValuePair<DateTime, double>> returnMeasurements = new List<KeyValuePair<DateTime, double>>();
 
             using (var access = new AccessDB())
             {
                 List<Measurement> mesurements = access.MeasurementHistory.Where(m => m.MRID.Equals(mRID)).ToList();
                 foreach (Measurement m in mesurements)
                 {
-                    returnMeasurements.Add(m.TimeStamp, m.ActivePower);
+                    returnMeasurements.Add(new KeyValuePair<DateTime, double>(m.TimeStamp, m.ActivePower));
                 }
             }
 

@@ -216,8 +216,9 @@ namespace LKRes.Services
 
         public UpdateInfo GetMySystem()
         {
-            CreateChannelToClient();
-            client.Update(updateInfo);
+            updateInfo = DataBase.Instance.ReadData();
+            //CreateChannelToClient();
+            //client.Update(updateInfo);
 
             return updateInfo;
         }
@@ -248,6 +249,7 @@ namespace LKRes.Services
             try
             {
                 KSResProxy.Login(username, password);
+                CreateChannelToClient();
 
                 this.updateInfo = new UpdateInfo();
                 Thread changePowerThread = new Thread(ChangeActivePower);
