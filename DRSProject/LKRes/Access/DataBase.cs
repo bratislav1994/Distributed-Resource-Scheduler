@@ -128,9 +128,14 @@ namespace LKRes.Access
 
                     if (entity.Gen.WorkingMode == WorkingMode.REMOTE && updateGenerator.WorkingMode == WorkingMode.LOCAL)
                     {
-                        entity.Gen.WorkingMode = updateGenerator.WorkingMode;
+                        
                         entity.Gen.SetPoint = -1;
                     }
+                    else
+                    {
+                        entity.Gen.SetPoint = updateGenerator.SetPoint;
+                    }
+                    entity.Gen.WorkingMode = updateGenerator.WorkingMode;
                 }
 
                 access.MeasurementHistory.Add(new Measurement()

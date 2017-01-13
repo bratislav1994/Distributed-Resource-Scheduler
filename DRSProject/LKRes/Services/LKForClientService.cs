@@ -21,7 +21,7 @@ namespace LKRes.Services
     /// <summary>
     /// Class represent a LKRes server who communicating with LKResClient and KSRes module
     /// </summary>
-    [CallbackBehavior(UseSynchronizationContext = false)]
+    //[CallbackBehavior(UseSynchronizationContext = false)]
     public class LKForClientService : ILKForClient, ILKRes
     {
         /// <summary>
@@ -145,12 +145,7 @@ namespace LKRes.Services
         }
         public LKForClientService()
         {
-            this.updateInfo = new UpdateInfo();
-            Thread changePowerThread = new Thread(ChangeActivePower);
-            changePowerThread.Start();
-
-            Thread basePointThread = new Thread(() => WriteBasePoint());
-            basePointThread.Start();
+           
         }
 
         public string Ping()
@@ -166,9 +161,14 @@ namespace LKRes.Services
                 {
                     Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
                     generator.SetPoint = setpoint.Power;
+                    Thread threadPower = new Thread(() => SetActivePower(generator));
+                    threadPower.Start();
+                    DataBase.Instance.UpdateGenerator(generator);
                 }
             }
         }
+
+
 
         public void ChangeActivePower()
         {
@@ -226,6 +226,13 @@ namespace LKRes.Services
             try
             {
                 KSResProxy.Login(username, password);
+
+                this.updateInfo = new UpdateInfo();
+                Thread changePowerThread = new Thread(ChangeActivePower);
+                changePowerThread.Start();
+
+                Thread basePointThread = new Thread(() => WriteBasePoint());
+                basePointThread.Start();
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -454,6 +461,24 @@ namespace LKRes.Services
                 }
 
                 BasePointCounter++;
+            }
+        }
+
+
+        private void SetActivePower(Generator generator)
+        {
+            Thread.Sleep(2000);
+            if (generator.WorkingMode == WorkingMode.REMOTE && generator.SetPoint != -1)
+            {
+                generator.ActivePower = generator.SetPoint;
+                DataBase.Instance.UpdateGenerator(generator);
+                UpdateInfo update = new UpdateInfo();
+                update.Groups = null;
+                update.Sites = null;
+                update.Generators.Add(generator);
+                update.UpdateType = UpdateType.UPDATE;
+                client.Update(update);
+                KSResProxy.Update(update);
             }
         }
     }

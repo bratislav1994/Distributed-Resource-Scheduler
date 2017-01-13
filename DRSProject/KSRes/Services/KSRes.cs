@@ -19,7 +19,6 @@ namespace KSRes.Services
     using CommonLibrary.Interfaces;
     using Data; 
     
-    //[CallbackBehavior(UseSynchronizationContext = false)]
     public class KSRes : IKSRes, IKSForClient
     {
         private static Controler controler = new Controler();
@@ -66,9 +65,15 @@ namespace KSRes.Services
             OperationContext context = OperationContext.Current;
             string sessionID = context.Channel.SessionId;
 
-            string username = Controler.GetServiceSID(sessionID).Username;
+            LKResService service = null;
 
-            Controler.SendMeasurement(username, measurments);
+            if( (service = Controler.GetServiceSID(sessionID) ) == null)
+            {
+                IdentificationExeption ex = new IdentificationExeption("Service not logged in.");
+                throw new FaultException<IdentificationExeption>(ex);
+            }
+
+            Controler.SendMeasurement(service.Username, measurments);
         }
 
         public void Update(UpdateInfo update)

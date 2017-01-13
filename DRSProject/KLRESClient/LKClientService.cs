@@ -13,6 +13,7 @@ namespace KLRESClient
     using System.Linq;
     using CommonLibrary;
     using CommonLibrary.Interfaces;
+    using System.ServiceModel;
 
     /// <summary>
     /// Implement interface ILKClient
@@ -453,7 +454,7 @@ namespace KLRESClient
         public bool Registration(string username, string password)
         {
             this.Proxy.Registration(username, password);
-            this.Initialize();
+            this.Proxy.Login(username, password);
             return true;
         }
 

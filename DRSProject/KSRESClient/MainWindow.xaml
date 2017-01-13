@@ -19,6 +19,7 @@
                             <DataGridTextColumn Header="name" Binding="{Binding Name}"/>
                             <DataGridTextColumn Header="activePower" Binding="{Binding ActivePower}"/>
                             <DataGridTextColumn Header="basePoint" Binding="{Binding BasePoint}"/>
+                            <DataGridTextColumn Header="setPoint" Binding="{Binding SetPoint}"/>
                             <DataGridTextColumn Header="hasMeasurment" Binding="{Binding HasMeasurment}"/>
                             <DataGridTextColumn Header="pmin" Width="40" Binding="{Binding Pmin}"/>
                             <DataGridTextColumn Header="pmax" Width="40" Binding="{Binding Pmax}"/>
