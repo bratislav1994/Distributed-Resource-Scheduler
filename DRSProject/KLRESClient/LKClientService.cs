@@ -18,6 +18,7 @@ namespace KLRESClient
     /// <summary>
     /// Implement interface ILKClient
     /// </summary>
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class LKClientService : ILKClient
     {
         #region fields
