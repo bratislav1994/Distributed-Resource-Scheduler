@@ -46,17 +46,14 @@ namespace LKResClientTest
         [OneTimeSetUp]
         public void SetupTest()
         {
-            MainWindow window = null;
-
             var t = new Thread(() =>
             {
-                window = new MainWindow();
-                this.masterVM = new MasterViewModel();
+                this.mainWindow = new MainWindow();
+                this.masterVM = new MasterViewModel(this.mainWindow);
                 mockClient = Substitute.For<LKClientService>();
                 this.masterVM.Client = mockClient;
                 this.masterVM.AddWindowVM = new AddWindowViewModel(this.masterVM.Client);
                 this.masterVM.EditRemoveWindowVM = new EditRemoveViewModel(this.masterVM.Client);
-                this.masterVM.MainWin = window;
                 this.masterVM.HomeVM = new HomeWindowViewModel();
                 // this.masterVM = new MasterViewModel(window);
             });
@@ -72,7 +69,7 @@ namespace LKResClientTest
         [Test]
         public void ConstructorTest()
         {
-            Assert.DoesNotThrow(() => this.masterVM = new MasterViewModel());
+            Assert.DoesNotThrow(() => this.masterVM = new MasterViewModel(this.mainWindow));
             Assert.AreEqual(null, this.masterVM.AddWindowVM);
             Assert.AreEqual(null, this.masterVM.EditRemoveWindowVM);
             Assert.AreEqual(null, this.masterVM.Client);
@@ -84,9 +81,8 @@ namespace LKResClientTest
         [Test]
         public void ClientTest()
         {
-            this.masterVM = new MasterViewModel();
+            this.masterVM = new MasterViewModel(this.mainWindow);
             this.masterVM.Client = mockClient;
-            // Assert.AreNotEqual(null, this.masterVM.Client);
             LKClientService client2 = new LKClientService();
             this.masterVM.Client = client2;
             Assert.AreEqual(client2, this.masterVM.Client);
@@ -110,7 +106,7 @@ namespace LKResClientTest
         [Test]
         public void AddWindowVMTest()
         {
-            this.masterVM = new MasterViewModel();
+            this.masterVM = new MasterViewModel(this.mainWindow);
             this.masterVM.AddWindowVM = new AddWindowViewModel(this.masterVM.Client);
             Assert.AreNotEqual(null, this.masterVM.AddWindowVM);
             Assert.Throws<ArgumentNullException>(() => this.masterVM.AddWindowVM = null);
@@ -125,42 +121,13 @@ namespace LKResClientTest
         [Test]
         public void EditRemoveWindowVMTest()
         {
-            this.masterVM = new MasterViewModel();
+            this.masterVM = new MasterViewModel(this.mainWindow);
             this.masterVM.EditRemoveWindowVM = new EditRemoveViewModel(this.masterVM.Client);
             Assert.AreNotEqual(null, this.masterVM.EditRemoveWindowVM);
             Assert.Throws<ArgumentNullException>(() => this.masterVM.EditRemoveWindowVM = null);
             EditRemoveViewModel viewModel = new EditRemoveViewModel(this.client);
             this.masterVM.EditRemoveWindowVM = viewModel;
             Assert.AreEqual(viewModel, this.masterVM.EditRemoveWindowVM);
-        }
-
-        /// <summary>
-        /// test for exit command
-        /// </summary>
-        [Test]
-        public void ExitCommandTest()
-        {
-            Assert.AreNotEqual(null, this.masterVM.ExitCommand);
-        }
-
-        /// <summary>
-        /// test for exit command action, when variable execute is true
-        /// </summary>
-        [Test]
-        public void ExitCommandAction()
-        {
-            MainWindow window = null;
-
-            var t = new Thread(() =>
-            {
-                window = new MainWindow();
-                this.masterVM = new MasterViewModel(window);
-                this.masterVM.ExitCommand.Execute();
-            });
-
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
         }
     }
 }

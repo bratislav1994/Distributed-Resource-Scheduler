@@ -366,7 +366,7 @@ namespace LKResTest.ServicesTest
         [Test]
         public void GetMeasurementsTest()
         {
-            lkResTest.GetMeasurements("1").Returns(new SortedDictionary<DateTime, double>());
+            lkResTest.GetMeasurements("1").Returns(new List<KeyValuePair<DateTime, double>>());
         }
 
         [Test]

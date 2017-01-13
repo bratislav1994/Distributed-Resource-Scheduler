@@ -646,11 +646,12 @@ namespace LKResClientTest
         [Test]
         public void DataHistoryTest()
         {
-            SortedDictionary<DateTime, double> history = new SortedDictionary<DateTime, double>();
+            List<KeyValuePair<DateTime, double>> history = new List<KeyValuePair<DateTime, double>>();
             this.viewModel.DataHistory = history;
             Assert.AreEqual(this.viewModel.DataHistory, history);
             this.viewModel.DataHistory = null;
-            history.Add(DateTime.Now, 20);
+            history.Add(new KeyValuePair<DateTime, double>(DateTime.Now, 20));
+            
             Assert.AreNotEqual(this.viewModel.DataHistory, history);
         }
 
@@ -691,8 +692,8 @@ namespace LKResClientTest
             this.viewModel.ShowDataCommand.Execute();
 
             ILKForClient mockService = Substitute.For<ILKForClient>();
-            SortedDictionary<DateTime, double> temp = new SortedDictionary<DateTime, double>();
-            temp.Add(DateTime.Now, 20);
+            List<KeyValuePair<DateTime, double>> temp = new List<KeyValuePair<DateTime, double>>();
+            temp.Add(new KeyValuePair<DateTime, double>(DateTime.Now, 20));
 
             mockService.GetMeasurements("1").Returns(temp);
             this.viewModel.Client.Proxy = mockService;
@@ -703,7 +704,7 @@ namespace LKResClientTest
 
             for (int i = 0; i < 10; i++)
             {
-                temp.Add(DateTime.Now.AddDays(1 * i), i * 10);
+                temp.Add(new KeyValuePair<DateTime, double>(DateTime.Now.AddDays(1 * i), i * 10));
             }
 
             var t = new Thread(() =>

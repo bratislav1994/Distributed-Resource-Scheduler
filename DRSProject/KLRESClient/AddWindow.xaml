@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KLRESClient"
         mc:Ignorable="d"
-        Title="AddWindow" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" Height="350" Width="500">
+        Title="AddWindow" WindowStyle="None" Height="350" Width="500">
     <Window.Resources>
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
             <Grid>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KLRESClient"
         mc:Ignorable="d"
-        Title="Project" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" Height="400" Width="900">
+        Title="Project" Height="400" Width="900">
 
     <Window.Resources>
         <Style BasedOn="{StaticResource {x:Type TextBlock}}"
@@ -147,7 +147,6 @@
         <TextBlock x:Name="textBlock" Style="{StaticResource TitleText}" HorizontalAlignment="Left" Margin="5,0,0,0" TextWrapping="Wrap" Text="Generators" VerticalAlignment="Top">
 
         </TextBlock>
-        <Button x:Name="button" Command="{Binding ExitCommand}" Content="X" FontSize="20" FontWeight="UltraBold" HorizontalAlignment="Left" Style="{StaticResource ResourceKey=WindowButtonStyle}" Margin="870,0,0,0" Height="30" Width="30" VerticalAlignment="Top"/>
 
     </Grid>
 

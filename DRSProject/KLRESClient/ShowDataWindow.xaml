@@ -13,135 +13,70 @@
     
         
         mc:Ignorable="d"
-        Title="ShowDataWindow" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="None" Height="525" Width="450">
+        Title="ShowDataWindow" WindowStartupLocation="CenterScreen" Height="350" WindowStyle="None" Width="800">
     <Window.Resources>
-        <PointCollection x:Key="PCol1">1,10 2,30 3,20 4,40</PointCollection>
-        <PointCollection x:Key="PCol2">1,40 2,20 3,30 4,10</PointCollection>
 
-        <Style x:Key="DataPointStyle1" TargetType="{x:Type chartingToolkit:LineDataPoint}">
-            <Setter Property="Background" Value="LightBlue"/>
-            <Setter Property="Width" Value="32"></Setter>
-            <Setter Property="Height" Value="32"></Setter>
+        <Color x:Key="WindowBackgroundColor">#FF2D2D30</Color>
+        <Color x:Key="HighlightColor">#EB2F2F</Color>
+        <Color x:Key="BlueColor">#7C0000</Color>
+        <Color x:Key="ForegroundColor">#222222</Color>
+
+        <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}"/>
+        <SolidColorBrush x:Key="HighlightColorBrush" Color="{StaticResource HighlightColor}"/>
+        <SolidColorBrush x:Key="BlueColorBrush" Color="{StaticResource BlueColor}"/>
+        <SolidColorBrush x:Key="ForegroundColorBrush" Color="{StaticResource ForegroundColor}"/>
+
+        <Style x:Key="WindowButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColorBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="chartingToolkit:LineDataPoint">
-                        <Ellipse Fill="LightBlue" Stroke="DarkBlue" StrokeThickness="3"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="DataPointStyle2" TargetType="{x:Type chartingToolkit:LineDataPoint}">
-            <Setter Property="Background" Value="LightGreen"/>
-            <Setter Property="Width" Value="16"></Setter>
-            <Setter Property="Height" Value="16"></Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="chartingToolkit:LineDataPoint">
-                        <Rectangle Fill="LightGreen" Stroke="DarkGreen" StrokeThickness="3"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="PolylineStyle1" TargetType="{x:Type Polyline}">
-            <Setter Property="StrokeThickness" Value="1"/>
-            <Setter Property="Stroke" Value="Blue"></Setter>
-        </Style>
-        <Style x:Key="PolylineStyle2" TargetType="{x:Type Polyline}">
-            <Setter Property="StrokeThickness" Value="2"/>
-            <Setter Property="Stroke" Value="Green"></Setter>
-        </Style>
-
-        <Style x:Key="LineSeriesStyle1" TargetType="{x:Type chartingToolkit:LineSeries}" >
-            <Setter Property="IsTabStop" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type chartingToolkit:LineSeries}">
-                        <Canvas x:Name="PlotArea">
-                            <Polyline Points="{TemplateBinding Points}" Style="{DynamicResource PolylineStyle1}" />
-                        </Canvas>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="LineSeriesStyle2" TargetType="{x:Type chartingToolkit:LineSeries}" >
-            <Setter Property="IsTabStop" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type chartingToolkit:LineSeries}">
-                        <Canvas x:Name="PlotArea">
-                            <Polyline Points="{TemplateBinding Points}" Style="{DynamicResource PolylineStyle2}" />
-                        </Canvas>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-            <Style BasedOn="{StaticResource {x:Type TextBlock}}"
-       TargetType="TextBlock"
-       x:Key="TitleText">
-                <Setter Property="FontSize" Value="40"/>
-                <Setter Property="Foreground">
-                    <Setter.Value>
-                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                            <LinearGradientBrush.GradientStops>
-                                <GradientStop Offset="0.0" Color="#90DDDD" />
-                                <GradientStop Offset="1.0" Color="#5BFFFF" />
-                            </LinearGradientBrush.GradientStops>
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-            <Color x:Key="WindowBackgroundColor">#FF2D2D30</Color>
-            <Color x:Key="HighlightColor">#EB2F2F</Color>
-            <Color x:Key="BlueColor">#7C0000</Color>
-            <Color x:Key="ForegroundColor">#222222</Color>
-
-            <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{StaticResource WindowBackgroundColor}"/>
-            <SolidColorBrush x:Key="HighlightColorBrush" Color="{StaticResource HighlightColor}"/>
-            <SolidColorBrush x:Key="BlueColorBrush" Color="{StaticResource BlueColor}"/>
-            <SolidColorBrush x:Key="ForegroundColorBrush" Color="{StaticResource ForegroundColor}"/>
-
-            <Style x:Key="WindowButtonStyle" TargetType="{x:Type Button}">
-                <Setter Property="Foreground" Value="{DynamicResource ForegroundColorBrush}" />
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="HorizontalContentAlignment" Value="Center" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Padding" Value="1" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid Background="{TemplateBinding Background}">
-                                <ContentPresenter x:Name="contentPresenter"
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter x:Name="contentPresenter"
                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                           Margin="{TemplateBinding Padding}"
                           RecognizesAccessKey="True" />
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource HighlightColorBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="{DynamicResource BlueColorBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="false">
-                                    <Setter TargetName="contentPresenter" Property="Opacity" Value=".5" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource HighlightColorBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource BlueColorBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="contentPresenter" Property="Opacity" Value=".5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
+
+        <Style x:Key="DataPointStyle1" TargetType="{x:Type chartingToolkit:LineDataPoint}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="chartingToolkit:LineDataPoint">
+                        <Grid>
+                            <Ellipse Fill="{TemplateBinding Background}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Window.Resources>
 
     <Grid Background="#FF5B6570">
 
-        <DVC:Chart Name="mcChart" Title="Last 10 values of active power" Height="210" Width="400" Background="#FFD4D7DB" Margin="10,10,32,269">
+        <DVC:Chart Canvas.Top="80" Canvas.Left="10" Name="mcChart" Background="#FFE5E5E5" Margin="10,32,235,15">
 
             <DVC:Chart.LegendStyle>
                 <Style TargetType="Control">
@@ -152,22 +87,22 @@
 
             <DVC:Chart.Series>
                 <DVC:LineSeries Canvas.Top="30" Canvas.Left="10" Background="Blue" Title="Data history"
-                    Style="{StaticResource LineSeriesStyle2}"
-                    DataPointStyle="{StaticResource DataPointStyle2}"
+                    DataPointStyle="{StaticResource DataPointStyle1}"
                     ItemsSource="{Binding EditRemoveWindowVM.DataHistory}"
                     IndependentValueBinding="{Binding Path=Key}"
-                    DependentValueBinding="{Binding Path=Value}" Margin="0,-15,0,1"/>
+                    DependentValueBinding="{Binding Path=Value}" Margin="0,0,0,-2"/>
             </DVC:Chart.Series>
         </DVC:Chart>
 
         <TextBox IsReadOnly="True" BorderThickness="1" BorderBrush="Black" x:Name="text_box1" Text ="{Binding EditRemoveWindowVM.AllHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                 HorizontalAlignment="Left" Height="200" Margin="10,271,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="400"
+                 HorizontalAlignment="Left" Height="266" Margin="562,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="220"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  ScrollViewer.CanContentScroll="True"/>
-        <Label x:Name="label1" Background="#FFD4D7DB" Content="All data history from selected generator" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1" Background="#FFD4D7DB" Content="All data history from selected generator" HorizontalAlignment="Left" Margin="562,35,0,0" VerticalAlignment="Top"/>
 
-        <Button x:Name="button" Command="{Binding EditRemoveWindowVM.ExitCommand}" Content="X" FontSize="20" FontWeight="UltraBold" HorizontalAlignment="Left" Style="{StaticResource ResourceKey=WindowButtonStyle}" Margin="420,0,0,0" Height="30" Width="30" VerticalAlignment="Top"/>
+        <Button x:Name="button" Command="{Binding EditRemoveWindowVM.ExitCommand}" Content="X" FontSize="20" FontWeight="UltraBold" HorizontalAlignment="Left" Style="{StaticResource ResourceKey=WindowButtonStyle}" Margin="760,0,0,0" Height="30" Width="30" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox" FontSize="16" BorderBrush="#FFE5E5E5" Background="#FFE5E5E5" HorizontalAlignment="Left" Height="22" Margin="132,47,0,0" Text="Last 10 values of active power" VerticalAlignment="Top" Width="250"/>
 
 
     </Grid>

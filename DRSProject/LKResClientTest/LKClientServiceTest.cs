@@ -405,7 +405,7 @@ namespace LKResClientTest
             this.client.Sites.Add(site);
 
             this.mockService = Substitute.For<ILKForClient>();
-            SortedDictionary<DateTime, double> temp = new SortedDictionary<DateTime, double>();
+            List<KeyValuePair<DateTime, double>> temp = new List<KeyValuePair<DateTime, double>>();
 
             this.mockService.GetMeasurements("1").Returns(temp);
             this.client.Proxy = this.mockService;
