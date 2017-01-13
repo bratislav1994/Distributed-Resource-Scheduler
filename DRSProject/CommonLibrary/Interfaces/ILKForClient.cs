@@ -16,7 +16,8 @@ using System.ServiceModel;
 
 namespace CommonLibrary.Interfaces
 {
-    [ServiceContract(CallbackContract = typeof(ILKClient))]
+    // [ServiceContract(CallbackContract = typeof(ILKClient))]
+    [ServiceContract]
     public interface ILKForClient
     {
         [OperationContract]
