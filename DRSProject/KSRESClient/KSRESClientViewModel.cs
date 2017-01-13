@@ -474,7 +474,7 @@ namespace KSRESClient
                     throw new Exception("Needed power must be positive");
                 }
 
-                Client.IssueCommand(np);
+                Client.IssueCommand(Math.Round(np, 3));
             }
             catch (Exception ex)
             {

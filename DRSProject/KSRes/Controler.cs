@@ -245,9 +245,12 @@ namespace KSRes
                 }
 
                 Generator generator = service.Generators.Where(x => x.MRID.Equals(mrid)).FirstOrDefault();
-                generator.ActivePower = measurments[mrid];
 
-                update.Generators.Add(generator);
+                if (generator != null)
+                {
+                    generator.ActivePower = measurments[mrid];
+                    update.Generators.Add(generator);
+                }
             }
 
             NotifyClients(update, username);

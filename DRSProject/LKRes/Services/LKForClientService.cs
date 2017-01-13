@@ -145,6 +145,7 @@ namespace LKRes.Services
         }
         public LKForClientService()
         {
+            this.updateInfo = new UpdateInfo();
             Thread changePowerThread = new Thread(ChangeActivePower);
             changePowerThread.Start();
 
@@ -178,7 +179,7 @@ namespace LKRes.Services
 
                 //posalji snagu modulu 2
                 Random randGenerator = new Random();
-                Dictionary<string, double> powerForProcessing = proxy.ChangeActivePower(ref updateInfo, randGenerator.Next(0, 2));
+                Dictionary<string, double> powerForProcessing = Proxy.ChangeActivePower(ref updateInfo, randGenerator.Next(0, 2));
 
                 foreach (KeyValuePair<string, double> pair in powerForProcessing)
                 {
@@ -194,7 +195,7 @@ namespace LKRes.Services
                 {
                     lock (LockObj)
                     {
-                        KSResProxy.SendMeasurement(powerForProcessing);
+                        this.KSResProxy.SendMeasurement(powerForProcessing);
                     }
                 }
 
@@ -214,7 +215,7 @@ namespace LKRes.Services
         public UpdateInfo GetMySystem()
         {
             updateInfo = DataBase.Instance.ReadData();
-            KSResProxy.Update(updateInfo);
+            this.KSResProxy.Update(updateInfo);
             OperationContext context = OperationContext.Current;
             client = context.GetCallbackChannel<ILKClient>();
             return updateInfo;

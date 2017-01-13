@@ -26,7 +26,7 @@
                             newPower = generatorIterator.ActivePower + (generatorIterator.ActivePower / 10);
                             if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
                             {
-                                generatorIterator.ActivePower = newPower;
+                                generatorIterator.ActivePower = Math.Round(newPower, 3);
                             }
                         }
                         else
@@ -34,7 +34,7 @@
                             newPower = generatorIterator.ActivePower - (generatorIterator.ActivePower / 10);
                             if (newPower >= generatorIterator.Pmin && newPower <= generatorIterator.Pmax)
                             {
-                                generatorIterator.ActivePower = newPower;
+                                generatorIterator.ActivePower = Math.Round(newPower, 3);
                             }
                         }
                     }

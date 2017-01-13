@@ -116,7 +116,7 @@ namespace LKRes.Access
 
                 if (entity != null)
                 {
-                    entity.Gen.ActivePower = updateGenerator.ActivePower;
+                    entity.Gen.ActivePower = Math.Round(updateGenerator.ActivePower, 3);
                     entity.Gen.GroupID = updateGenerator.GroupID;
                     entity.Gen.GeneratorType = updateGenerator.GeneratorType;
                     entity.Gen.HasMeasurment = updateGenerator.HasMeasurment;
