@@ -65,6 +65,11 @@ namespace KLRESClient
             this.client = this.Client;
         }
 
+        public HomeWindowViewModel(LKClientService client)
+        {
+            this.client = client;
+        }
+
         #region Properties
 
         /// <summary>

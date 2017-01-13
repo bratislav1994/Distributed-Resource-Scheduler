@@ -64,6 +64,11 @@ namespace KLRESClient
             this.editRemoveWindowVM = new EditRemoveViewModel(this.Client);
         }
 
+        public MasterViewModel()
+        {
+            
+        }
+
         #endregion
 
         #region properties
@@ -81,6 +86,19 @@ namespace KLRESClient
             set
             {
                 this.client = value;
+            }
+        }
+
+        public MainWindow MainWin
+        {
+            get
+            {
+                return this.mainWindow;
+            }
+
+            set
+            {
+                this.mainWindow = value;
             }
         }
 

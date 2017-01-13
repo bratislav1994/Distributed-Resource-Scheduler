@@ -671,6 +671,9 @@ namespace LKResClientTest
         [Test]
         public void ShowDataExecuteTest()
         {
+            this.viewModel.SelectedItem = null;
+            Assert.IsFalse(this.viewModel.ShowDataCommand.CanExecute());
+
             this.client.Generators.Clear();
             this.client.Groups.Clear();
             this.client.Sites.Clear();
