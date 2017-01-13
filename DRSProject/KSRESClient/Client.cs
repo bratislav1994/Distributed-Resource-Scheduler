@@ -374,14 +374,14 @@ namespace KSRESClient
         {
             lock (lockObj)
             {
-                Generators.Clear();
+                generatorsForShowing.Clear();
                 if (currentUser == null)
                 {
                     foreach (LKResService user in allUsers)
                     {
                         foreach (Generator g in user.Generators)
                         {
-                            Generators.Add(g);
+                            generatorsForShowing.Add(g);
                         }
                     }
                 }
@@ -389,7 +389,7 @@ namespace KSRESClient
                 {
                     foreach (Generator g in currentUser.Generators)
                     {
-                        Generators.Add(g);
+                        generatorsForShowing.Add(g);
                     }
                 }
             }

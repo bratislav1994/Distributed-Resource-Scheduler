@@ -110,7 +110,21 @@ namespace KSRes.Services
         public List<LKResService> GetAllSystem()
         {
             OperationContext context = OperationContext.Current;
-            IKSClient client = context.GetCallbackChannel<IKSClient>();
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+            string ip = endpoint.Address;
+
+            if (ip.Equals("::1"))
+            {
+                ip = "localhost";
+            }
+
+            ChannelFactory<IKSClient> factory = new ChannelFactory<IKSClient>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://" + ip + ":10030/IKSClient"));
+            string sessionID = context.Channel.SessionId;
+
+            IKSClient client = factory.CreateChannel();
 
             Controler.Clients.Add(client);
 

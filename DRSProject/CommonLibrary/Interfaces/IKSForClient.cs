@@ -14,6 +14,7 @@ using System.ServiceModel;
 
 namespace CommonLibrary.Interfaces
 {
+    [ServiceContract]
     public interface IKSForClient
     {
         [OperationContract]

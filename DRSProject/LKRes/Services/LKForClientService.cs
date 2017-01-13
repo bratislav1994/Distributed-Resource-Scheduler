@@ -89,10 +89,9 @@ namespace LKRes.Services
             {
                 if (this.kSResProxy == null)
                 {
-                    DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-                new InstanceContext(this),
-                new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+                    ChannelFactory<IKSRes> ksResFactory = new ChannelFactory<IKSRes>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
                     kSResProxy = ksResFactory.CreateChannel();
                 }

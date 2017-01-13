@@ -15,6 +15,7 @@ using CommonLibrary.Exceptions;
 
 namespace CommonLibrary.Interfaces
 {
+    [ServiceContract]
     public interface IKSRes
     {
         [OperationContract]
