@@ -128,13 +128,13 @@ namespace LKRes.Access
 
                     if (entity.Gen.WorkingMode == WorkingMode.REMOTE && updateGenerator.WorkingMode == WorkingMode.LOCAL)
                     {
+                        
                         entity.Gen.SetPoint = -1;
                     }
                     else
                     {
-                        entity.Gen.SetPoint = Math.Round(updateGenerator.SetPoint, 3);
+                        entity.Gen.SetPoint = Math.Round(updateGenerator.BasePoint, 3);
                     }
-
                     entity.Gen.WorkingMode = updateGenerator.WorkingMode;
                 }
 

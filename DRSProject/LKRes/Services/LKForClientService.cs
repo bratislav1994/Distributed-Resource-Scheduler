@@ -17,11 +17,13 @@ namespace LKRes.Services
     using CommonLibrary.Exceptions;
     using CommonLibrary.Interfaces;
     using LKRes.Access;
+    using System.ServiceModel.Channels;
 
     /// <summary>
     /// Class represent a LKRes server who communicating with LKResClient and KSRes module
     /// </summary>
-    [CallbackBehavior(UseSynchronizationContext = false)]
+    //[CallbackBehavior(UseSynchronizationContext = false)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class LKForClientService : ILKForClient, ILKRes
     {
         /// <summary>
@@ -89,10 +91,9 @@ namespace LKRes.Services
             {
                 if (this.kSResProxy == null)
                 {
-                    DuplexChannelFactory<IKSRes> ksResFactory = new DuplexChannelFactory<IKSRes>(
-                new InstanceContext(this),
-                new NetTcpBinding(),
-                new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
+                    ChannelFactory<IKSRes> ksResFactory = new ChannelFactory<IKSRes>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://localhost:10010/IKSRes"));
 
                     kSResProxy = ksResFactory.CreateChannel();
                 }
@@ -143,14 +144,11 @@ namespace LKRes.Services
                 basepointBuffer = value;
             }
         }
+
         public LKForClientService()
         {
             updateInfo = new UpdateInfo();
-            Thread changePowerThread = new Thread(ChangeActivePower);
-            changePowerThread.Start();
-
-            Thread basePointThread = new Thread(() => WriteBasePoint());
-            basePointThread.Start();
+            Client = null;
         }
 
         public string Ping()
@@ -162,10 +160,14 @@ namespace LKRes.Services
         {
             lock (LockObj)
             {
+                updateInfo = DataBase.Instance.ReadData();
                 foreach (Point setpoint in setPoints)
                 {
                     Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
                     generator.SetPoint = setpoint.Power;
+                    Thread threadPower = new Thread(() => SetActivePower(generator));
+                    threadPower.Start();
+                    DataBase.Instance.UpdateGenerator(generator);
                 }
             }
         }
@@ -195,7 +197,7 @@ namespace LKRes.Services
                 {
                     lock (LockObj)
                     {
-                        KSResProxy.SendMeasurement(powerForProcessing);
+                        this.KSResProxy.SendMeasurement(powerForProcessing);
                     }
                 }
 
@@ -215,10 +217,29 @@ namespace LKRes.Services
         public UpdateInfo GetMySystem()
         {
             updateInfo = DataBase.Instance.ReadData();
-            KSResProxy.Update(updateInfo);
-            OperationContext context = OperationContext.Current;
-            client = context.GetCallbackChannel<ILKClient>();
+
             return updateInfo;
+        }
+
+        private void CreateChannelToClient()
+        {
+            updateInfo = DataBase.Instance.ReadData();
+            this.KSResProxy.Update(updateInfo);
+            OperationContext context = OperationContext.Current;
+            MessageProperties prop = context.IncomingMessageProperties;
+            RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+            string ip = endpoint.Address;
+
+            if (ip.Equals("::1"))
+            {
+                ip = "localhost";
+            }
+
+            ChannelFactory<ILKClient> factory = new ChannelFactory<ILKClient>(
+                       new NetTcpBinding(),
+                       new EndpointAddress("net.tcp://" + ip + ":10050/ILKClient"));
+
+            client = factory.CreateChannel();
         }
 
         public void Login(string username, string password)
@@ -226,6 +247,18 @@ namespace LKRes.Services
             try
             {
                 KSResProxy.Login(username, password);
+
+                if (Client == null)
+                {
+                    CreateChannelToClient();
+                }
+
+                this.updateInfo = new UpdateInfo();
+                Thread changePowerThread = new Thread(ChangeActivePower);
+                changePowerThread.Start();
+
+                Thread basePointThread = new Thread(() => WriteBasePoint());
+                basePointThread.Start();
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -239,6 +272,7 @@ namespace LKRes.Services
             try
             {
                 KSResProxy.Registration(username, password);
+                CreateChannelToClient();
             }
             catch (FaultException<IdentificationExeption> ex)
             {
@@ -377,6 +411,7 @@ namespace LKRes.Services
         #region Update
         private void UpdateData(UpdateInfo update)
         {
+
             DataBase.Instance.UpdateGenerator(update.Generators[0]);
 
             //nova grupa
@@ -436,6 +471,7 @@ namespace LKRes.Services
             }
         }
 
+
         public void ProcessingBasePoint()
         {
             if (BasePointCounter < BasepointBuffer.Count)
@@ -453,6 +489,24 @@ namespace LKRes.Services
                 }
 
                 BasePointCounter++;
+            }
+        }
+
+
+        private void SetActivePower(Generator generator)
+        {
+            Thread.Sleep(2000);
+            if (generator.WorkingMode == WorkingMode.REMOTE && generator.SetPoint != -1)
+            {
+                generator.ActivePower = generator.SetPoint;
+                DataBase.Instance.UpdateGenerator(generator);
+                UpdateInfo update = new UpdateInfo();
+                update.Groups = null;
+                update.Sites = null;
+                update.Generators.Add(generator);
+                update.UpdateType = UpdateType.UPDATE;
+                client.Update(update);
+                KSResProxy.Update(update);
             }
         }
     }
