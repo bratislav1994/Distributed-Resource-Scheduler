@@ -155,15 +155,12 @@ namespace KSRes
 
                 lock (lockForActiveService)
                 {
-                    if (ActiveService.Where(o => o.Username.Equals(username)).FirstOrDefault() != null)
+                    if (ActiveService.Where(o => o.Username.Equals(username)).FirstOrDefault() == null)
                     {
-                        IdentificationExeption ex = new IdentificationExeption("Service is already logged in.");
-                        throw new FaultException<IdentificationExeption>(ex);
+                        LKResService newService = new LKResService(username, channel, sessionID);
+                        ActiveService.Add(newService);
                     }
-
-                    LKResService newService = new LKResService(username, channel, sessionID);
                     Console.WriteLine("{0}\t User: {1} is logged in.", DateTime.Now, username);
-                    ActiveService.Add(newService);
                 }
             }
             else

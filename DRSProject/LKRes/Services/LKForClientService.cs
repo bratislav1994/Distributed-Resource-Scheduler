@@ -225,7 +225,15 @@ namespace LKRes.Services
                         {
                             DataBase.Instance.UpdateGenerator(generator);
                         }
-                        client.Update(update);
+
+                        try
+                        {
+                            client.Update(update);
+                        }
+                        catch (Exception)
+                        {
+                            client = null;
+                        }
                     }
                 }
             }
@@ -241,10 +249,7 @@ namespace LKRes.Services
         private void CreateChannelToClient()
         {
             Updateinfo = DataBase.Instance.ReadData();
-            lock (lockObj)
-            {
-                this.KSResProxy.Update(Updateinfo);
-            }
+            
             OperationContext context = OperationContext.Current;
             MessageProperties prop = context.IncomingMessageProperties;
             RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
@@ -271,6 +276,11 @@ namespace LKRes.Services
                 if (Client == null)
                 {
                     CreateChannelToClient();
+                }
+
+                lock (lockObj)
+                {
+                    this.KSResProxy.Update(Updateinfo);
                 }
 
                 this.Updateinfo = new UpdateInfo();
@@ -467,7 +477,14 @@ namespace LKRes.Services
         private void NotifyClient(UpdateInfo update)
         {
             Thread.Sleep(50);
-            Client.Update(update);
+            try
+            {
+                client.Update(update);
+            }
+            catch (Exception)
+            {
+                client = null;
+            }
         }
 
         public void SendBasePoint(Dictionary<int, List<Point>> basePoints)
@@ -535,7 +552,15 @@ namespace LKRes.Services
                 update.Sites = null;
                 update.Generators.Add(generator);
                 update.UpdateType = UpdateType.UPDATE;
-                client.Update(update);
+
+                try
+                {
+                    client.Update(update);
+                }
+                catch (Exception)
+                {
+                    client = null;
+                }
 
                 lock (lockObj)
                 {

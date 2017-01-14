@@ -354,7 +354,14 @@ namespace KLRESClient
         /// <param name="update">update info which will be sent to service</param>
         public void Command(UpdateInfo update)
         {
-            this.proxy.Update(update);
+            try
+            {
+                this.proxy.Update(update);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         #endregion
@@ -454,8 +461,16 @@ namespace KLRESClient
         /// <param name="password">password box</param>
         public bool Registration(string username, string password)
         {
-            this.Proxy.Registration(username, password);
-            this.Proxy.Login(username, password);
+            try
+            {
+                this.Proxy.Registration(username, password);
+                this.Proxy.Login(username, password);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
             return true;
         }
 
@@ -466,8 +481,16 @@ namespace KLRESClient
         /// <param name="password">password box</param>
         public bool LogIn(string username, string password)
         {
-            this.Proxy.Login(username, password);
-            this.Initialize();
+            try
+            {
+                this.Proxy.Login(username, password);
+                this.Initialize();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            
             return true;
         }
 

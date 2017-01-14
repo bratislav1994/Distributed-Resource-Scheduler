@@ -732,7 +732,11 @@ namespace KLRESClient
             this.group = null;
             this.generator = null;
             this.site = null;
-            this.win1.Close();
+
+            if (this.win1 != null)
+            {
+                this.win1.Close();
+            }
         }
 
         #endregion

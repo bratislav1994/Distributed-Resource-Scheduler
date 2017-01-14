@@ -57,6 +57,9 @@ namespace KLRESClient
         /// </summary>
         private string password2 = string.Empty;
 
+        private bool isRegistered = false;
+        private bool isLogin = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel" /> class.
         /// </summary>
@@ -227,6 +230,32 @@ namespace KLRESClient
             }
         }
 
+        public bool IsRegistered
+        {
+            get
+            {
+                return isRegistered;
+            }
+
+            set
+            {
+                isRegistered = value;
+            }
+        }
+
+        public bool IsLogin
+        {
+            get
+            {
+                return isLogin;
+            }
+
+            set
+            {
+                isLogin = value;
+            }
+        }
+
         /// <summary>
         /// Validation for username and password
         /// </summary>
@@ -258,12 +287,16 @@ namespace KLRESClient
         {
             try
             {
-                this.Client.LogIn(this.Username, this.Password);
-                this.homeWin.Close();
+                IsLogin = this.Client.LogIn(this.Username, this.Password);
+                if (this.HomeWin != null)
+                {
+                    this.homeWin.Close();
+                }
             }
             catch
             {
                 MessageBox.Show("Error during login.");
+                IsLogin = false;
             }
         }
 
@@ -298,12 +331,16 @@ namespace KLRESClient
         {
             try
             {
-                this.Client.Registration(this.Username2, this.Password2);
-                this.homeWin.Close();
+                IsRegistered = this.Client.Registration(this.Username2, this.Password2);
+                if (this.HomeWin != null)
+                {
+                    this.homeWin.Close();
+                }
             }
             catch
             {
                 MessageBox.Show("Error during registration.");
+                IsRegistered = false;
             }
         }
 

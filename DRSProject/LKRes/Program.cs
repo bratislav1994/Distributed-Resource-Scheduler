@@ -28,7 +28,7 @@ namespace LKRes
         public static void Main(string[] args)
         {
             LKForClientService instance = new LKForClientService();
-
+            
             NetTcpBinding binding = new NetTcpBinding();
             string address = "net.tcp://localhost:4000/ILKRes";
             ServiceHost host = new ServiceHost(instance);

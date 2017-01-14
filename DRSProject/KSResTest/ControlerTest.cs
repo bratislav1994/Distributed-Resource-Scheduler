@@ -696,7 +696,7 @@ namespace KSResTest
             RegisteredService ret = new RegisteredService() { Username = "loginUser", Password = HashAlgorithm.Create().ComputeHash(Encoding.ASCII.GetBytes("pass")) };
             LocalDB.Instance.GetService(Arg.Any<string>()).Returns(ret);
 
-            Assert.Throws<FaultException<IdentificationExeption>>(() => controler.Login("loginUser", "pass", mockService, "sessionIdLogIn"));
+            Assert.DoesNotThrow(() => controler.Login("loginUser", "pass", mockService, "sessionIdLogIn"));
         }
 
         [Test]
