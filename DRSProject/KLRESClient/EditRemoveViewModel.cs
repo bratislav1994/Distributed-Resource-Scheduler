@@ -217,6 +217,8 @@ namespace KLRESClient
         /// </summary>
         private List<KeyValuePair<DateTime, double>> dataHistory;
 
+        private bool isTest = false;
+
         #endregion
 
         #region constructor
@@ -245,6 +247,19 @@ namespace KLRESClient
         /// The source of the event
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsTest
+        {
+            get
+            {
+                return this.isTest;
+            }
+
+            set
+            {
+                this.isTest = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets show window
@@ -912,7 +927,11 @@ namespace KLRESClient
             }
             catch
             {
-                MessageBox.Show("Error during getting measurement for selected generator.");
+                if (!this.isTest)
+                {
+                    MessageBox.Show("Error during getting measurement for selected generator.");
+                }
+                    
                 this.SelectedItem = null;
                 this.DataHistory = null;
                 this.ShowDataCommand.RaiseCanExecuteChanged();
@@ -1122,7 +1141,10 @@ namespace KLRESClient
             }
             catch
             {
-                MessageBox.Show("Error during execution Edit command.");
+                if (!this.isTest)
+                {
+                    MessageBox.Show("Error during execution Edit command.");
+                }
             }
         }
 

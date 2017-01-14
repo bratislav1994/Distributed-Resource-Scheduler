@@ -59,6 +59,7 @@ namespace KLRESClient
 
         private bool isRegistered = false;
         private bool isLogin = false;
+        private bool isTest = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel" /> class.
@@ -234,12 +235,12 @@ namespace KLRESClient
         {
             get
             {
-                return isRegistered;
+                return this.isRegistered;
             }
 
             set
             {
-                isRegistered = value;
+                this.isRegistered = value;
             }
         }
 
@@ -247,12 +248,25 @@ namespace KLRESClient
         {
             get
             {
-                return isLogin;
+                return this.isLogin;
             }
 
             set
             {
-                isLogin = value;
+                this.isLogin = value;
+            }
+        }
+
+        public bool IsTest
+        {
+            get
+            {
+                return this.isTest;
+            }
+
+            set
+            {
+                this.isTest = value;
             }
         }
 
@@ -295,7 +309,11 @@ namespace KLRESClient
             }
             catch
             {
-                MessageBox.Show("Error during login.");
+                if (!this.isTest)
+                {
+                    MessageBox.Show("Error during login.");
+                }
+                
                 IsLogin = false;
             }
         }
@@ -339,7 +357,11 @@ namespace KLRESClient
             }
             catch
             {
-                MessageBox.Show("Error during registration.");
+                if (!this.isTest)
+                {
+                    MessageBox.Show("Error during registration.");
+                }
+                    
                 IsRegistered = false;
             }
         }

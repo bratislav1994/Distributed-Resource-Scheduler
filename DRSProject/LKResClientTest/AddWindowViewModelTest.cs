@@ -38,6 +38,7 @@ namespace LKResClientTest
         {
             this.client = new LKClientService() { DataContext = this };
             this.addWindowVM = new AddWindowViewModel(this.client);
+            this.addWindowVM.IsTest = true;
         }
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace LKResClientTest
         public void ConstructorTest()
         {
             Assert.DoesNotThrow(() => this.addWindowVM = new AddWindowViewModel(this.client));
+            this.addWindowVM.IsTest = true;
             Assert.AreNotEqual(null, this.addWindowVM.Client);
         }
 
@@ -378,6 +380,7 @@ namespace LKResClientTest
                 this.addWindowVM.AddWin = new AddWindow(this.addWindowVM.Client.DataContext);
                 AddWindow add = this.addWindowVM.AddWin;
                 this.addWindowVM.ClickAddCommand.Execute();
+                this.addWindowVM.AddWin.Close();
             });
 
             t.SetApartmentState(ApartmentState.STA);
@@ -483,6 +486,13 @@ namespace LKResClientTest
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
             t.Join();
+        }
+
+        [Test]
+        public void IsTestTest()
+        {
+            this.addWindowVM.IsTest = true;
+            Assert.IsTrue(this.addWindowVM.IsTest);
         }
     }
 }

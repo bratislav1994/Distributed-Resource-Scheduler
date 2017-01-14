@@ -40,6 +40,7 @@ namespace LKResClientTest
         {
             this.client = new LKClientService() { DataContext = this };
             this.viewModel = new EditRemoveViewModel(this.client);
+            this.viewModel.IsTest = true;
         }
 
         /// <summary>
@@ -49,6 +50,7 @@ namespace LKResClientTest
         public void ConstructorTest()
         {
             Assert.DoesNotThrow(() => this.viewModel = new EditRemoveViewModel(this.client));
+            this.viewModel.IsTest = true;
             Assert.AreNotEqual(null, this.viewModel.Client);
         }
 
@@ -415,6 +417,7 @@ namespace LKResClientTest
             this.viewModel.Client.Sites.Clear();
 
             EditRemoveViewModel temp = new EditRemoveViewModel(this.client);
+            this.viewModel.IsTest = true;
 
             temp.Client.Groups.Add(new Group() { MRID = "2", SiteID = "3" });
             temp.Client.Sites.Add(new Site() { MRID = "3" });
@@ -746,6 +749,13 @@ namespace LKResClientTest
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
             t.Join();
+        }
+
+        [Test]
+        public void IsTestTest()
+        {
+            this.viewModel.IsTest = true;
+            Assert.IsTrue(this.viewModel.IsTest);
         }
     }
 }
