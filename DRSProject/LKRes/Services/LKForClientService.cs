@@ -446,7 +446,7 @@ namespace LKRes.Services
         private void NotifyClient(UpdateInfo update)
         {
             Thread.Sleep(50);
-            client.Update(update);
+            Client.Update(update);
         }
 
         public void SendBasePoint(Dictionary<int, List<Point>> basePoints)

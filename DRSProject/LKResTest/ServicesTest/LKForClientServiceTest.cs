@@ -32,11 +32,10 @@ namespace LKResTest.ServicesTest
             this.lkResTest.Updateinfo = new UpdateInfo();
             this.lkResTest.Proxy = Substitute.For<IActivePowerManagement>();
             this.lkResTest.KSResProxy = Substitute.For<IKSRes>();
-            this.lkResTest.LockObj = new object();
+            this.lkResTest.Client = Substitute.For<ILKClient>();
 
             this.mockDataBase = Substitute.For<IDataBase>();
             DataBase.Instance = mockDataBase;
-            Assert.AreNotEqual(null, this.lkResTest.LockObj);
         }
 
         [Test]
@@ -63,40 +62,51 @@ namespace LKResTest.ServicesTest
             Assert.AreNotEqual(string.Empty, lkResTest.Ping());
         }
 
-        //[Test]
-        //public void SetpointTest()
-        //{
-        //    lkResTest = new LKForClientService();
-        //    lkResTest.Updateinfo = new UpdateInfo();
+        [Test]
+        public void SetpointTest()
+        {
+            lkResTest = new LKForClientService();
+            lkResTest.Updateinfo = new UpdateInfo();
+            IDataBase mockDataBase = Substitute.For<IDataBase>();
 
-        //    List<Point> setpoints = new List<Point>();
-        //    Generator generator = new Generator()
-        //    {
-        //        MRID = "1"
-        //    };
+            List<Point> setpoints = new List<Point>();
+            Generator generator = new Generator()
+            {
+                MRID = "1"
+            };
 
-        //   // lkResTest.Updateinfo.Generators.Add(generator);
-        //    DataBase.Instance.AddGenerator(new GeneratorEntity()
-        //    {
-        //        Gen = generator
-        //    });
+           lkResTest.Updateinfo.Generators.Add(generator);
 
-        //    Point setpoint = new Point();
-        //    setpoint.GeneratorID = generator.MRID;
-        //    setpoint.Power = 10;
-        //    setpoints.Add(setpoint);
+           mockDataBase.ReadData().Returns(new UpdateInfo()
+           {
+                Generators = new List<Generator>()
+                {
+                    generator
+                }
 
-        //    lkResTest.SendSetPoint(setpoints);
+           });
+            
+            lkResTest.Updateinfo = mockDataBase.ReadData();
 
-        //    Assert.AreNotEqual(null, setpoints);
-        //    Assert.AreNotEqual(null, generator);
-        //    Assert.AreNotEqual(null, setpoint);
-        //}
+            DataBase.Instance = mockDataBase;
+
+            Point setpoint = new Point();
+            setpoint.GeneratorID = generator.MRID;
+            setpoint.Power = 10;
+            setpoints.Add(setpoint);
+
+            lkResTest.SendSetPoint(setpoints);
+
+            Assert.AreNotEqual(null, setpoints);
+            Assert.AreNotEqual(null, generator);
+            Assert.AreNotEqual(null, setpoint);
+        }
 
 
         [Test]
         public void UpdateAddTest01()
         {
+            ILKClient mockClient = Substitute.For<ILKClient>();
             IKSRes mockKSRes = Substitute.For<IKSRes>();
 
             Assert.Throws<ArgumentNullException>(() => lkResTest.Update(null));
@@ -113,11 +123,11 @@ namespace LKResTest.ServicesTest
             Site site = new Site();
             info.Sites.Add(site);
 
-            
+
 
             mockKSRes.Update(info);
             lkResTest.KSResProxy = mockKSRes;
-
+            lkResTest.Client = mockClient;
             lkResTest.Update(info);
         }
 
@@ -125,6 +135,8 @@ namespace LKResTest.ServicesTest
         public void UpdateAddTest02()
         {
             IKSRes mockKSRes = Substitute.For<IKSRes>();
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
             Assert.Throws<ArgumentNullException>(() => lkResTest.Update(null));
 
             UpdateInfo info = new UpdateInfo();
@@ -148,6 +160,8 @@ namespace LKResTest.ServicesTest
         public void UpdateAddTest03()
         {
             IKSRes mockKSRes = Substitute.For<IKSRes>();
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
             Assert.Throws<ArgumentNullException>(() => lkResTest.Update(null));
 
             UpdateInfo info = new UpdateInfo();
@@ -170,6 +184,8 @@ namespace LKResTest.ServicesTest
         {
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.REMOVE;
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
 
             Generator generator = new Generator()
             {
@@ -220,6 +236,8 @@ namespace LKResTest.ServicesTest
             this.lkResTest.Updateinfo = new UpdateInfo();
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.REMOVE;
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
 
             Generator generator = new Generator()
             {
@@ -239,6 +257,8 @@ namespace LKResTest.ServicesTest
         public void UpdateTest01()
         {
             IKSRes mockKSRes = Substitute.For<IKSRes>();
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
 
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.UPDATE;
@@ -251,6 +271,7 @@ namespace LKResTest.ServicesTest
                 GeneratorType = GeneratorType.SOLAR,
                 HasMeasurment = false
             };
+            this.lkResTest = new LKForClientService();
             this.lkResTest.Updateinfo = new UpdateInfo();
 
             lkResTest.Updateinfo.Generators.Add(generator1);
@@ -287,6 +308,8 @@ namespace LKResTest.ServicesTest
         public void UpdateTest02()
         {
             IKSRes mockKSRes = Substitute.For<IKSRes>();
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
 
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = UpdateType.UPDATE;
@@ -301,7 +324,7 @@ namespace LKResTest.ServicesTest
 
             this.lkResTest.Updateinfo = new UpdateInfo();
             lkResTest.Updateinfo.Generators.Add(generator1);
-//
+            //
             Generator generator2 = new Generator()
             {
                 MRID = "g2",
@@ -325,6 +348,8 @@ namespace LKResTest.ServicesTest
         public void UpdateTest03()
         {
             IKSRes mockKSRes = Substitute.For<IKSRes>();
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
 
             UpdateInfo info = new UpdateInfo();
             info.UpdateType = 0;
@@ -353,7 +378,7 @@ namespace LKResTest.ServicesTest
         //{
         //    IKSRes mockRes = Substitute.For<IKSRes>();
         //    mockRes.Registration("test", "test");
-        //    mockRes.Login("test", "test"); 
+        //    mockRes.Login("test", "test");
 
         //    lkResTest.KSResProxy = mockRes;
         //    Assert.AreEqual(mockRes, lkResTest.KSResProxy);
@@ -361,6 +386,7 @@ namespace LKResTest.ServicesTest
         //    lkResTest.Registration("test", "test");
         //    lkResTest.Login("test", "test");
         //}
+
 
         [Test]
         public void ClientTest()
