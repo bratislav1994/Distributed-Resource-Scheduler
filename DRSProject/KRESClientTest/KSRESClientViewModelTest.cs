@@ -24,6 +24,7 @@ namespace KRESClientTest
         public void Setup()
         {
             model = new KSRESClientViewModel();
+            model.IsTest = true;
         }
 
         [Test]

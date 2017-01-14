@@ -48,6 +48,7 @@ namespace KSRESClient
         private DelegateCommand drawLoadForecastCommand;
         private DelegateCommand clearLoadForecast;
         private DelegateCommand clearHistoryCommand;
+        private bool isTest = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -303,7 +304,20 @@ namespace KSRESClient
                 genGroup = value;
             }
         }
-        
+
+        public bool IsTest
+        {
+            get
+            {
+                return isTest;
+            }
+
+            set
+            {
+                isTest = value;
+            }
+        }
+
         public SortedDictionary<DateTime, double> ProductionHistory
         {
             get
@@ -483,7 +497,14 @@ namespace KSRESClient
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                if (IsTest)
+                {
+
+                }
+                else
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
@@ -512,7 +533,14 @@ namespace KSRESClient
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                if (IsTest)
+                {
+
+                }
+                else
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
@@ -529,7 +557,14 @@ namespace KSRESClient
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                if (IsTest)
+                {
+
+                }
+                else
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
