@@ -53,3 +53,47 @@ Scenario Outline: Registration
  And I have entered groupName into text box.
  When I press add button
  Then generator should be added
+
+ Scenario: Add generator in existing site and existing group
+ Given I have entered name into text box.
+ And I have entered activePower into text box.
+ And I have choose hasMeas from combo box
+ And I have choose workingMode from combo box
+ And I have entered pMin into text box.
+ And I have entered pMax into text box.
+ And I have entered price into text box.
+ And I have choose genType from combo box
+ And I have checked radioButtonn from input form
+ And I have choose groupName from text box.
+ And I have choose siteName from combo box.
+ When I press add button
+ Then generator should be added
+
+  Scenario: Add generator in existing site and new group
+ Given I have entered name into text box.
+ And I have entered activePower into text box.
+ And I have choose hasMeas from combo box
+ And I have choose workingMode from combo box
+ And I have entered pMin into text box.
+ And I have entered pMax into text box.
+ And I have entered price into text box.
+ And I have choose genType from combo box
+ And I have checked radioButtonnn from input form
+ And I have choose cmbSiteName from combo box.
+ And I have choose txbGroupName from text box.
+ When I press add button
+ Then generator should be added
+
+   Scenario: Not all input form are passed validation for Add generator
+ Given I have entered activePower into text box.
+ And I have choose hasMeas from combo box
+ And I have choose workingMode from combo box
+ And I have entered pMin into text box.
+ And I have entered pMax into text box.
+ And I have entered price into text box.
+ And I have choose genType from combo box
+ And I have checked radioButton from input form
+ And I have entered siteName into text box.
+ And I have entered groupName into text box.
+ When I have entered empty name into text box.
+ Then create button should be disabled
