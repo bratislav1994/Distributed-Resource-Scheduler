@@ -133,7 +133,7 @@ namespace LKRes.Access
                     }
                     else
                     {
-                        entity.Gen.SetPoint = Math.Round(updateGenerator.BasePoint, 3);
+                        entity.Gen.SetPoint = Math.Round(updateGenerator.SetPoint, 3);
                     }
                     entity.Gen.WorkingMode = updateGenerator.WorkingMode;
                 }

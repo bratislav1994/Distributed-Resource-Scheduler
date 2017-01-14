@@ -1074,7 +1074,8 @@ namespace KLRESClient
                 Pmin = double.Parse(this.EditPMin),
                 Price = double.Parse(this.EditPrice),
                 WorkingMode = this.EditCmbWorkingModeSelectedItem,
-                MRID = this.SelectedItem.MRID
+                MRID = this.SelectedItem.MRID,
+                BasePoint = this.SelectedItem.BasePoint
             };
         }
 

@@ -22,7 +22,6 @@ namespace LKRes.Services
     /// <summary>
     /// Class represent a LKRes server who communicating with LKResClient and KSRes module
     /// </summary>
-    //[CallbackBehavior(UseSynchronizationContext = false)]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class LKForClientService : ILKForClient, ILKRes
     {
@@ -45,6 +44,10 @@ namespace LKRes.Services
         /// Property to lock a shared resource
         /// </summary>
         private static object lockObj = new object();
+
+        private static object lockObj1 = new object();
+
+        private static object lockForUpdateInfo = new object();
 
         /// <summary>
         /// Temporary data base
@@ -109,16 +112,23 @@ namespace LKRes.Services
             set { client = value; }
         }
 
-        public object LockObj
-        {
-            get { return lockObj; }
-            set { lockObj = value; }
-        }
-
         public UpdateInfo Updateinfo
         {
-            get { return updateInfo; }
-            set { updateInfo = value; }
+            get
+            {
+                lock (lockForUpdateInfo)
+                {
+                    return updateInfo;
+                }
+            }
+            
+            set
+            {
+                lock (lockForUpdateInfo)
+                {
+                    updateInfo = value;
+                }
+            }
         }
 
         public int BasePointCounter
@@ -147,7 +157,7 @@ namespace LKRes.Services
 
         public LKForClientService()
         {
-            updateInfo = new UpdateInfo();
+            Updateinfo = new UpdateInfo();
             Client = null;
         }
 
@@ -158,17 +168,14 @@ namespace LKRes.Services
 
         public void SendSetPoint(List<Point> setPoints)
         {
-            lock (LockObj)
+            Updateinfo = DataBase.Instance.ReadData();
+            foreach (Point setpoint in setPoints)
             {
-                updateInfo = DataBase.Instance.ReadData();
-                foreach (Point setpoint in setPoints)
-                {
-                    Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
-                    generator.SetPoint = setpoint.Power;
-                    Thread threadPower = new Thread(() => SetActivePower(generator));
-                    threadPower.Start();
-                    DataBase.Instance.UpdateGenerator(generator);
-                }
+                Generator generator = Updateinfo.Generators.Where(gen => gen.MRID.Equals(setpoint.GeneratorID)).FirstOrDefault();
+                generator.SetPoint = setpoint.Power;
+                Thread threadPower = new Thread(() => SetActivePower(generator));
+                threadPower.Start();
+                DataBase.Instance.UpdateGenerator(generator);
             }
         }
 
@@ -177,12 +184,15 @@ namespace LKRes.Services
             while (true)
             {
                 Thread.Sleep(4000);
-                updateInfo = DataBase.Instance.ReadData();
+                Updateinfo = DataBase.Instance.ReadData();
 
                 //posalji snagu modulu 2
                 Random randGenerator = new Random();
-                Dictionary<string, double> powerForProcessing = this.Proxy.ChangeActivePower(ref updateInfo, randGenerator.Next(0, 2));
-
+                Dictionary<string, double> powerForProcessing = new Dictionary<string, double>();
+                lock (lockForUpdateInfo)
+                {
+                    powerForProcessing = this.Proxy.ChangeActivePower(ref updateInfo, randGenerator.Next(0, 2));
+                }
                 foreach (KeyValuePair<string, double> pair in powerForProcessing)
                 {
                     DataBase.Instance.AddMeasurement(new Measurement()
@@ -195,36 +205,46 @@ namespace LKRes.Services
 
                 if (powerForProcessing.Count != 0)
                 {
-                    lock (LockObj)
+                    lock (lockObj)
                     {
                         this.KSResProxy.SendMeasurement(powerForProcessing);
                     }
                 }
 
-                if (updateInfo.Generators.Count != 0)
+                lock (lockForUpdateInfo)
                 {
-                    UpdateInfo update = new UpdateInfo();
-                    update.UpdateType = UpdateType.UPDATE;
-                    update.Groups = null;
-                    update.Sites = null;
+                    if (updateInfo.Generators.Count != 0)
+                    {
+                        UpdateInfo update = new UpdateInfo();
+                        update.UpdateType = UpdateType.UPDATE;
+                        update.Groups = null;
+                        update.Sites = null;
 
-                    update.Generators = updateInfo.Generators;
-                    client.Update(update);
+                        update.Generators = updateInfo.Generators;
+                        foreach (Generator generator in updateInfo.Generators)
+                        {
+                            DataBase.Instance.UpdateGenerator(generator);
+                        }
+                        client.Update(update);
+                    }
                 }
             }
         }
 
         public UpdateInfo GetMySystem()
         {
-            updateInfo = DataBase.Instance.ReadData();
+            Updateinfo = DataBase.Instance.ReadData();
 
-            return updateInfo;
+            return Updateinfo;
         }
 
         private void CreateChannelToClient()
         {
-            updateInfo = DataBase.Instance.ReadData();
-            this.KSResProxy.Update(updateInfo);
+            Updateinfo = DataBase.Instance.ReadData();
+            lock (lockObj)
+            {
+                this.KSResProxy.Update(Updateinfo);
+            }
             OperationContext context = OperationContext.Current;
             MessageProperties prop = context.IncomingMessageProperties;
             RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
@@ -253,7 +273,7 @@ namespace LKRes.Services
                     CreateChannelToClient();
                 }
 
-                this.updateInfo = new UpdateInfo();
+                this.Updateinfo = new UpdateInfo();
                 Thread changePowerThread = new Thread(ChangeActivePower);
                 changePowerThread.Start();
 
@@ -300,9 +320,11 @@ namespace LKRes.Services
                     UpdateData(update);
                     break;
             }
-            updateInfo = DataBase.Instance.ReadData();
-
-            KSResProxy.Update(update);
+            Updateinfo = DataBase.Instance.ReadData();
+            lock (lockObj)
+            {
+                KSResProxy.Update(update);
+            }
             notifyThread = new Thread(() => NotifyClient(update));
             notifyThread.Start();
         }
@@ -382,7 +404,7 @@ namespace LKRes.Services
         private void Remove(UpdateInfo update)
         {
             Generator gen = null;
-            gen = updateInfo.Generators.Where(g => g.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
+            gen = Updateinfo.Generators.Where(g => g.MRID.Equals(update.Generators[0].MRID)).FirstOrDefault();
 
             if (gen != null)
             {
@@ -393,7 +415,7 @@ namespace LKRes.Services
             if (update.Groups != null)
             {
                 Group group = null;
-                group = updateInfo.Groups.Where(g => g.MRID.Equals(update.Groups[0].MRID)).FirstOrDefault();
+                group = Updateinfo.Groups.Where(g => g.MRID.Equals(update.Groups[0].MRID)).FirstOrDefault();
                 // updateInfo.Groups.Remove(group);
                 DataBase.Instance.RemoveGroup(group);
             }
@@ -401,7 +423,7 @@ namespace LKRes.Services
             if (update.Sites != null)
             {
                 Site site = null;
-                site = updateInfo.Sites.Where(s => s.MRID.Equals(update.Sites[0].MRID)).FirstOrDefault();
+                site = Updateinfo.Sites.Where(s => s.MRID.Equals(update.Sites[0].MRID)).FirstOrDefault();
                 //updateInfo.Sites.Remove(site);
                 DataBase.Instance.RemoveSite(site);
             }
@@ -411,7 +433,6 @@ namespace LKRes.Services
         #region Update
         private void UpdateData(UpdateInfo update)
         {
-
             DataBase.Instance.UpdateGenerator(update.Generators[0]);
 
             //nova grupa
@@ -453,7 +474,7 @@ namespace LKRes.Services
         {
             if (basePoints.Count != 0)
             {
-                lock (lockObj)
+                lock (lockObj1)
                 {
                     basepointBuffer = basePoints;
                     BasePointCounter = 0;
@@ -474,21 +495,30 @@ namespace LKRes.Services
 
         public void ProcessingBasePoint()
         {
-            if (BasePointCounter < BasepointBuffer.Count)
+            List<Generator> updateGen = new List<Generator>();
+            lock (lockObj1)
             {
-                List<Point> points = BasepointBuffer[BasePointCounter];
-                foreach (Point g in points)
+                if (BasePointCounter < BasepointBuffer.Count)
                 {
-                    Generator generator = updateInfo.Generators.Where(gen => gen.MRID.Equals(g.GeneratorID)).FirstOrDefault();
-                    if (generator != null)
+                    List<Point> points = BasepointBuffer[BasePointCounter];
+                    foreach (Point g in points)
                     {
-                        generator.BasePoint = g.Power;
-                        DataBase.Instance.UpdateGenerator(generator);
-                        KSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = new List<Generator>() { generator } });
+                        Generator generator = Updateinfo.Generators.Where(gen => gen.MRID.Equals(g.GeneratorID)).FirstOrDefault();
+                        if (generator != null)
+                        {
+                            generator.BasePoint = g.Power;
+                            DataBase.Instance.UpdateGenerator(generator);
+                            updateGen.Add(generator);
+                        }
                     }
-                }
 
-                BasePointCounter++;
+                    BasePointCounter++;
+                }
+            }
+
+            lock (lockObj)
+            {
+                KSResProxy.Update(new UpdateInfo() { Groups = null, Sites = null, UpdateType = UpdateType.UPDATE, Generators = updateGen });
             }
         }
 
@@ -506,7 +536,11 @@ namespace LKRes.Services
                 update.Generators.Add(generator);
                 update.UpdateType = UpdateType.UPDATE;
                 client.Update(update);
-                KSResProxy.Update(update);
+
+                lock (lockObj)
+                {
+                    KSResProxy.Update(update);
+                }
             }
         }
     }
