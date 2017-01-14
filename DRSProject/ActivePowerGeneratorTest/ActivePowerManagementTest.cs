@@ -123,5 +123,40 @@ namespace LKResTest.ServicesTest
             management.ChangeActivePower(ref update, 1);
             management.ChangeActivePower(ref update, 0);
         }
+
+        [Test]
+        public void ChangeActivePower05()
+        {
+            UpdateInfo update = new UpdateInfo();
+
+            Group group = new Group() { MRID = "2" };
+
+            Generator generator = new Generator()
+            {
+                MRID = "1",
+                GroupID = group.MRID,
+                SetPoint = -1,
+                HasMeasurment = false,
+                Pmax = 20,
+                Pmin = 0,
+                ActivePower = 8
+            };
+
+            Generator generator2 = new Generator()
+            {
+                MRID = "2",
+                GroupID = group.MRID,
+                SetPoint = -1,
+                HasMeasurment = true,
+                Pmax = 20,
+                Pmin = 0,
+                ActivePower = 8
+            };
+            update.Generators.Add(generator);
+            update.Generators.Add(generator2);
+            update.Groups.Add(group);
+
+            management.ChangeActivePower(ref update, 1);
+        }
     }
 }
