@@ -36,6 +36,7 @@ namespace LKResTest.ServicesTest
 
             this.mockDataBase = Substitute.For<IDataBase>();
             DataBase.Instance = mockDataBase;
+            Assert.AreNotEqual(null, this.lkResTest.LockObj);
         }
 
         [Test]
@@ -62,30 +63,37 @@ namespace LKResTest.ServicesTest
             Assert.AreNotEqual(string.Empty, lkResTest.Ping());
         }
 
-        [Test]
-        public void SetpointTest()
-        {
-            List<Point> setpoints = new List<Point>();
-            Generator generator = new Generator()
-            {
-                MRID = "1"
-            };
+        //[Test]
+        //public void SetpointTest()
+        //{
+        //    lkResTest = new LKForClientService();
+        //    lkResTest.Updateinfo = new UpdateInfo();
 
-            lkResTest.Updateinfo.Generators.Add(generator);
+        //    List<Point> setpoints = new List<Point>();
+        //    Generator generator = new Generator()
+        //    {
+        //        MRID = "1"
+        //    };
 
-            Point setpoint = new Point();
-            setpoint.GeneratorID = generator.MRID;
-            setpoint.Power = 10;
-            setpoints.Add(setpoint);
+        //   // lkResTest.Updateinfo.Generators.Add(generator);
+        //    DataBase.Instance.AddGenerator(new GeneratorEntity()
+        //    {
+        //        Gen = generator
+        //    });
 
-            lkResTest.SendSetPoint(setpoints);
+        //    Point setpoint = new Point();
+        //    setpoint.GeneratorID = generator.MRID;
+        //    setpoint.Power = 10;
+        //    setpoints.Add(setpoint);
 
-            Assert.AreNotEqual(null, setpoints);
-            Assert.AreNotEqual(null, generator);
-            Assert.AreNotEqual(null, setpoint);
-        }
+        //    lkResTest.SendSetPoint(setpoints);
 
-        
+        //    Assert.AreNotEqual(null, setpoints);
+        //    Assert.AreNotEqual(null, generator);
+        //    Assert.AreNotEqual(null, setpoint);
+        //}
+
+
         [Test]
         public void UpdateAddTest01()
         {
@@ -327,32 +335,32 @@ namespace LKResTest.ServicesTest
             lkResTest.Update(info);
         }
 
-        [Test]
-        public void RegistrationTest01()
-        {
-            lkResTest = new LKForClientService();
-            IKSRes mockRes = Substitute.For<IKSRes>();
-            mockRes.Registration("test", "test");
+        //[Test]
+        //public void RegistrationTest01()
+        //{
+        //    lkResTest = new LKForClientService();
+        //    IKSRes mockRes = Substitute.For<IKSRes>();
+        //    mockRes.Registration("test", "test");
 
-            lkResTest.KSResProxy = mockRes;
-            Assert.AreEqual(mockRes, lkResTest.KSResProxy);
+        //    lkResTest.KSResProxy = mockRes;
+        //    Assert.AreEqual(mockRes, lkResTest.KSResProxy);
 
-            lkResTest.Registration("test", "test");
-        }
+        //    lkResTest.Registration("test", "test");
+        //}
 
-        [Test]
-        public void LoginTest()
-        {
-            IKSRes mockRes = Substitute.For<IKSRes>();
-            mockRes.Registration("test", "test");
-            mockRes.Login("test", "test"); 
+        //[Test]
+        //public void LoginTest()
+        //{
+        //    IKSRes mockRes = Substitute.For<IKSRes>();
+        //    mockRes.Registration("test", "test");
+        //    mockRes.Login("test", "test"); 
 
-            lkResTest.KSResProxy = mockRes;
-            Assert.AreEqual(mockRes, lkResTest.KSResProxy);
+        //    lkResTest.KSResProxy = mockRes;
+        //    Assert.AreEqual(mockRes, lkResTest.KSResProxy);
 
-            lkResTest.Registration("test", "test");
-            lkResTest.Login("test", "test");
-        }
+        //    lkResTest.Registration("test", "test");
+        //    lkResTest.Login("test", "test");
+        //}
 
         [Test]
         public void ClientTest()
@@ -366,7 +374,7 @@ namespace LKResTest.ServicesTest
         [Test]
         public void GetMeasurementsTest()
         {
-            lkResTest.GetMeasurements("1").Returns(new SortedDictionary<DateTime, double>());
+            lkResTest.GetMeasurements("1").Returns(new List<KeyValuePair<DateTime, double>>());
         }
 
         [Test]
@@ -410,6 +418,9 @@ namespace LKResTest.ServicesTest
         [Test]
         public void ProcessingBasePointTest01()
         {
+            lkResTest = new LKForClientService();
+            lkResTest.Updateinfo = new UpdateInfo();
+
             lkResTest.BasePointCounter = 0;
             Generator generator1 = new Generator()
             {
@@ -436,6 +447,50 @@ namespace LKResTest.ServicesTest
             lkResTest.KSResProxy = mockKsRes;
 
             lkResTest.ProcessingBasePoint();
+        }
+
+        [Test]
+        public void ProcessingBasePointTest02()
+        {
+            lkResTest = new LKForClientService();
+            lkResTest.Updateinfo = new UpdateInfo();
+
+            lkResTest.BasePointCounter = 0;
+            Generator generator1 = new Generator()
+            {
+                MRID = "g1",
+                Name = "gen",
+                ActivePower = 10.25,
+                GeneratorType = GeneratorType.SOLAR,
+                HasMeasurment = false
+            };
+            lkResTest.Updateinfo.Generators.Add(generator1);
+
+            Dictionary<int, List<Point>> basepoints = new Dictionary<int, List<Point>>();
+            basepoints.Add(0, new List<Point>()
+            {
+                new Point()
+                {
+                    GeneratorID = "222",
+                    Power = 10
+                }
+            });
+            lkResTest.BasepointBuffer = basepoints;
+
+            mockKsRes = Substitute.For<IKSRes>();
+            lkResTest.KSResProxy = mockKsRes;
+
+            lkResTest.ProcessingBasePoint();
+
+            lkResTest.BasePointCounter = 10;
+            lkResTest.BasepointBuffer = new Dictionary<int, List<Point>>();
+            lkResTest.ProcessingBasePoint();
+        }
+
+        [Test]
+        public void GetMySystem()
+        {
+            this.lkResTest.GetMySystem();
         }
     }
 }
