@@ -32,16 +32,6 @@ namespace KLRESClient
         private LKClientService client = null;
 
         /// <summary>
-        /// exit command
-        /// </summary>
-        private DelegateCommand clickExitCommand;
-
-        /// <summary>
-        /// Use for closing MainWindow
-        /// </summary>
-        private MainWindow mainWindow = null;
-
-        /// <summary>
         /// Represent view model for login and register actions
         /// </summary>
         private HomeWindowViewModel homeVM = null;
@@ -56,7 +46,10 @@ namespace KLRESClient
         /// <param name="win">main window</param>
         public MasterViewModel(MainWindow win)
         {
-            this.mainWindow = win;
+        }
+
+        public MasterViewModel()
+        {
             this.homeVM = new HomeWindowViewModel();
             this.Client = this.homeVM.Client;
             this.Client.DataContext = this;
@@ -64,14 +57,7 @@ namespace KLRESClient
             this.editRemoveWindowVM = new EditRemoveViewModel(this.Client);
         }
 
-        public MasterViewModel()
-        {
-            
-        }
-
         #endregion
-
-        #region properties
 
         /// <summary>
         /// Gets or sets instance of client
@@ -89,18 +75,6 @@ namespace KLRESClient
             }
         }
 
-        public MainWindow MainWin
-        {
-            get
-            {
-                return this.mainWindow;
-            }
-
-            set
-            {
-                this.mainWindow = value;
-            }
-        }
 
         /// <summary>
         /// Gets or sets view model for add action
@@ -159,35 +133,5 @@ namespace KLRESClient
                 this.homeVM = value;
             }
         }
-
-        /// <summary>
-        /// Gets information if exit command can be executed
-        /// </summary>
-        public DelegateCommand ExitCommand
-        {
-            get
-            {
-                if (this.clickExitCommand == null)
-                {
-                    this.clickExitCommand = new DelegateCommand(this.ExitCommandAction);
-                }
-
-                return this.clickExitCommand;
-            }
-        }
-
-        #endregion
-
-        #region exit
-
-        /// <summary>
-        /// Close main window
-        /// </summary>
-        private void ExitCommandAction()
-        {
-            this.mainWindow.Close();
-        }
-
-        #endregion
     }
 }

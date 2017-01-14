@@ -19,7 +19,7 @@ namespace KLRESClient
         public MainWindow()
         {
             this.InitializeComponent();
-            MasterViewModel model = new MasterViewModel(this);
+            MasterViewModel model = new MasterViewModel();
             this.DataContext = model;
             HomeWindow homeWin = new HomeWindow(this.DataContext);
             model.HomeVM.HomeWin = homeWin;
