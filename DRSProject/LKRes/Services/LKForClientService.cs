@@ -254,7 +254,7 @@ namespace LKRes.Services
             MessageProperties prop = context.IncomingMessageProperties;
             RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
             string ip = endpoint.Address;
-
+            
             if (ip.Equals("::1"))
             {
                 ip = "localhost";
