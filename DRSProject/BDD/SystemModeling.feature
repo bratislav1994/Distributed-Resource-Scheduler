@@ -112,3 +112,24 @@ Scenario Outline: Registration
  Given I have selected generator from table
  When I have pressed remove button
  Then generator should be deleted
+
+@base1
+ Scenario: Not all edit form are passed validation for Edit generator
+ Given I have filled edit form
+ When I have entered empty Editname into text box.
+ Then edit button should be disabled
+
+ @base1
+ Scenario: Not selected generator from table
+ Given I have table with at least one generator
+ When generator not selected 
+ Then edit button, remove button, show data button should be disabled
+
+ @base1
+ Scenario: Edit generator in new site and new group
+ Given I have filled edit form.
+ And I have checked radioButton from edit form
+ And I have entered editSiteName into text box..
+ And I have entered editGroupName into text box..
+ When I pressed edit button
+ Then generator should be edited

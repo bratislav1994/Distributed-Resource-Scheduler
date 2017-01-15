@@ -443,25 +443,34 @@ namespace LKRes.Services
         #region Update
         private void UpdateData(UpdateInfo update)
         {
-            DataBase.Instance.UpdateGenerator(update.Generators[0]);
+            //novi sajt
+            if (update.Sites != null)
+            {
+                update.Sites[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
+                DataBase.Instance.AddSite(new Data.SiteEntity()
+                {
+                    SEntity = update.Sites[0]
+                });
+            }
 
             //nova grupa
             if (update.Groups != null)
             {
+                update.Groups[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
+                update.Generators[0].GroupID = update.Groups[0].MRID;
+
+                if( update.Sites != null)
+                {
+                    update.Groups[0].SiteID = update.Sites[0].MRID;
+                }
+
                 DataBase.Instance.AddGroup(new Data.GroupEntity()
                 {
                     GEntity = update.Groups[0]
                 });
             }
 
-            //novi sajt
-            if (update.Sites != null)
-            {
-                DataBase.Instance.AddSite(new Data.SiteEntity()
-                {
-                    SEntity = update.Sites[0]
-                });
-            }
+            DataBase.Instance.UpdateGenerator(update.Generators[0]);
         }
         #endregion
 

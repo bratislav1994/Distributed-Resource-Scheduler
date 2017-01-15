@@ -48,7 +48,7 @@ namespace LKRes.Access
             {
                 access.GroupHistory.Add(newGroup);
                 int i = access.SaveChanges();
-                Console.WriteLine("Broj grupa je " + access.GroupHistory.Count());
+                Console.WriteLine("Dodata grupa {0}", newGroup.GEntity.Name);
                 if (i > 0)
                     return true;
                 return false;

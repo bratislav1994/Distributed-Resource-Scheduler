@@ -34,6 +34,8 @@ namespace BDDTest
             path = path.Substring(0, path.LastIndexOf("BDD"));
 
             master.HomeVM.IsTest = true;
+            master.EditRemoveWindowVM.IsTest = true;
+            master.AddWindowVM.IsTest = true;
 
             p1.StartInfo = new ProcessStartInfo( path + "LoadForecast\\bin\\Debug\\LoadForecast.exe");
             p1.Start();
@@ -349,6 +351,205 @@ namespace BDDTest
         }
         #endregion removeGenerator
 
+        #region editDisabled
+        [Given(@"I have filled edit form")]
+        public void GivenIHaveFilledEditForm()
+        {
+            Generator generator = new Generator()
+            {
+                MRID = "genTest",
+                GroupID = "test",
+                HasMeasurment = true,
+                ActivePower = 50,
+                Name = "gen1",
+                BasePoint = -1,
+                Price = 200,
+                GeneratorType = GeneratorType.MICROHYDRO,
+                Pmax = 100,
+                Pmin = 20,
+                SetPoint = -1,
+                WorkingMode = WorkingMode.LOCAL
+            };
+
+            master.EditRemoveWindowVM.SelectedItem = generator;
+
+            master.EditRemoveWindowVM.EditName = generator.Name;
+            master.EditRemoveWindowVM.EditActivePower = generator.ActivePower.ToString();
+            master.EditRemoveWindowVM.EditCmbHasMeasSelectedItem = generator.HasMeasurment;
+            master.EditRemoveWindowVM.EditCmbWorkingModeSelectedItem = generator.WorkingMode;
+            master.EditRemoveWindowVM.EditPMin = generator.Pmin.ToString();
+            master.EditRemoveWindowVM.EditPMax = generator.Pmax.ToString();
+            master.EditRemoveWindowVM.EditPrice = generator.Price.ToString();
+            master.EditRemoveWindowVM.EditCmbGeneratorTypeSelectedItem = generator.GeneratorType;
+
+            master.EditRemoveWindowVM.EditRadioButton = false;
+            master.EditRemoveWindowVM.EditRadioButton1 = true;
+            master.EditRemoveWindowVM.EditRadioButton2 = false;
+
+            DataBase.Instance.AddGenerator(new LKRes.Data.GeneratorEntity() { Gen = generator });
+            DataBase.Instance.AddGroup(new LKRes.Data.GroupEntity() { GEntity = new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" } });
+            DataBase.Instance.AddSite(new LKRes.Data.SiteEntity() { SEntity = new Site() { MRID = "testSajt", Name = "testbaza" } });
+        }
+
+        [When(@"I have entered empty Editname into text box\.")]
+        public void WhenIHaveEnteredEmptyEditnameIntoTextBox_()
+        {
+            master.EditRemoveWindowVM.EditName = string.Empty;
+        }
+
+        [Then(@"edit button should be disabled")]
+        public void ThenEditButtonShouldBeDisabled()
+        {
+            Assert.IsFalse(master.EditRemoveWindowVM.EditCommand.CanExecute());
+
+            UpdateInfo forRemove = DataBase.Instance.ReadData();
+            foreach (Generator g in forRemove.Generators)
+            {
+                DataBase.Instance.RemoveGenerator(g);
+            }
+
+            foreach (Group g in forRemove.Groups)
+            {
+                DataBase.Instance.RemoveGroup(g);
+            }
+
+            foreach (Site s in forRemove.Sites)
+            {
+                DataBase.Instance.RemoveSite(s);
+            }
+        }
+
+        #endregion editDisabled
+
+        #region selectedFromTableDisabled
+        [Given(@"I have table with at least one generator")]
+        public void GivenIHaveTableWithAtLeastOneGenerator()
+        {
+            gen = new Generator() { MRID = "14142", GroupID = "test" };
+            DataBase.Instance.AddGenerator(new LKRes.Data.GeneratorEntity() { Gen = gen });
+            DataBase.Instance.AddGroup(new LKRes.Data.GroupEntity() { GEntity = new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" } });
+            DataBase.Instance.AddSite(new LKRes.Data.SiteEntity() { SEntity = new Site() { MRID = "testSajt", Name = "testbaza" } });
+        }
+
+        [When(@"generator not selected")]
+        public void WhenGeneratorNotSelected()
+        {
+            master.EditRemoveWindowVM.SelectedItem = null;
+        }
+
+        [Then(@"edit button, remove button, show data button should be disabled")]
+        public void ThenEditButtonRemoveButtonShowDataButtonShouldBeDisabled()
+        {
+            Assert.IsFalse(master.EditRemoveWindowVM.ClickEditCommand.CanExecute());
+            Assert.IsFalse(master.EditRemoveWindowVM.ShowDataCommand.CanExecute());
+            Assert.IsFalse(master.EditRemoveWindowVM.RemoveCommand.CanExecute());
+
+            UpdateInfo forRemove = DataBase.Instance.ReadData();
+            foreach (Generator g in forRemove.Generators)
+            {
+                DataBase.Instance.RemoveGenerator(g);
+            }
+
+            foreach (Group g in forRemove.Groups)
+            {
+                DataBase.Instance.RemoveGroup(g);
+            }
+
+            foreach (Site s in forRemove.Sites)
+            {
+                DataBase.Instance.RemoveSite(s);
+            }
+        }
+
+        #endregion
+
+        #region editNewSiteAndNewGroup
+        [Given(@"I have filled edit form\.")]
+        public void GivenIHaveFilledEditForm_()
+        {
+            Generator generator = new Generator()
+            {
+                MRID = "genTest",
+                GroupID = "test",
+                HasMeasurment = true,
+                ActivePower = 50,
+                Name = "gen1",
+                BasePoint = -1,
+                Price = 200,
+                GeneratorType = GeneratorType.MICROHYDRO,
+                Pmax = 100,
+                Pmin = 20,
+                SetPoint = -1,
+                WorkingMode = WorkingMode.LOCAL
+            };
+
+            master.EditRemoveWindowVM.SelectedItem = generator;
+
+            master.EditRemoveWindowVM.EditName = generator.Name;
+            master.EditRemoveWindowVM.EditActivePower = generator.ActivePower.ToString();
+            master.EditRemoveWindowVM.EditCmbHasMeasSelectedItem = generator.HasMeasurment;
+            master.EditRemoveWindowVM.EditCmbWorkingModeSelectedItem = generator.WorkingMode;
+            master.EditRemoveWindowVM.EditPMin = generator.Pmin.ToString();
+            master.EditRemoveWindowVM.EditPMax = generator.Pmax.ToString();
+            master.EditRemoveWindowVM.EditPrice = generator.Price.ToString();
+            master.EditRemoveWindowVM.EditCmbGeneratorTypeSelectedItem = generator.GeneratorType;
+
+            DataBase.Instance.AddGenerator(new LKRes.Data.GeneratorEntity() { Gen = generator });
+            DataBase.Instance.AddGroup(new LKRes.Data.GroupEntity() { GEntity = new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" } });
+            DataBase.Instance.AddSite(new LKRes.Data.SiteEntity() { SEntity = new Site() { MRID = "testSajt", Name = "testbaza" } });
+        }
+
+        [Given(@"I have checked radioButton from edit form")]
+        public void GivenIHaveCheckedRadioButtonFromEditForm()
+        {
+            master.EditRemoveWindowVM.EditRadioButton = true;
+            master.EditRemoveWindowVM.EditRadioButton1 = false;
+            master.EditRemoveWindowVM.EditRadioButton2 = false;
+        }
+
+        [Given(@"I have entered editSiteName into text box\.\.")]
+        public void GivenIHaveEnteredEditSiteNameIntoTextBox_()
+        {
+            master.EditRemoveWindowVM.EditSiteName = "NoviSajt";
+        }
+
+        [Given(@"I have entered editGroupName into text box\.\.")]
+        public void GivenIHaveEnteredEditGroupNameIntoTextBox_()
+        {
+            master.EditRemoveWindowVM.EditGroupName = "NovaGrupa";
+        }
+
+        [When(@"I pressed edit button")]
+        public void WhenIPressedEditButton()
+        {
+            master.HomeVM.Username = "proba";
+            master.HomeVM.Password = "proba";
+            master.HomeVM.LoginCommand.Execute();
+            Assert.IsTrue(master.EditRemoveWindowVM.EditCommand.CanExecute());
+            master.EditRemoveWindowVM.EditCommand.Execute();
+        }
+
+        [Then(@"generator should be edited")]
+        public void ThenGeneratorShouldBeEdited()
+        {
+            Thread.Sleep(5000);
+            gen = master.Client.Generators[master.Client.Generators.Count - 1];
+            Group deleteGroup = master.AddWindowVM.Client.GetGroupFromId(gen.GroupID);
+            Site deleteSite = master.AddWindowVM.Client.GetSiteFromId(deleteGroup.SiteID);
+
+            Assert.AreEqual("NoviSajt", master.Client.Sites[master.Client.Sites.Count-1].Name);
+            Assert.AreEqual("NovaGrupa", master.Client.Groups[master.Client.Groups.Count-1].Name);
+
+            DataBase.Instance.RemoveGenerator(gen);
+            DataBase.Instance.RemoveGroup(deleteGroup);
+            DataBase.Instance.RemoveGroup(new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" });
+            DataBase.Instance.RemoveSite(deleteSite);
+            DataBase.Instance.RemoveSite(new Site() { MRID = "testSajt", Name = "testbaza" });
+            master.AddWindowVM.Client.Sites.Remove(deleteSite);
+            master.AddWindowVM.Client.Groups.Remove(deleteGroup);
+        }
+
+        #endregion
     }
 }
 

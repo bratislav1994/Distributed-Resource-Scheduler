@@ -349,6 +349,69 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Not all edit form are passed validation for Edit generator")]
+        [NUnit.Framework.CategoryAttribute("base1")]
+        public virtual void NotAllEditFormArePassedValidationForEditGenerator()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Not all edit form are passed validation for Edit generator", new string[] {
+                        "base1"});
+#line 117
+ this.ScenarioSetup(scenarioInfo);
+#line 118
+ testRunner.Given("I have filled edit form", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 119
+ testRunner.When("I have entered empty Editname into text box.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 120
+ testRunner.Then("edit button should be disabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Not selected generator from table")]
+        [NUnit.Framework.CategoryAttribute("base1")]
+        public virtual void NotSelectedGeneratorFromTable()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Not selected generator from table", new string[] {
+                        "base1"});
+#line 123
+ this.ScenarioSetup(scenarioInfo);
+#line 124
+ testRunner.Given("I have table with at least one generator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 125
+ testRunner.When("generator not selected", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 126
+ testRunner.Then("edit button, remove button, show data button should be disabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Edit generator in new site and new group")]
+        [NUnit.Framework.CategoryAttribute("base1")]
+        public virtual void EditGeneratorInNewSiteAndNewGroup()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Edit generator in new site and new group", new string[] {
+                        "base1"});
+#line 129
+ this.ScenarioSetup(scenarioInfo);
+#line 130
+ testRunner.Given("I have filled edit form.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 131
+ testRunner.And("I have checked radioButton from edit form", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 132
+ testRunner.And("I have entered editSiteName into text box..", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 133
+ testRunner.And("I have entered editGroupName into text box..", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 134
+ testRunner.When("I pressed edit button", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 135
+ testRunner.Then("generator should be edited", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

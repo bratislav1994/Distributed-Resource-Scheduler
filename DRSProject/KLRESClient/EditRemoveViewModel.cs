@@ -1104,8 +1104,9 @@ namespace KLRESClient
         private void EditCommandAction()
         {
             this.generator = this.SelectedItem;
-            this.group = this.Client.GetGroupFromId(this.generator.GroupID);
-            this.site = this.Client.GetSiteFromId(this.group.SiteID);
+
+            //this.group = this.Client.GetGroupFromId(this.generator.GroupID);
+            //this.site = this.Client.GetSiteFromId(this.group.SiteID);
 
             List<Generator> generators = new List<Generator>(1)
             {
