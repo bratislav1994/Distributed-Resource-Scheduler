@@ -1,5 +1,6 @@
 ﻿using CommonLibrary;
 using KLRESClient;
+using KSRes.Access;
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -11,6 +12,7 @@ namespace BDDTest
     public class SystemModelingSteps
     {
         private MasterViewModel master = new MasterViewModel();
+        private string registrationServie = String.Empty;
         private int numOfGenerators = 0;
         private Generator gen = new Generator();
 
@@ -20,12 +22,13 @@ namespace BDDTest
         public void GivenIHaveEnteredTestIntoTextBox(string username)
         {
             master.HomeVM.Username2 = username;
+            registrationServie = username;
         }
 
         [Given(@"I have entered already existing (.*) into text box\.")]
         public void GivenIHaveEnteredAlreadyExistingTestIntoTextBox_(string username)
         {
-            master.HomeVM.Username2 = username;
+            this.master.HomeVM.Username2 = username;
         }
 
         [Given(@"I have entered (.*) into password box")]
@@ -44,6 +47,8 @@ namespace BDDTest
         public void ThenIShouldBeRegisteredOnSystem()
         {
             Assert.IsTrue(this.master.HomeVM.IsRegistered);
+            LocalDB.Instance.DeleteRegistrationService(registrationServie);
+            registrationServie = String.Empty;
         }
 
         [Then(@"I should not be registered on system")]
@@ -53,15 +58,15 @@ namespace BDDTest
         }
 
         [Given(@"I have entered registered (.*) into text box\.")]
-        public void GivenIHaveEnteredRegisteredTestIntoTextBox_(string p0)
+        public void GivenIHaveEnteredRegisteredTestIntoTextBox_(string username)
         {
-            this.master.HomeVM.Username = p0;
+            this.master.HomeVM.Username = username;
         }
 
         [Given(@"I have entered (.*) into password box\.")]
-        public void GivenIHaveEnteredTestIntoPasswordBox_(string p0)
+        public void GivenIHaveEnteredTestIntoPasswordBox_(string password)
         {
-            this.master.HomeVM.Password = p0;
+            this.master.HomeVM.Password = password;
         }
 
         [When(@"I press login button")]
@@ -230,11 +235,7 @@ namespace BDDTest
 
         #endregion
 
-        [BeforeScenario("SystemModeling")]
-        private void Before()
-        {
-
-        }
+     
     }
 }
 

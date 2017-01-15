@@ -119,7 +119,7 @@ this.ScenarioSetup(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Login")]
-        [NUnit.Framework.TestCaseAttribute("proba", "proba", new string[0])]
+        [NUnit.Framework.TestCaseAttribute("test1", "test1", new string[0])]
         public virtual void Login(string user1, string pass1, string[] exampleTags)
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Login", exampleTags);

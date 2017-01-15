@@ -43,8 +43,8 @@ namespace LKRes
 
             string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string path = System.IO.Path.GetDirectoryName(executable);
-            path = path.Substring(0, path.LastIndexOf("bin"));
-            AppDomain.CurrentDomain.SetData("DataDirectory", path);
+            path = path.Substring(0, path.LastIndexOf("LKRes"));
+            AppDomain.CurrentDomain.SetData("DataDirectory", path + "LKRes");
 
             // update database
            Database.SetInitializer(new MigrateDatabaseToLatestVersion<Access.AccessDB, Access.Configuration>());

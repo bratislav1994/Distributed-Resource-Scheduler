@@ -28,7 +28,7 @@ Scenario Outline: Registration
  Then I should be login on system   
  Examples: 
  | user1  | pass1  |
- | proba  | proba  |
+ | test1  | test1  |
 
  Scenario Outline: Login failed
  Given I have entered not existing <user1> into text box
