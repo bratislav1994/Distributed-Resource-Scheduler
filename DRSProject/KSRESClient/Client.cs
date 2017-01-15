@@ -14,10 +14,10 @@ namespace KSRESClient
     using System.ServiceModel;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Windows.Data;
     using CommonLibrary;
     using CommonLibrary.Interfaces;
-    using System.Windows.Data;
-
+    
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class Client : IKSClient
     {
@@ -287,8 +287,6 @@ namespace KSRESClient
         public void IssueCommand(double neededPower)
         {
             Proxy.IssueCommand(neededPower);
-
-
         }
 
         public Generator GetGeneratorFromId(string mrId)
@@ -378,6 +376,15 @@ namespace KSRESClient
             Proxy.LoadForecastOnDemand();
         }
 
+        public void DeleteService(string username)
+        {
+            LKResService user = allUsers.Where(o => o.Username.Equals(username)).FirstOrDefault();
+            allUsers.Remove(user);
+
+            userNames.Remove(username);
+            FillListForShowing();
+        }
+
         private void FillListForShowing()
         {
             lock (lockObj)
@@ -420,16 +427,6 @@ namespace KSRESClient
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
-        }
-
-        public void DeleteService(string username)
-        {
-            LKResService user = allUsers.Where(o => o.Username.Equals(username)).FirstOrDefault();
-            allUsers.Remove(user);
-
-            userNames.Remove(username);
-            FillListForShowing();
-            
         }
     }
 }

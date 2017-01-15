@@ -221,11 +221,6 @@
             <BooleanProperty Name="Enabled">True</BooleanProperty>
           </RuleSettings>
         </Rule>
-        <Rule Name="UsingStaticDirectivesMustBePlacedAtTheCorrectLocation">
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">True</BooleanProperty>
-          </RuleSettings>
-        </Rule>
       </Rules>
       <AnalyzerSettings />
     </Analyzer>

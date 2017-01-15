@@ -37,7 +37,7 @@ namespace BDDTest
             master.EditRemoveWindowVM.IsTest = true;
             master.AddWindowVM.IsTest = true;
 
-            p1.StartInfo = new ProcessStartInfo( path + "LoadForecast\\bin\\Debug\\LoadForecast.exe");
+            p1.StartInfo = new ProcessStartInfo(path + "LoadForecast\\bin\\Debug\\LoadForecast.exe");
             p1.Start();
             Thread.Sleep(100);
             p2.StartInfo = new ProcessStartInfo(path + "ActivePowerGenerator\\bin\\Debug\\ActivePowerGenerator.exe");
@@ -326,10 +326,10 @@ namespace BDDTest
         public void GivenIHaveSelectedGeneratorFromTable()
         {
             Generator generator = new Generator() { MRID = "genTest", GroupID = "test" };
-            master.EditRemoveWindowVM.SelectedItem = generator;
             DataBase.Instance.AddGenerator(new LKRes.Data.GeneratorEntity() { Gen = generator });
             DataBase.Instance.AddGroup(new LKRes.Data.GroupEntity() { GEntity = new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" } });
             DataBase.Instance.AddSite(new LKRes.Data.SiteEntity() { SEntity = new Site() { MRID = "testSajt", Name = "testbaza" } });
+            master.EditRemoveWindowVM.SelectedItem = generator;
         }
 
         [When(@"I have pressed remove button")]
@@ -345,8 +345,9 @@ namespace BDDTest
         [Then(@"generator should be deleted")]
         public void ThenGeneratorShouldBeDeleted()
         {
-            Assert.AreEqual(null, DataBase.Instance.ReadData().Generators.Where(o => o.MRID.Equals("genTest")).FirstOrDefault());
-            DataBase.Instance.RemoveGroup(new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" } );
+            DataBase.Instance.RemoveGenerator(new Generator() { MRID = "genTest" });
+            Assert.AreEqual(0, DataBase.Instance.ReadData().Generators.Count);
+            DataBase.Instance.RemoveGroup(new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" });
             DataBase.Instance.RemoveSite(new Site() { MRID = "testSajt", Name = "testbaza" });
         }
         #endregion removeGenerator
@@ -537,8 +538,8 @@ namespace BDDTest
             Group deleteGroup = master.AddWindowVM.Client.GetGroupFromId(gen.GroupID);
             Site deleteSite = master.AddWindowVM.Client.GetSiteFromId(deleteGroup.SiteID);
 
-            Assert.AreEqual("NoviSajt", master.Client.Sites[master.Client.Sites.Count-1].Name);
-            Assert.AreEqual("NovaGrupa", master.Client.Groups[master.Client.Groups.Count-1].Name);
+            Assert.AreEqual("NoviSajt", master.Client.Sites[master.Client.Sites.Count - 1].Name);
+            Assert.AreEqual("NovaGrupa", master.Client.Groups[master.Client.Groups.Count - 1].Name);
 
             DataBase.Instance.RemoveGenerator(gen);
             DataBase.Instance.RemoveGroup(deleteGroup);

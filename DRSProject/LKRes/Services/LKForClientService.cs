@@ -459,7 +459,7 @@ namespace LKRes.Services
                 update.Groups[0].MRID = Guid.NewGuid().ToString().Substring(0, 10);
                 update.Generators[0].GroupID = update.Groups[0].MRID;
 
-                if( update.Sites != null)
+                if (update.Sites != null)
                 {
                     update.Groups[0].SiteID = update.Sites[0].MRID;
                 }

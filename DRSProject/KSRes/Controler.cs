@@ -160,6 +160,7 @@ namespace KSRes
                         LKResService newService = new LKResService(username, channel, sessionID);
                         ActiveService.Add(newService);
                     }
+
                     Console.WriteLine("{0}\t User: {1} is logged in.", DateTime.Now, username);
                 }
             }
@@ -435,21 +436,203 @@ namespace KSRes
 
             return retVal;
         }
-
-        private double SumActivePower(List<double> list)
+        #endregion GetProductionHistory
+        
+        #region LoadForecast
+        
+        public void LoadForecast()
         {
-            double retVal = 0;
-            if (list != null)
+            List<ConsuptionHistory> consuptions = LocalDB.Instance.ReadConsuptions();
+            if (consuptions.Count == 2)
             {
-                foreach (double d in list)
+                List<KeyValuePair<DateTime, double>> parameter = new List<KeyValuePair<DateTime, double>>();
+                foreach (ConsuptionHistory consuption in consuptions)
                 {
-                    retVal += d;
+                    parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
+                }
+
+                int counter = 10;
+
+                try
+                {
+                    LastValuesLC = proxy.LoadForecast(parameter);
+                }
+                catch
+                {
+                    while (counter > 0)
+                    {
+                        try
+                        {
+                            ChannelFactory<ILoadForecast> factory = new ChannelFactory<ILoadForecast>(
+                               new NetTcpBinding(),
+                               new EndpointAddress("net.tcp://localhost:10040/ILoadForecast"));
+                            proxy = factory.CreateChannel();
+                            break;
+                        }
+                        catch
+                        {
+                        }
+
+                        counter -= 1;
+                        Thread.Sleep(1000);
+                    }
+                }
+
+                Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
+                int minute = 0;
+
+                foreach (double value in LastValuesLC.Values)
+                {
+                    List<Point> basePoints = P(value, true);
+
+                    lock (lockForActiveService)
+                    {
+                        foreach (LKResService service in ActiveService)
+                        {
+                            List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
+
+                            if (!deployment.ContainsKey(service.Username))
+                            {
+                                deployment.Add(service.Username, new Dictionary<int, List<Point>>());
+                            }
+
+                            deployment[service.Username].Add(minute, temp);
+                        }
+                    }
+
+                    minute++;
+                }
+
+                lock (lockForActiveService)
+                {
+                    foreach (LKResService service in ActiveService)
+                    {
+                        service.Client.SendBasePoint(deployment[service.Username]);
+                    }
+                }
+            }
+        }
+    
+        private List<Point> GetAllBasePointsForUser(string username, List<Point> basePoints)
+        {
+            List<Point> temp = new List<Point>();
+            foreach (Generator generator in GetService(username).Generators)
+            {
+                Point point = basePoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
+
+                if (point != null)
+                {
+                    temp.Add(point);
+                }
+                else
+                {
+                    Point newPoint = new Point();
+                    newPoint.GeneratorID = generator.MRID;
+                    newPoint.Power = generator.ActivePower;
+                    temp.Add(newPoint);
                 }
             }
 
+            return temp;
+        }
+        #endregion LoadForecast
+
+        private double AverageAP(List<ProductionHistory> list)
+        {
+            double retVal = 0;
+            foreach (ProductionHistory p in list)
+            {
+                retVal += p.ActivePower;
+            }
+
+            retVal /= list.Count;
+
             return retVal;
         }
-        #endregion GetProductionHistory
+
+        private void CheckIfLKServiceIsAlive()
+        {
+            while (true)
+            {
+                List<LKResService> serviceForRemove = new List<LKResService>();
+
+                foreach (LKResService user in ActiveService)
+                {
+                    try
+                    {
+                        user.Client.Ping();
+                    }
+                    catch
+                    {
+                        serviceForRemove.Add(user);
+                    }
+                }
+
+                foreach (LKResService user in serviceForRemove)
+                {
+                    lock (lockForActiveService)
+                    {
+                        ActiveService.Remove(user);
+                        NotifyClientsAboutDelete(user.Username);
+                    }
+                }
+
+                serviceForRemove.Clear();
+
+                Thread.Sleep(1000);
+            }
+        }
+
+        private void NotifyClients(UpdateInfo update, string username)
+        {
+            List<IKSClient> notActiveClient = new List<IKSClient>();
+            foreach (IKSClient client in Clients)
+            {
+                try
+                {
+                    client.Update(update, username);
+                }
+                catch
+                {
+                    notActiveClient.Add(client);
+                }
+            }
+
+            foreach (IKSClient client in notActiveClient)
+            {
+                clients.Remove(client);
+            }
+        }
+
+        private void NotifyClientsAboutDelete(string username)
+        {
+            List<IKSClient> notActiveClient = new List<IKSClient>();
+            foreach (IKSClient client in Clients)
+            {
+                try
+                {
+                    client.DeleteService(username);
+                }
+                catch
+                {
+                    notActiveClient.Add(client);
+                }
+            }
+
+            foreach (IKSClient client in notActiveClient)
+            {
+                clients.Remove(client);
+            }
+        }
+
+        private void LoadForecastThread()
+        {
+            while (true)
+            {
+                Thread.Sleep(10000);
+                LoadForecast();
+            }
+        }
 
         #region Private add/update/remove
         private void AddOrUpdateSite(List<Site> sites, LKResService service)
@@ -583,199 +766,18 @@ namespace KSRes
                 }
             }
         }
-        
         #endregion add/update/remove
-        
-        private void CheckIfLKServiceIsAlive()
-        {
-            while (true)
-            {
-                List<LKResService> serviceForRemove = new List<LKResService>();
 
-                foreach (LKResService user in ActiveService)
-                {
-                    try
-                    {
-                        user.Client.Ping();
-                    }
-                    catch
-                    {
-                        serviceForRemove.Add(user);
-                    }
-                }
-
-                foreach (LKResService user in serviceForRemove)
-                {
-                    lock (lockForActiveService)
-                    {
-                        ActiveService.Remove(user);
-                        NotifyClientsAboutDelete(user.Username);
-                    }
-                }
-
-                serviceForRemove.Clear();
-
-                Thread.Sleep(1000);
-            }
-        }
-
-        private void NotifyClients(UpdateInfo update, string username)
-        {
-            List<IKSClient> notActiveClient = new List<IKSClient>();
-            foreach (IKSClient client in Clients)
-            {
-                try
-                {
-                    client.Update(update, username);
-                }
-                catch
-                {
-                    notActiveClient.Add(client);
-                }
-            }
-
-            foreach (IKSClient client in notActiveClient)
-            {
-                clients.Remove(client);
-            }
-        }
-
-        private void NotifyClientsAboutDelete(string username)
-        {
-            List<IKSClient> notActiveClient = new List<IKSClient>();
-            foreach (IKSClient client in Clients)
-            {
-                try
-                {
-                    client.DeleteService(username);
-                }
-                catch
-                {
-                    notActiveClient.Add(client);
-                }
-            }
-
-            foreach (IKSClient client in notActiveClient)
-            {
-                clients.Remove(client);
-            }
-        }
-
-
-
-        #region LoadForecast
-        private void LoadForecastThread()
-        {
-            while (true)
-            {
-                Thread.Sleep(10000);
-                LoadForecast();
-            }
-        }
-
-        public void LoadForecast()
-        {
-            List<ConsuptionHistory> consuptions = LocalDB.Instance.ReadConsuptions();
-            if (consuptions.Count == 2)
-            {
-                List<KeyValuePair<DateTime, double>> parameter = new List<KeyValuePair<DateTime, double>>();
-                foreach (ConsuptionHistory consuption in consuptions)
-                {
-                    parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
-                }
-
-                int counter = 10;
-
-                try
-                {
-                    LastValuesLC = proxy.LoadForecast(parameter);
-                }
-                catch
-                {
-                    while (counter > 0)
-                    {
-                        try
-                        {
-                            ChannelFactory<ILoadForecast> factory = new ChannelFactory<ILoadForecast>(
-                               new NetTcpBinding(),
-                               new EndpointAddress("net.tcp://localhost:10040/ILoadForecast"));
-                            proxy = factory.CreateChannel();
-                            break;
-                        }
-                        catch { }
-                        counter--;
-                        Thread.Sleep(1000);
-                    }
-                }
-
-                Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
-                int minute = 0;
-
-                foreach (double value in LastValuesLC.Values)
-                {
-                    List<Point> basePoints = P(value, true);
-
-                    lock (lockForActiveService)
-                    {
-                        foreach (LKResService service in ActiveService)
-                        {
-                            List<Point> temp = GetAllBasePointsForUser(service.Username, basePoints);
-
-                            if (!deployment.ContainsKey(service.Username))
-                            {
-                                deployment.Add(service.Username, new Dictionary<int, List<Point>>());
-                            }
-
-                            deployment[service.Username].Add(minute, temp);
-                        }
-                    }
-
-                    minute++;
-                }
-
-                lock (lockForActiveService)
-                {
-                    foreach (LKResService service in ActiveService)
-                    {
-                        service.Client.SendBasePoint(deployment[service.Username]);
-                    }
-                }
-            }
-        }
-    
-        private List<Point> GetAllBasePointsForUser(string username, List<Point> basePoints)
-        {
-            List<Point> temp = new List<Point>();
-            foreach (Generator generator in GetService(username).Generators)
-            {
-                Point point = basePoints.Where(x => x.GeneratorID.Equals(generator.MRID)).FirstOrDefault();
-
-                if (point != null)
-                {
-                    temp.Add(point);
-                }
-                else
-                {
-                    Point newPoint = new Point();
-                    newPoint.GeneratorID = generator.MRID;
-                    newPoint.Power = generator.ActivePower;
-                    temp.Add(newPoint);
-                }
-            }
-
-            return temp;
-        }
-        #endregion LoadForecast
-
-        private double AverageAP(List<ProductionHistory> list)
+        private double SumActivePower(List<double> list)
         {
             double retVal = 0;
-            foreach (ProductionHistory p in list)
+            if (list != null)
             {
-                retVal += p.ActivePower;
+                foreach (double d in list)
+                {
+                    retVal += d;
+                }
             }
-
-            retVal /= list.Count;
 
             return retVal;
         }

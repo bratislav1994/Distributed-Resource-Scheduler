@@ -17,14 +17,18 @@ namespace LKRes.Access
             get
             {
                 if (myDB == null)
+                {
                     myDB = new DataBase();
+                }
 
                 return myDB;
             }
             set
             {
                 if (myDB == null)
+                {
                     myDB = value;
+                }
             }
         }
 
@@ -37,7 +41,10 @@ namespace LKRes.Access
                 int i = access.SaveChanges();
                 Console.WriteLine("Broj generatora je " + access.GeneratorHistory.Count());
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }
@@ -50,7 +57,10 @@ namespace LKRes.Access
                 int i = access.SaveChanges();
                 Console.WriteLine("Dodata grupa {0}", newGroup.GEntity.Name);
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }
@@ -63,7 +73,10 @@ namespace LKRes.Access
                 int i = access.SaveChanges();
                 Console.WriteLine("Broj sajtova je " + access.SiteHistory.Count());
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }
@@ -150,7 +163,10 @@ namespace LKRes.Access
 
                 int i = access.SaveChanges();
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }
@@ -195,7 +211,10 @@ namespace LKRes.Access
                 int i = access.SaveChanges();
 
                 if (i > 0)
+                {
                     return true;
+                }
+
                 return false;
             }
         }

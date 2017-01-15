@@ -11,16 +11,16 @@ namespace KSRes.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.ServiceModel;
+    using System.ServiceModel.Channels;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Access;
     using CommonLibrary;
     using CommonLibrary.Exceptions;
     using CommonLibrary.Interfaces;
     using Data;
-    using System.ServiceModel.Channels;
-    using System.Threading;
-
+    
     public class KSRes : IKSRes, IKSForClient
     {
         private static Controler controler = new Controler();
@@ -41,14 +41,14 @@ namespace KSRes.Services
             RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
             string ip = endpoint.Address;
 
-            if(ip.Equals("::1"))
+            if (ip.Equals("::1"))
             {
                 ip = "localhost";
             }
 
             ChannelFactory<ILKRes> factory = new ChannelFactory<ILKRes>(
                        new NetTcpBinding(),
-                       new EndpointAddress("net.tcp://"+ ip +":4000/ILKRes"));
+                       new EndpointAddress("net.tcp://" + ip + ":4000/ILKRes"));
             string sessionID = context.Channel.SessionId;
 
             ILKRes service = factory.CreateChannel();
@@ -82,7 +82,7 @@ namespace KSRes.Services
 
             LKResService service = null;
 
-            if( (service = Controler.GetServiceSID(sessionID) ) == null)
+            if ((service = Controler.GetServiceSID(sessionID)) == null)
             {
                 IdentificationExeption ex = new IdentificationExeption("Service not logged in.");
                 throw new FaultException<IdentificationExeption>(ex);

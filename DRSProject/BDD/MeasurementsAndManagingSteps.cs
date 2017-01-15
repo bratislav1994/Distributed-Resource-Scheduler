@@ -40,9 +40,7 @@ namespace BDD
             string path = System.IO.Path.GetDirectoryName(executable);
             path = path.Substring(0, path.LastIndexOf("BDD"));
             AppDomain.CurrentDomain.SetData("DataDirectory", path + "LKRes");
-
-            #region initialize database
-
+            
             g1 = new Generator()
             {
                 MRID = "test1",
@@ -111,9 +109,7 @@ namespace BDD
             {
                 SEntity = s
             });
-            #endregion initialize database
-
-            #region startservices
+            
             model.IsTest = true;
 
             p1.StartInfo = new ProcessStartInfo(path + "LoadForecast\\bin\\Debug\\LoadForecast.exe");
@@ -127,7 +123,6 @@ namespace BDD
             Thread.Sleep(100);
             p4.StartInfo = new ProcessStartInfo(path + "LKRes\\bin\\Debug\\LKRes.exe");
             p4.Start();
-            #endregion startservices
 
             master.HomeVM.Username2 = "testClient";
             master.HomeVM.Password2 = "pass111";
@@ -235,7 +230,7 @@ namespace BDD
                         }
                     }
                 }
-                if(diff == 0)
+                if (diff == 0)
                 {
                     expectedPower = requiredAP;
                 }

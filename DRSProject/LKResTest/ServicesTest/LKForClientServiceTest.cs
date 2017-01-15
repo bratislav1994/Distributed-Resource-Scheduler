@@ -66,19 +66,28 @@ namespace LKResTest.ServicesTest
         [Test]
         public void SetpointTest()
         {
+            IKSRes mockRes = Substitute.For<IKSRes>();
+            lkResTest.KSResProxy = mockRes;
+
+            ILKClient mockClient = Substitute.For<ILKClient>();
+            lkResTest.Client = mockClient;
+
             lkResTest = new LKForClientService();
             lkResTest.Updateinfo = new UpdateInfo();
 
             IDataBase mockDataBase = Substitute.For<IDataBase>();
             DataBase.Instance = mockDataBase;
+            DataBase.Instance.ReadData().Returns(lkResTest.Updateinfo);
 
             List<Point> setpoints = new List<Point>();
             Generator generator = new Generator()
             {
-                MRID = "1"
+                MRID = "1",
+                WorkingMode = WorkingMode.REMOTE,
+                SetPoint = 5
             };
 
-          //  lkResTest.Updateinfo.Generators.Add(generator);
+            lkResTest.Updateinfo.Generators.Add(generator);
             DataBase.Instance.AddGenerator(new GeneratorEntity()
             {
                 Gen = generator
@@ -89,11 +98,10 @@ namespace LKResTest.ServicesTest
             setpoint.Power = 10;
             setpoints.Add(setpoint);
 
-            Assert.AreNotEqual(null, DataBase.Instance.ReadData());
             lkResTest.SendSetPoint(setpoints);
+            Thread.Sleep(2500);
 
             Assert.AreNotEqual(null, setpoints);
-           
             Assert.AreNotEqual(null, setpoint);
         }
 
@@ -320,7 +328,6 @@ namespace LKResTest.ServicesTest
 
             this.lkResTest.Updateinfo = new UpdateInfo();
             lkResTest.Updateinfo.Generators.Add(generator1);
-            //
             Generator generator2 = new Generator()
             {
                 MRID = "g2",

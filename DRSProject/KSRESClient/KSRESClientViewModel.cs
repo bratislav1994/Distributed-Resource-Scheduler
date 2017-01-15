@@ -499,7 +499,6 @@ namespace KSRESClient
             {
                 if (IsTest)
                 {
-
                 }
                 else
                 {
@@ -535,7 +534,6 @@ namespace KSRESClient
             {
                 if (IsTest)
                 {
-
                 }
                 else
                 {
@@ -559,7 +557,6 @@ namespace KSRESClient
             {
                 if (IsTest)
                 {
-
                 }
                 else
                 {
