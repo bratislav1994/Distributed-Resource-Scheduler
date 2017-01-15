@@ -14,6 +14,7 @@ using KSRes;
 using System.Threading;
 using LKRes.Access;
 using LKRes.Data;
+using System.ServiceModel.Channels;
 
 namespace LKResTest.ServicesTest
 {
@@ -67,7 +68,9 @@ namespace LKResTest.ServicesTest
         {
             lkResTest = new LKForClientService();
             lkResTest.Updateinfo = new UpdateInfo();
+
             IDataBase mockDataBase = Substitute.For<IDataBase>();
+            DataBase.Instance = mockDataBase;
 
             List<Point> setpoints = new List<Point>();
             Generator generator = new Generator()
@@ -75,30 +78,22 @@ namespace LKResTest.ServicesTest
                 MRID = "1"
             };
 
-           lkResTest.Updateinfo.Generators.Add(generator);
-
-           mockDataBase.ReadData().Returns(new UpdateInfo()
-           {
-                Generators = new List<Generator>()
-                {
-                    generator
-                }
-
-           });
-            
-            lkResTest.Updateinfo = mockDataBase.ReadData();
-
-            DataBase.Instance = mockDataBase;
+          //  lkResTest.Updateinfo.Generators.Add(generator);
+            DataBase.Instance.AddGenerator(new GeneratorEntity()
+            {
+                Gen = generator
+            });
 
             Point setpoint = new Point();
             setpoint.GeneratorID = generator.MRID;
             setpoint.Power = 10;
             setpoints.Add(setpoint);
 
+            Assert.AreNotEqual(null, DataBase.Instance.ReadData());
             lkResTest.SendSetPoint(setpoints);
 
             Assert.AreNotEqual(null, setpoints);
-            Assert.AreNotEqual(null, generator);
+           
             Assert.AreNotEqual(null, setpoint);
         }
 
@@ -219,6 +214,7 @@ namespace LKResTest.ServicesTest
             };
 
             lkResTest.Updateinfo.Sites.Add(site);
+           
             DataBase.Instance.AddSite(new SiteEntity()
             {
                 SEntity = site
@@ -377,6 +373,8 @@ namespace LKResTest.ServicesTest
         //public void LoginTest()
         //{
         //    IKSRes mockRes = Substitute.For<IKSRes>();
+        //    ILKClient mockClient = Substitute.For<ILKClient>();
+        //    lkResTest.Client = mockClient;
         //    mockRes.Registration("test", "test");
         //    mockRes.Login("test", "test");
 
@@ -518,5 +516,21 @@ namespace LKResTest.ServicesTest
         {
             this.lkResTest.GetMySystem();
         }
+
+        [Test]
+        public void UpdateTestBad()
+        {
+            UpdateInfo update = new UpdateInfo();
+            update.UpdateType = 0;
+
+            lkResTest.Client = null;
+            lkResTest.Update(update);
+        }
+
+        //[Test]
+        //public void ChangeActivePower()
+        //{
+        //    lkResTest.ChangeActivePower();
+        //}
     }
 }
