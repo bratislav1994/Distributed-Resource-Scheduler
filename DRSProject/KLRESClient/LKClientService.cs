@@ -212,7 +212,7 @@ namespace KLRESClient
                 {
                     throw new ArgumentNullException();
                 }
-
+                Console.WriteLine(generators.Count);
                 this.generators = value;
                 this.RaisePropertyChanged("Generators");
             }

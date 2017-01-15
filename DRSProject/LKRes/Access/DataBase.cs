@@ -78,6 +78,7 @@ namespace LKRes.Access
                 if (entity != null)
                 {
                     access.GeneratorHistory.Remove(entity);
+                    access.SaveChanges();
                 }
             }        
         }
@@ -90,6 +91,7 @@ namespace LKRes.Access
                 if (entity != null)
                 {
                     access.GroupHistory.Remove(entity);
+                    access.SaveChanges();
                 }
             }
         }
@@ -102,6 +104,7 @@ namespace LKRes.Access
                 if (entity != null)
                 {
                     access.SiteHistory.Remove(entity);
+                    access.SaveChanges();
                 }
             }
         }

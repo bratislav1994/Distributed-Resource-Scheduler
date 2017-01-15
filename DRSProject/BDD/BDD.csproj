@@ -54,6 +54,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.6.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -99,6 +100,10 @@
     <ProjectReference Include="..\KSRes\KSRes.csproj">
       <Project>{26BCBD69-6B8E-4A70-A877-9FB3055328DA}</Project>
       <Name>KSRes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LKRes\LKRes.csproj">
+      <Project>{8A029237-38B2-4BEE-B415-E6EF8EB3B2E2}</Project>
+      <Name>LKRes</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -90,18 +90,28 @@ namespace KLRESClient
             {
                 if (this.client == null)
                 {
-                    this.client = new LKClientService() { DataContext = this };
+                    try
+                    {
 
-                    ChannelFactory<ILKForClient> factory = new ChannelFactory<ILKForClient>(
-                        new NetTcpBinding(),
-                        new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
-                    this.client.Proxy = factory.CreateChannel();
 
-                    NetTcpBinding binding = new NetTcpBinding();
-                    string address = "net.tcp://localhost:10050/ILKClient";
-                    ServiceHost host = new ServiceHost(this.client);
-                    host.AddServiceEndpoint(typeof(ILKClient), binding, address);
-                    host.Open();
+                        
+                        this.client = new LKClientService() { DataContext = this };
+
+                        ChannelFactory<ILKForClient> factory = new ChannelFactory<ILKForClient>(
+                            new NetTcpBinding(),
+                            new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
+                        this.client.Proxy = factory.CreateChannel();
+
+                        NetTcpBinding binding = new NetTcpBinding();
+                        string address = "net.tcp://localhost:10050/ILKClient";
+                        ServiceHost host = new ServiceHost(this.client);
+                        host.AddServiceEndpoint(typeof(ILKClient), binding, address);
+                        host.Open();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("uso");
+                    }
                 }
 
                 return this.client;
