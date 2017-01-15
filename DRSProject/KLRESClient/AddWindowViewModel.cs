@@ -179,6 +179,8 @@ namespace KLRESClient
         /// </summary>
         private DelegateCommand clickAddCommand;
 
+        private bool isTest = false;
+
         #endregion
 
         #region constructor
@@ -237,6 +239,19 @@ namespace KLRESClient
             set
             {
                 this.client = value;
+            }
+        }
+
+        public bool IsTest
+        {
+            get
+            {
+                return this.isTest;
+            }
+
+            set
+            {
+                this.isTest = value;
             }
         }
 
@@ -906,7 +921,10 @@ namespace KLRESClient
             }
             catch
             {
-                MessageBox.Show("Error during execution Create command.");
+                if (!this.isTest)
+                {
+                    MessageBox.Show("Error during execution Create command.");
+                }
             }
         }
 

@@ -30,6 +30,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
@@ -88,6 +95,10 @@
     <ProjectReference Include="..\KLRESClient\LKRESClient.csproj">
       <Project>{F4EAB13F-D09E-44BD-BEF2-FB4A26DEC05C}</Project>
       <Name>LKRESClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KSRes\KSRes.csproj">
+      <Project>{26BCBD69-6B8E-4A70-A877-9FB3055328DA}</Project>
+      <Name>KSRes</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

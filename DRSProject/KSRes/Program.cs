@@ -36,8 +36,8 @@ namespace KSRes
 
             string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string path = System.IO.Path.GetDirectoryName(executable);
-            path = path.Substring(0, path.LastIndexOf("bin"));
-            AppDomain.CurrentDomain.SetData("DataDirectory", path);
+            path = path.Substring(0, path.LastIndexOf("KSRes"));
+            AppDomain.CurrentDomain.SetData("DataDirectory", path + "KSRes");
 
             // update database
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<AccessDB, Configuration>());

@@ -132,5 +132,26 @@ namespace KSRes.Access
                 return service;
             }
         }
+
+        bool ILocalDB.DeleteRegistrationService(string username)
+        {
+            using (var access = new AccessDB())
+            {
+                RegisteredService service = access.RegisteredServices.Where(x => x.Username.Equals(username)).FirstOrDefault();
+
+                if (service != null)
+                {
+                    access.RegisteredServices.Remove(service);
+                    int i = access.SaveChanges();
+
+                    if (i > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
     }
 }

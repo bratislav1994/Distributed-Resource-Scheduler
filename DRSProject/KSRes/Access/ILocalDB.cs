@@ -27,5 +27,7 @@ namespace KSRes.Access
         bool Registration(RegisteredService service);
 
         RegisteredService GetService(string username);
+
+        bool DeleteRegistrationService(string username);
     }
 }

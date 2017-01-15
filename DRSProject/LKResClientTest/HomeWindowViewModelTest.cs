@@ -39,6 +39,7 @@ namespace LKResClientTest
         {
             this.client = new LKClientService() { DataContext = this };
             this.homeVM = new HomeWindowViewModel();
+            this.homeVM.IsTest = true;
             this.homeVM.Client = this.client;
         }
 
@@ -89,6 +90,7 @@ namespace LKResClientTest
             var t = new Thread(() =>
             {
                 this.homeVM.HomeWin = new HomeWindow(this.homeVM.Client.DataContext);
+                this.homeVM.IsTest = true;
                 HomeWindow home = this.homeVM.HomeWin;
                 this.homeVM.LoginCommand.Execute();
             });
@@ -134,6 +136,7 @@ namespace LKResClientTest
             var t = new Thread(() =>
             {
                 this.homeVM.HomeWin = new HomeWindow(this.homeVM.Client.DataContext);
+                this.homeVM.IsTest = true;
                 this.homeVM.RegistrateCommand.Execute();
             });
 
@@ -205,6 +208,16 @@ namespace LKResClientTest
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
             t.Join();
+        }
+
+        [Test]
+        public void PropertyIsRegisterIsLoginTest()
+        {
+            this.homeVM.IsLogin = true;
+            this.homeVM.IsRegistered = true;
+            Assert.AreEqual(this.homeVM.IsLogin, this.homeVM.IsRegistered);
+            this.homeVM.IsTest = true;
+            Assert.IsTrue(this.homeVM.IsTest);
         }
     }
 }
