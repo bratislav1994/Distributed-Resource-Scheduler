@@ -609,6 +609,7 @@ namespace KSRes
                     lock (lockForActiveService)
                     {
                         ActiveService.Remove(user);
+                        NotifyClientsAboutDelete(user.Username);
                     }
                 }
 
@@ -639,6 +640,29 @@ namespace KSRes
             }
         }
 
+        private void NotifyClientsAboutDelete(string username)
+        {
+            List<IKSClient> notActiveClient = new List<IKSClient>();
+            foreach (IKSClient client in Clients)
+            {
+                try
+                {
+                    client.DeleteService(username);
+                }
+                catch
+                {
+                    notActiveClient.Add(client);
+                }
+            }
+
+            foreach (IKSClient client in notActiveClient)
+            {
+                clients.Remove(client);
+            }
+        }
+
+
+
         #region LoadForecast
         private void LoadForecastThread()
         {
@@ -660,7 +684,29 @@ namespace KSRes
                     parameter.Add(new KeyValuePair<DateTime, double>(consuption.TimeStamp, consuption.Consuption));
                 }
 
-                LastValuesLC = proxy.LoadForecast(parameter);
+                int counter = 10;
+
+                try
+                {
+                    LastValuesLC = proxy.LoadForecast(parameter);
+                }
+                catch
+                {
+                    while (counter > 0)
+                    {
+                        try
+                        {
+                            ChannelFactory<ILoadForecast> factory = new ChannelFactory<ILoadForecast>(
+                               new NetTcpBinding(),
+                               new EndpointAddress("net.tcp://localhost:10040/ILoadForecast"));
+                            proxy = factory.CreateChannel();
+                            break;
+                        }
+                        catch { }
+                        counter--;
+                        Thread.Sleep(1000);
+                    }
+                }
 
                 Dictionary<string, Dictionary<int, List<Point>>> deployment = new Dictionary<string, Dictionary<int, List<Point>>>();
                 int minute = 0;

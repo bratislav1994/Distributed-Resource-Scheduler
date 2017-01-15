@@ -19,5 +19,8 @@ namespace CommonLibrary.Interfaces
     {
         [OperationContract]
         void Update(UpdateInfo update, string username);
+
+        [OperationContract]
+        void DeleteService(string username);
     }
 }

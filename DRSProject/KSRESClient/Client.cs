@@ -421,5 +421,15 @@ namespace KSRESClient
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
+
+        public void DeleteService(string username)
+        {
+            LKResService user = allUsers.Where(o => o.Username.Equals(username)).FirstOrDefault();
+            allUsers.Remove(user);
+
+            userNames.Remove(username);
+            FillListForShowing();
+            
+        }
     }
 }
