@@ -56,6 +56,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.6.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -72,6 +73,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MeasurementsAndManaging.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MeasurementsAndManaging.feature</DependentUpon>
+    </Compile>
+    <Compile Include="MeasurementsAndManagingSteps.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemModeling.feature.cs">
       <AutoGen>True</AutoGen>
@@ -82,6 +89,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="MeasurementsAndManaging.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>MeasurementsAndManaging.feature.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
     <None Include="SystemModeling.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
@@ -96,6 +107,10 @@
     <ProjectReference Include="..\KLRESClient\LKRESClient.csproj">
       <Project>{F4EAB13F-D09E-44BD-BEF2-FB4A26DEC05C}</Project>
       <Name>LKRESClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KSRESClient\KSRESClient.csproj">
+      <Project>{3FD8A3BC-79C9-4662-BF7E-D82593717466}</Project>
+      <Name>KSRESClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\KSRes\KSRes.csproj">
       <Project>{26BCBD69-6B8E-4A70-A877-9FB3055328DA}</Project>

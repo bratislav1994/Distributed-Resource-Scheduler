@@ -172,6 +172,11 @@ namespace KSRes.Services
             return controler.GetProductionHistory(days);
         }
 
+        public void LoadForecastOnDemand()
+        {
+            controler.LoadForecast();
+        }
+
         #endregion IKSForClient
     }
 }

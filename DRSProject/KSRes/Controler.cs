@@ -414,7 +414,7 @@ namespace KSRes
         public SortedDictionary<DateTime, double> GetProductionHistory(double days)
         {
             SortedDictionary<DateTime, double> retVal = new SortedDictionary<DateTime, double>();
-            DateTime condition = DateTime.Now.AddMinutes(0 - days);
+            DateTime condition = DateTime.Now.AddDays(0 - days);
             Dictionary<DateTime, List<double>> temp = new Dictionary<DateTime, List<double>>();
             List<ProductionHistory> productions = LocalDB.Instance.ReadProductions(condition);
 
@@ -649,7 +649,7 @@ namespace KSRes
             }
         }
 
-        private void LoadForecast()
+        public void LoadForecast()
         {
             List<ConsuptionHistory> consuptions = LocalDB.Instance.ReadConsuptions();
             if (consuptions.Count == 2)

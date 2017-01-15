@@ -373,6 +373,11 @@ namespace KSRESClient
             return Proxy.GetLoadForecast();
         }
 
+        public void LoadForecastOnDemand()
+        {
+            Proxy.LoadForecastOnDemand();
+        }
+
         private void FillListForShowing()
         {
             lock (lockObj)

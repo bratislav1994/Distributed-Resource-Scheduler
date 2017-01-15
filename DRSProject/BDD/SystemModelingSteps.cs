@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using TechTalk.SpecFlow;
 
@@ -48,9 +49,10 @@ namespace BDDTest
 
         }
 
-        [AfterFeature]
+        [AfterFeature("sysMod")]
         public static void Stop()
         {
+            master.HomeVM.Host.Close();
             p1.Kill();
             p2.Kill();
             p3.Kill();
@@ -273,26 +275,33 @@ namespace BDDTest
             DataBase.Instance.AddSite(new LKRes.Data.SiteEntity() { SEntity = new Site() { MRID = "testSajt", Name = "testbaza" } });
         }
 
-
         // next 3 given for radio button2
 
-        //[Given(@"I have checked radioButtonnn from input form")]
-        //public void GivenIHaveCheckedRadioButtonnnFromInputForm()
-        //{
-        //    master.AddWindowVM.RadioButton2 = true;
-        //}
+        [Given(@"I have checked radioButtonnn from input form")]
+        public void GivenIHaveCheckedRadioButtonnnFromInputForm()
+        {
+            master.AddWindowVM.RadioButton2 = true;
+            master.AddWindowVM.RadioButton = false;
+            master.AddWindowVM.RadioButton1 = false;
+        }
 
-        //[Given(@"I have choose cmbSiteName from combo box\.")]
-        //public void GivenIHaveChooseCmbSiteNameFromComboBox_()
-        //{
-        //    master.AddWindowVM.Cmb3SiteNameSelectedItem = new Site();
-        //}
+        [Given(@"I have choose cmbSiteName from combo box\.")]
+        public void GivenIHaveChooseCmbSiteNameFromComboBox_()
+        {
+            master.AddWindowVM.Cmb3SiteNameSelectedItem = new Site() { MRID = "testSajt", Name = "test" };
+        }
 
-        //[Given(@"I have choose txbGroupName from text box\.")]
-        //public void GivenIHaveChooseTxbGroupNameFromTextBox_()
-        //{
-        //    master.AddWindowVM.TxbGroupName = "Grupa1";
-        //}
+        [Given(@"I have choose txbGroupName from text box\.")]
+        public void GivenIHaveChooseTxbGroupNameFromTextBox_()
+        {
+            master.AddWindowVM.TxbGroupName = "Grupa1";
+        }
+
+        [When(@"existing sites and new group")]
+        public void WhenExistingSitesAndNewGroup()
+        {
+            DataBase.Instance.AddSite(new LKRes.Data.SiteEntity() { SEntity = new Site() { MRID = "testSajt", Name = "test" } });
+        }
 
         [When(@"I have entered empty name into text box\.")]
         public void WhenIHaveEnteredEmptyNameIntoTextBox_()
@@ -308,11 +317,38 @@ namespace BDDTest
         {
             Assert.IsFalse(master.AddWindowVM.CreateCommand.CanExecute());
         }
-
-
         #endregion
 
-     
+        #region removeGenerator
+        [Given(@"I have selected generator from table")]
+        public void GivenIHaveSelectedGeneratorFromTable()
+        {
+            Generator generator = new Generator() { MRID = "genTest", GroupID = "test" };
+            master.EditRemoveWindowVM.SelectedItem = generator;
+            DataBase.Instance.AddGenerator(new LKRes.Data.GeneratorEntity() { Gen = generator });
+            DataBase.Instance.AddGroup(new LKRes.Data.GroupEntity() { GEntity = new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" } });
+            DataBase.Instance.AddSite(new LKRes.Data.SiteEntity() { SEntity = new Site() { MRID = "testSajt", Name = "testbaza" } });
+        }
+
+        [When(@"I have pressed remove button")]
+        public void WhenIHavePressedRemoveButton()
+        {
+            master.HomeVM.Username = "proba";
+            master.HomeVM.Password = "proba";
+            master.HomeVM.LoginCommand.Execute();
+            Assert.IsTrue(master.EditRemoveWindowVM.RemoveCommand.CanExecute());
+            master.EditRemoveWindowVM.RemoveCommand.Execute();
+        }
+
+        [Then(@"generator should be deleted")]
+        public void ThenGeneratorShouldBeDeleted()
+        {
+            Assert.AreEqual(null, DataBase.Instance.ReadData().Generators.Where(o => o.MRID.Equals("genTest")).FirstOrDefault());
+            DataBase.Instance.RemoveGroup(new Group() { MRID = "test", Name = "testbaza", SiteID = "testSajt" } );
+            DataBase.Instance.RemoveSite(new Site() { MRID = "testSajt", Name = "testbaza" });
+        }
+        #endregion removeGenerator
+
     }
 }
 

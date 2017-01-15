@@ -60,6 +60,7 @@ namespace KLRESClient
         private bool isRegistered = false;
         private bool isLogin = false;
         private bool isTest = false;
+        private ServiceHost host = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel" /> class.
@@ -90,28 +91,18 @@ namespace KLRESClient
             {
                 if (this.client == null)
                 {
-                    try
-                    {
+                    this.client = new LKClientService() { DataContext = this };
 
+                    ChannelFactory<ILKForClient> factory = new ChannelFactory<ILKForClient>(
+                        new NetTcpBinding(),
+                        new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
+                    this.client.Proxy = factory.CreateChannel();
 
-                        
-                        this.client = new LKClientService() { DataContext = this };
-
-                        ChannelFactory<ILKForClient> factory = new ChannelFactory<ILKForClient>(
-                            new NetTcpBinding(),
-                            new EndpointAddress("net.tcp://localhost:5000/ILKForClient"));
-                        this.client.Proxy = factory.CreateChannel();
-
-                        NetTcpBinding binding = new NetTcpBinding();
-                        string address = "net.tcp://localhost:10050/ILKClient";
-                        ServiceHost host = new ServiceHost(this.client);
-                        host.AddServiceEndpoint(typeof(ILKClient), binding, address);
-                        host.Open();
-                    }
-                    catch
-                    {
-                        MessageBox.Show("uso");
-                    }
+                    NetTcpBinding binding = new NetTcpBinding();
+                    string address = "net.tcp://localhost:10050/ILKClient";
+                    this.host = new ServiceHost(this.client);
+                    host.AddServiceEndpoint(typeof(ILKClient), binding, address);
+                    host.Open();
                 }
 
                 return this.client;
@@ -277,6 +268,19 @@ namespace KLRESClient
             set
             {
                 this.isTest = value;
+            }
+        }
+
+        public ServiceHost Host
+        {
+            get
+            {
+                return host;
+            }
+
+            set
+            {
+                host = value;
             }
         }
 

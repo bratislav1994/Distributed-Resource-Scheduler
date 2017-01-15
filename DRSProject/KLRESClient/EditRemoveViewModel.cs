@@ -13,8 +13,8 @@ namespace KLRESClient
     using System.Text;
     using System.Windows;
     using CommonLibrary;
-    using Prism.Commands; 
-    
+    using Prism.Commands;
+
     /// <summary>
     /// View model for edit and remove actions
     /// </summary>
@@ -716,7 +716,7 @@ namespace KLRESClient
                 this.RaisePropertyChanged("EditTxbVisibility");
             }
         }
-        
+
         /// <summary>
         /// Gets or sets data history
         /// </summary>
@@ -901,7 +901,7 @@ namespace KLRESClient
             {
                 List<KeyValuePair<DateTime, double>> temp = this.Client.GetMeasurements(this.SelectedItem.MRID);
                 StringBuilder allHist = new StringBuilder();
-                
+
                 if (temp.Count > 10)
                 {
                     List<KeyValuePair<DateTime, double>> lastFive = temp.GetRange(temp.Count - 10, 10);
@@ -931,7 +931,7 @@ namespace KLRESClient
                 {
                     MessageBox.Show("Error during getting measurement for selected generator.");
                 }
-                    
+
                 this.SelectedItem = null;
                 this.DataHistory = null;
                 this.ShowDataCommand.RaiseCanExecuteChanged();
@@ -958,7 +958,7 @@ namespace KLRESClient
         }
 
         #endregion
-        
+
         #region EditCommand
 
         /// <summary>
@@ -1103,6 +1103,10 @@ namespace KLRESClient
         /// </summary>
         private void EditCommandAction()
         {
+            this.generator = this.SelectedItem;
+            this.group = this.Client.GetGroupFromId(this.generator.GroupID);
+            this.site = this.Client.GetSiteFromId(this.group.SiteID);
+
             List<Generator> generators = new List<Generator>(1)
             {
                 this.generator
@@ -1181,7 +1185,12 @@ namespace KLRESClient
             this.generator = null;
             this.site = null;
             this.SelectedItem = null;
-            this.win1.Close();
+
+            if (!this.IsTest)
+            {
+                this.win1.Close();
+            }
+
             this.ShowDataCommand.RaiseCanExecuteChanged();
             this.ClickEditCommand.RaiseCanExecuteChanged();
             this.RemoveCommand.RaiseCanExecuteChanged();
@@ -1204,6 +1213,10 @@ namespace KLRESClient
         /// </summary>
         private void RemoveCommandAction()
         {
+            this.generator = this.SelectedItem;
+            this.group = this.Client.GetGroupFromId(this.generator.GroupID);
+            this.site = this.Client.GetSiteFromId(this.group.SiteID);
+
             List<Generator> generators = new List<Generator>(1)
             {
                 this.generator

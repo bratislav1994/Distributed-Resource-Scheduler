@@ -19,10 +19,15 @@ namespace CommonLibrary.Interfaces
     {
         [OperationContract]
         List<LKResService> GetAllSystem();
+
         [OperationContract]
         void IssueCommand(double requiredAP);
+
         [OperationContract]
         SortedDictionary<DateTime, double> GetLoadForecast();
+
+        [OperationContract]
+        void LoadForecastOnDemand();
 
         [OperationContract]
         SortedDictionary<DateTime, double> GetProductionHistory(double days);

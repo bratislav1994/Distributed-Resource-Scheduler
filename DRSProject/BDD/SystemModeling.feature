@@ -88,7 +88,8 @@ Scenario Outline: Registration
  And I have checked radioButtonnn from input form
  And I have choose cmbSiteName from combo box.
  And I have choose txbGroupName from text box.
- When I press add button
+ When existing sites and new group
+ And I press add button
  Then generator should be added
 
  @base1
@@ -105,3 +106,9 @@ Scenario Outline: Registration
  And I have entered groupName into text box.
  When I have entered empty name into text box.
  Then create button should be disabled
+
+ @base1
+ Scenario: Remove generator
+ Given I have selected generator from table
+ When I have pressed remove button
+ Then generator should be deleted
