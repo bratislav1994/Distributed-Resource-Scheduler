@@ -932,7 +932,7 @@ namespace KLRESClient
                     MessageBox.Show("Error during getting measurement for selected generator.");
                 }
 
-                this.SelectedItem = null;
+               // this.SelectedItem = null;
                 this.DataHistory = null;
                 this.ShowDataCommand.RaiseCanExecuteChanged();
                 this.ClickEditCommand.RaiseCanExecuteChanged();
@@ -949,7 +949,7 @@ namespace KLRESClient
         /// </summary>
         private void ExitCommandAction()
         {
-            this.SelectedItem = null;
+           // this.SelectedItem = null;
             this.DataHistory = null;
             this.showWin.Close();
             this.ShowDataCommand.RaiseCanExecuteChanged();
@@ -1096,6 +1096,17 @@ namespace KLRESClient
                 MRID = this.SelectedItem.MRID,
                 BasePoint = this.SelectedItem.BasePoint
             };
+
+
+            
+            this.SelectedItem.MRID = generator.MRID;
+            this.selectedItem.ActivePower = generator.ActivePower;
+            this.selectedItem.GeneratorType = generator.GeneratorType;
+            this.selectedItem.HasMeasurment = generator.HasMeasurment;
+            this.selectedItem.Pmax = generator.Pmax;
+            this.selectedItem.Pmin = generator.Pmin;
+            this.selectedItem.Price = generator.Price;
+            this.selectedItem.WorkingMode = generator.WorkingMode;
         }
 
         /// <summary>
@@ -1185,7 +1196,7 @@ namespace KLRESClient
             this.group = null;
             this.generator = null;
             this.site = null;
-            this.SelectedItem = null;
+            //this.SelectedItem = null;
 
             if (!this.IsTest)
             {
@@ -1276,7 +1287,7 @@ namespace KLRESClient
                 UpdateType = UpdateType.REMOVE
             };
 
-            this.SelectedItem = null;
+           // this.SelectedItem = null;
 
             this.Client.Command(this.updateInfo);
             this.ShowDataCommand.RaiseCanExecuteChanged();
